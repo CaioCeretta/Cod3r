@@ -64,3 +64,48 @@ a npm install and the core project will be finally created.
 For a script to run, such as test, we need to add the test script in the core package, after it, inform turbo repo that
 a test script exists, and for it, create a new object inside tasks of test: {}, and inside monorepo's core package.json,
 utilize the turbo run test, and turbo run will make every project script build/test/lint to execute.
+
+## Modeling
+
+Every time we choose to apply a pattern, we initially have a recurrent problem and a proposed solution, but that solution
+wants a pattern for this problem and we will have to adapt it for the application necessity.
+
+So for instance, if the person catalogued a problem saying that greek columns only work with light colors, which means that
+if in the app, anything that refers to ancient greece, it will need to have a light color to resemblance the architecture.
+
+But, when he started cataloguing these patterns, he noticed that by the time he was trying to apply them, someone may have
+understood the pattern, and let's say that the other person used white, but used some black grooves because he though it
+would be prettier for that scenario.
+
+Modeling doesn't aim on adding complexity, but there are some different types of complexity we may face:
+
+1: `Accidental Complexity`: These types of complexities are typically a "team choice", that sometimes complicate something
+that should be simple.
+
+2 `Intrinsic complexity`: It means that there may be complex problems, such as granting a social security benefit., the
+calculus to see how much will be granted and if he is going to receive it, already has its complexities, meaning it already
+has an inherent complexity.
+
+In the tic-tac-toe we have a simple problem to solve, but we'll create a series of elements to define a modeling because
+of study reasons.
+
+## Implementation comments
+
+The core package have within the src folder, the following:
+
+A `Board class`, `Game Class`, a `Cell Class`, and a `Player Class`
+
+A game consist of a board that consist of cells which the players utilize.
+
+It also has a `Result Class`, that consist of multiple classes, which are:
+
+. CellsChecker
+. DiagonalChecker
+. GameResult
+. HorizontalChecker
+. ResultChecker
+. TieChecker
+. Vertical Checker
+
+Where the `GameResult Class` is the class that represents the final result of the game, which holds the winner, what was
+the winning play.
