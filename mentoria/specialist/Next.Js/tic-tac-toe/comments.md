@@ -89,7 +89,14 @@ has an inherent complexity.
 In the tic-tac-toe we have a simple problem to solve, but we'll create a series of elements to define a modeling because
 of study reasons.
 
-## Implementation comments
+Choosing a rich modeling approach, with responsibilities separated into different components, is always a good option when
+planning to scale a project with more complex features. It is much more maintainable than having everything centralized
+in a single component, if the goal is the same.
+
+It's a good practice to design this way even in smaller applications, so that when scaling becomes necessary, we already
+know how to handle it.
+
+## End comments
 
 The core package have within the src folder, the following:
 
@@ -109,3 +116,36 @@ It also has a `Result Class`, that consist of multiple classes, which are:
 
 Where the `GameResult Class` is the class that represents the final result of the game, which holds the winner, what was
 the winning play.
+
+## Implementation Comments
+
+### Tests
+
+After finishing the player class, we were already able to think on the tests we could apply to the player. This means, that
+we aren't already thinking on the graphical interface, colors, etc, but on the game logic.
+
+This means that we aren't cascade developing, where we first do only the requisites of the app, then the docs, then another
+thing, and so on. However, sometimes we model a little, then we do an experiment on the clarity so we have a higher clarity
+of this modeling, then we model again, and so on.
+
+### Core and front-end link
+
+Within the core/src/index.ts, we import the classes (e.g. Player), and simply export it, and using this, we can simply
+import these classes/types in the core index, instead of going through all the directories.
+
+### Player Class
+
+We start by creating the player type which simply consists of an Player enum including the values 'X' and 'O', and will be used
+to type the player class type
+Afterwards, we create a Player class that on its creation needs to receive the name, the type of player type — 'X' or 'O',
+and the player score, and the game of this player
+
+within the class, an addScore method, for adding the score of the player, and because we have an immutable object, e.g. an
+object that once created won't change, and after the game ends, the only state we have is the player score.
+
+Since every attribute is readonly, each one of them is immutable, and every time we have a behavior where we need to change
+the object's state, this behavior returns a new instance. For example, when we call the addScore method, it returns a new
+`Player` instance, with the same values, except for the score that will be the last score + the score being passed.
+
+Other rich behavior from the `Player` is when we want to clear it, and for it, when calling the clear method, we return
+a new instance of Player, with the same name and type, and the score being 0.
