@@ -1,3 +1,4 @@
-export function sum(a: number, b: number) {
-	return a + b
-}
+import Player from './player/Player'
+import { PlayerType } from './shared/PlayerType'
+
+export { Player, PlayerType }
