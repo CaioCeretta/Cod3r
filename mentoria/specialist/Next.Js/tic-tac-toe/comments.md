@@ -96,6 +96,47 @@ in a single component, if the goal is the same.
 It's a good practice to design this way even in smaller applications, so that when scaling becomes necessary, we already
 know how to handle it.
 
+## Rich Behaviors
+
+In POO, we say that a class have rich behaviors when the class isn't only used for storing data, but it also knows and
+execute the business rules or the actions make sense for that object.
+
+It other words, it's not just a "bag of data" (row, col, type: in the Cell example), it knows how to behave in the context
+of the tic-tac-toe game.
+
+Methods like isEmpty() and isNotEmpty() encapsulate the concept of whether a cell is empty or filled. Meaning that we don't
+have to write something like
+
+if(cell.type === null)
+
+Instead, we write something more expressive, like if (cell.isEmpty())
+
+this improves clarity, readability , and maintainability of the code.
+
+Comparing this to an "anemic object":
+
+An anemic object would be a class that only holds data:
+
+```ts
+class Cell {
+	row: number
+	cell: number
+	type: PlayerType | null
+}
+
+// Then the rules would be scattered outside the class, like:
+
+function mark(cell: Cell, type: PlayerType) {
+	if (cell.type === null) {
+		cell.type = type
+	}
+}
+```
+
+In conclusion: This is not real OOP. It's just data structure (closer to procedural programming). It is called rich behaviors
+because the class carries both the data and the rules for how that data should behave. This is a core practice of true OOP,
+which isn't just about grouping data; it's about modelling behaviors.
+
 ## End comments
 
 The core package have within the src folder, the following:
@@ -149,3 +190,16 @@ the object's state, this behavior returns a new instance. For example, when we c
 
 Other rich behavior from the `Player` is when we want to clear it, and for it, when calling the clear method, we return
 a new instance of Player, with the same name and type, and the score being 0.
+
+### Cell Class
+
+`Cell` is The element that is the base of the whole game, an element which can either be 'X', 'O', or empty or occupied.
+
+The `Cell` will not only be used in the game, but also in the results
+
+Each `Cell` object includes a line, a column and the player type that marked it — either 'X' or 'O', and can also be empty
+or null.
+
+_Comments about methods in the Class _
+
+Once an element is created, such as the class, we can now create the tests for it.

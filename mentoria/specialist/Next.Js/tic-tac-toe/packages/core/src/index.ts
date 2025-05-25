@@ -1,4 +1,5 @@
 import Player from './player/Player'
 import { PlayerType } from './shared/PlayerType'
+import Cell from './shared/Cell'
 
-export { Player, PlayerType }
+export { Player, Cell, PlayerType }
