@@ -193,7 +193,7 @@ a new instance of Player, with the same name and type, and the score being 0.
 
 ### Cell Class
 
-`Cell` is The element that is the base of the whole game, an element which can either be 'X', 'O', or empty or occupied.
+`Cell` is the base element of the entire game, an element which can either be 'X', 'O', or empty or occupied.
 
 The `Cell` will not only be used in the game, but also in the results
 
@@ -203,3 +203,100 @@ or null.
 _Comments about methods in the Class _
 
 Once an element is created, such as the class, we can now create the tests for it.
+
+### Board Class
+
+An array of lines and columns are going to be the only attribute of this class: e.g. Cell[][]. And it will have methods
+for creating an empty board, and others for the board and cells structure which will be commented inside the class.
+
+How does flattening of an bi-dimensional array works?
+
+Flattening is basically converting a 2D array (array of arrays) into a 1D array (single list of elements)
+
+Example:
+
+const array2D = [
+[1, 2, 3],
+[4, 5, 6],
+[7,8,9]
+]
+
+After flattening:
+
+const flattened = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+_Comments about methods in the Class_
+
+No behaviors created in the class change the board state. There are methods to create, verify how many lines, columns,
+one for flattening and retrieving the state — but it won't change the state — get one particular cell after get, verify
+if one cell is empty and if the board is full, none of these alter the state
+
+The only method that will indeed alter the board's state is the `set` method, where we pass the number of the line, of the
+column and the player, and by the end of it, it will return us a new instance of Board with the altered state.
+
+This method, also includes the rich behaviors of other components, such as markWith from the `Cell`.
+
+Once the element is finished, we can now create the tests for it.
+
+## OOP Comments
+
+### 1.
+
+❓ Why can i access state[row][col] and call the method markWith(type) on it, considering that state is two dimensional array
+of Cell objects? (Cell[][])
+
+✅: When we do state[row][col] = state[row][col].markWith(type)
+
+we are saying
+
+"Get the cell object that is in the line `row` and in the column `row` and call the method markWith(type), that returns
+a new instance of Cell (filled, if it is empty). After, replace in the array this instance in place of the previous one."
+
+Why does it work?
+
+Because state is a matrix Cell[][], and accessing a cell is as easy as
+
+state[row][col]
+
+This gives us an object of the type Cell that exist in that position. Then we call:
+
+state[row][col].markWith(type)
+
+this methods will return us a new cell, that we then assign back to the same position.
+
+state[row][col] = newCell
+
+### 2.
+
+❓ Why was i able to access board.items without calling it like a function ( board.items() )?
+
+✅: Because i declared the method with the `get` keyword, which makes it a getter property. This makes it behave like an
+attribute (a property) rather than a regular function
+
+❓ What exactly does the get keyword do here?
+
+✅: The `get` keyword defines a getter for the class. A getter is a function that's automatically called when you access
+the property, without needing parentheses. JS runs the getter code transparently as if you were accessing a variable.
+
+❓ So is board.items an attribute or a method?
+
+✅: Technically, it's a method, but it behaves like an attribute. The `get` hides the fact that it's a function. When you
+do `board.items`, JavaScript executes the method without requiring parentheses.
+
+❓ What if I didn’t use get?
+
+✅ Without the get, you would have to call the method like this:
+
+board.items()
+
+You’d need parentheses, just like any regular method.
+
+❓ Why would someone use a getter instead of a regular method?
+
+✅ To:
+
+Make code cleaner and easier to read, as if you’re accessing a real property.
+
+Hide internal logic and expose information as data, not an action.
+
+Simplify testing, reading, and maintenance.
