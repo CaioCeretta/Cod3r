@@ -270,7 +270,7 @@ state[row][col] = newCell
 
 ❓ Why was i able to access board.items without calling it like a function ( board.items() )?
 
-✅: Because i declared the method with the `get` keyword, which makes it a getter property. This makes it behave like an
+A: Because i declared the method with the `get` keyword, which makes it a getter property. This makes it behave like an
 attribute (a property) rather than a regular function
 
 ❓ What exactly does the get keyword do here?
@@ -293,10 +293,118 @@ You’d need parentheses, just like any regular method.
 
 ❓ Why would someone use a getter instead of a regular method?
 
-✅ To:
+Answer:
 
 Make code cleaner and easier to read, as if you’re accessing a real property.
 
 Hide internal logic and expose information as data, not an action.
 
 Simplify testing, reading, and maintenance.
+
+### 3.
+
+❓ Why create a `shared` folder instead of a `Cell` folder?
+
+✅: What the instructor is doing follows a very common pattern in projects that use domain separation (DDD — Domain-Driven
+Design) or simply a more modular architecture.
+
+The logic is:
+
+    - If an element (like Cell) does not belong exclusively to a specific context, but instead is a shared concept across
+    different parts of the domain, then it goes inside a `shared` (or sometimes called `common`) folder.
+
+    - On the other hand, if `Cell` were a concept strictly tied to the `Board` context, then creating a folder like `cell`
+    	or `board/cell` would make sense.
+
+    Putting it inside `shared` means that `Cell` is not just part of the `Board` or `Player`, but it's a concept that can
+    	be manipulated, read, or interpreted by any module that needs to understand the game state.
+
+What usually goes inside a shared folder?
+
+    - Global types (PlayerType, enums, status types, etc).
+    - Value objects (like Cell, Position, Score, etc.)
+    - Helpers and pure functions (e.g. shuffleArray, deepClone)
+    - Global constants (BOARD_SIZE, WINNING_COMBINATIONS, etc)
+
+Why not create a cell folder?
+
+    If you create a `cell` folder it would suggest that `Cell` is a standalone module with its own behaviors and responsibilities —
+    which makes sense if it has complex logic.
+
+    	However, if `Cell` is just a simple Value Object, like a representation of a "position on the board" holding the current
+    	state (`empty`, `X` or `O`) it doesn't require an entire folder for itself.
+
+Practical rule to decide:
+
+If the entity has complex behaviors (methods, internal rules) then create its own folder
+If it's just a simple data structure or a shared concept then create it inside a shared folder.
+
+💡 Summary applied to this example:
+
+✔️ Board.ts → Board logic (validate moves, check for winners, etc.)
+✔️ Player.ts → Player representation
+✔️ shared/Cell.ts → Cell representation (current state), which is used both by Board, Player, or any other logic
+✔️ shared/PlayerType.ts → Enum or type that defines 'X' | 'O'
+
+### 4. What are value objects?
+
+Value object is an object that represents a concept based on its value, not its identity. Unlike Entities, Value Objects
+does not have a unique ID. They are defined entirely by their properties.
+
+if two Value Objects have the same value in all their properties, they are considered equal
+
+Characteristics:
+
+1. No Identity: It doesn't have a unique ID. Two Value Objects with te same value are the same.
+2. Immutable: Once created, it shouldn't change. If you need a new state, you create a new instance.
+3. Self-Validating: It can enforce its own rules upon creation (e.g. "a cell must be X, O, or empty").
+4. Equality by Value: Comparisons are based on property values, not memory references.
+
+Examples in Real Life:
+
+- Address: { street, city, zip} — If two addresses have the same street, city, and zip, they are the same.
+- Money: { amount, currency } — 10 USD is equal to another 10 USD
+- Position: { row, column } in a game like Tic-Tac-Toe
+
+##### Example in a Tic Tac Toe Game:
+
+A cell can be a Value Object, because:
+
+- It has no identity.
+- It's defined by its position (row, column) and value ('X', 'O', null).
+- If two cells have the same row, column, and value, they are the same.
+
+export type PlayerType = 'X' | 'O' | null;
+
+export class Cell {
+constructor(
+public readonly row: number,
+public readonly column: number,
+public readonly value: PlayerType
+) {}
+
+    isEmpty() {
+    return this.value === null;
+    }
+
+}
+
+- Cell does not have an ID
+- It's equal to another Cell if row, column, and value are the same.
+
+##### Value Object vs Entity:
+
+| Aspect   | Value Object            | Entity              |
+| -------- | ----------------------- | ------------------- |
+| Identity | No                      | Yes                 |
+| Equality | By value                | By ID               |
+| Mutable  | Usually immutable       | Usually mutable     |
+| Example  | Cell, Position, Address | Player, Game, Board |
+
+##### Why use Value Objects?
+
+Makes the code safer by avoiding bugs related to identity or accidental mutations.
+
+Encapsulates logic and validation related to a concept.
+
+Improves readability and maintainability.
