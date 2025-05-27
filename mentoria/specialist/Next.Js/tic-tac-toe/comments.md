@@ -202,7 +202,7 @@ or null.
 
 _Comments about methods in the Class _
 
-Once an element is created, such as the class, we can now create the tests for it.
+Once the class is created, such as the class, we can now create the tests for it.
 
 ### Board Class
 
@@ -236,7 +236,16 @@ column and the player, and by the end of it, it will return us a new instance of
 
 This method, also includes the rich behaviors of other components, such as markWith from the `Cell`.
 
-Once the element is finished, we can now create the tests for it.
+Once the class is created, we can now create the tests for it.
+
+### Game Result Class
+
+In the Game Result class we have attributes to know which was the winning move and who made it, to get the player type
+and a private tie attribute for cases where the winningMove is empty and it will be private for calculation purposes.
+
+_Comments about methods in the Class_
+
+Once the class is created, such as the class, we can now create the tests for it.
 
 ## OOP Comments
 
@@ -403,8 +412,6 @@ public readonly value: PlayerType
 
 ##### Why use Value Objects?
 
-Makes the code safer by avoiding bugs related to identity or accidental mutations.
-
-Encapsulates logic and validation related to a concept.
-
-Improves readability and maintainability.
+. Makes the code safer by avoiding bugs related to identity or accidental mutations.
+. Encapsulates logic and validation related to a concept.
+. Improves readability and maintainability.
