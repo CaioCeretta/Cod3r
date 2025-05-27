@@ -1,5 +1,4 @@
-import { PlayerType } from '../../src'
-import Board from '../../src/game/Board'
+import { PlayerType, Board } from '../../src'
 
 test('It should create an empty board', () => {
 	const board = Board.empty()
