@@ -74,9 +74,9 @@ export default class Board {
 	}
 
 	set(row: number, col: number, type: PlayerType): Board {
-		const p = this.get(row, col)
+		const c = this.get(row, col)
 
-		if (!p || p.isNotEmpty()) return this
+		if (!c || c.isNotEmpty()) return this
 
 		const state = this.state.map((r) => [...r])
 
