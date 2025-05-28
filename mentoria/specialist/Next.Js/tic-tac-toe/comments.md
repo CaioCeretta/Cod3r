@@ -247,6 +247,29 @@ _Comments about methods in the Class_
 
 Once the class is created, such as the class, we can now create the tests for it.
 
+### ResultChecker Interface
+
+Result checker is basically an interface that receives a board as input and returns us the game result
+
+For example: If we are verifying a horizontal result, it can say that both the game is in progress, because no winning
+game was found, and by checking the vertical one, it may say that the game is complete because one winning move was
+found.
+
+By the time we are uniting these results, we pass it through different logics and at the end, we get the result and check
+if it was a win or a tie.
+
+The merge method is for uniting the results, but the result itself, by calculating the results received, it should be able
+to set result priorities in the array received, such as a winning game has a higher one than an inProgress game.
+
+The instructor thought: "No, i don't want to put all these logics inside only one place and used another way where we can
+create an interface with a common behavior and we would have all these logics being implemented in an independent manner
+(e.g. diagonal, horizontal, vertical, ties).
+
+But he started noticing that all the result verification involved getting a set of Cells and see if they were filled with
+the same player. Then, he created a CellChecker class to help in this process
+
+### Cell Checker Class
+
 ## OOP Comments
 
 ### 1.
