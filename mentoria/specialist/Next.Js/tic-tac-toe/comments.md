@@ -270,6 +270,73 @@ the same player. Then, he created a CellChecker class to help in this process
 
 ### Cell Checker Class
 
+The `CellChecker` Class will implement `ResultChecker` and on its constructor it receives a set of numbers to verify
+
+and in the end it checks the array with rows and cols, and will verify if all those elements are from the same type
+and if yes, it will pass to the GameResult class these winning cells
+
+Its methods are going to be commented on the file itself
+
+### How the code communicates
+
+### 4.
+
+❓ How the application works in the end?
+
+For this, let's break down a part of the application to make everything clear
+
+1. `ResultChecker` (interface)
+
+. This is an interface, meaning it defines a contract for classes.
+. Any class that implements ResultChecker must have a method called check(board: Board): GameResult
+
+. Purpose: it ensures that any kind of rule-checking logic for the game result follows the same function signature.
+
+2. `GameResult` (Class)
+
+. Represents the result of the game
+. It holds:
+    . winningMove the winning cells (if there is one)
+    . _tied: whether the game tied
+. It provides useful methods to check the status
+    . xWins
+    . oWins
+    . tied
+    . inProgress
+    . finished
+    . hasCell(row, col)
+
+This class doesn't check whether someone won. It just represents the result once a checker (like `CellChecker`) determines
+it .
+
+3. `CellChecker` (Class that implements `ResultChecker`)
+
+. Purpose: Check a specific set of 3 cells to see if they form a winning line (same player)
+
+. How it works: 
+    . It receives an array of coordinates like [[0, 0], [0, 1], [0,2]]
+    . The check method
+        . Retrieves the `Cell` objects from the `Board` for these coordinates
+        . Checks whether all the cells have the same type and none are null
+        . if yes, return new GameResult with the winning cells.
+        . if not, returns an empty `GameResult` (meaning no win for this set of cells)
+
+4. `HorizontalChecker` (Class that implements `ResultChecker`)
+    . Purpose: Check if there is a horizontal win (any of the three rows).
+    . How it works: It creates three CellsChecker instances — one for each row:
+        .Top row: [[0,0], [0,1], [0,2]]
+        .Middle row: [[1,0], [1,1], [1,2]]
+        .Bottom row: [[2,0], [2,1], [2,2]]
+    . Calls .check(board) on each one.
+    . Looks for any result where .finished is true.
+        . If found, returns that result (a win)
+        . If not, returns a default new GameResult() (no win horizontally)
+
+5. `VerticalChecker` and `DiagonalChecker` (Classes that implements `ResultChecker`)
+    . Everything is the same as the horizontal, being the orientation the only difference
+
+
+
 ## OOP Comments
 
 ### 1.
@@ -438,3 +505,7 @@ public readonly value: PlayerType
 . Makes the code safer by avoiding bugs related to identity or accidental mutations.
 . Encapsulates logic and validation related to a concept.
 . Improves readability and maintainability.
+
+
+
+
