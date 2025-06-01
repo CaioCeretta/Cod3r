@@ -18,7 +18,7 @@ export default class CellsChecker implements ResultChecker {
 		/* see if all the cells are of the same type, if yes, it will generate a result with the winning play, and if not
 		return an empty result */
 		return types.every(
-			(type) => type != null && type === type[0]
+			(type) => type != null && type === types[0]
 		)
 		? new GameResult(cells as Cell[])
 		: new GameResult()
