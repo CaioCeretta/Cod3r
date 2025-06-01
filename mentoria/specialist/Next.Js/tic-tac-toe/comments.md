@@ -336,6 +336,46 @@ it .
     . Everything is the same as the horizontal, being the orientation the only difference
 
 
+In the end, some question arose like: "How do i know in the code that x or o won, where am i setting the xWon property, etc"
+
+The direct answer is:
+
+1. CellsChecker verifies if all the cells being passed to it have the same type ('X' or 'O').
+   If yes, it returns
+
+   new GameResult(cells as Cell[])
+
+   That is, it provides which cell formed the winning move.
+
+2. Who discovers who won is the GameResult, by looking at the tye of the first cell of the winning sequence:
+
+    ```ts
+
+        get xWins(): boolean {
+            return this.winningMove[0]?type === PlayerType.X
+        }
+
+    ```
+
+    thereby, the logic is:
+
+    . winningMove[0] has the .type equals to PlayerType.X -> X wins.
+    . If PlayerType.O -> O wins.
+    . If winningMove is empty -> there is no winner
+
+
+Conceptually:
+
+    The `Checker` does not need to know who is X or O.
+    He only answers: "Are these cells equal to each other?
+    If yes -> `GameResult` takes care of interpreting who won.
+
+
+
+
+
+    
+
 
 ## OOP Comments
 
