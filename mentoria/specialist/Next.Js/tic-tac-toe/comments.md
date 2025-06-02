@@ -335,6 +335,15 @@ it .
 5. `VerticalChecker` and `DiagonalChecker` (Classes that implements `ResultChecker`)
     . Everything is the same as the horizontal, being the orientation the only difference
 
+6. `TieChecker` (Class that implements `ResultChecker`)
+    . Purpose: Check if the game ended in a tie
+    . How it works: It won't even check if there was a winningMove, just check if the board is `isFull` but there is no
+    winning move, which means it tied. 
+    . For the game to be tied neither the xWins nor the oWins.
+    . Therefore, because there is a priority, where the tie is the last one, it doesn't make sense for us to calculate
+    the board cells, therefore, we only need to check if the board is full and return an empty array as the first parameter
+    and the tie as the second one.
+
 
 In the end, some question arose like: "How do i know in the code that x or o won, where am i setting the xWon property, etc"
 
