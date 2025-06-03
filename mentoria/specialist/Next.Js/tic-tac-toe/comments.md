@@ -277,6 +277,15 @@ and if yes, it will pass to the GameResult class these winning cells
 
 Its methods are going to be commented on the file itself
 
+### Game Class
+
+Now that we completed all the calculations and verifications, the last class of our domain modeling is the `Game class`.
+
+. It has an private constructor, meaning that it will have a static method to create one new `Game`
+. Receives: Players, board, firstPlayer, currentPlayer, gameResult — GameResult class which will init empty
+. The static method to create the game, since we are not creating it by the constructor, will simply receive its players,
+the board and the players order, and will return a new Game with those arguments.
+
 ### How the code communicates
 
 ### 4.
