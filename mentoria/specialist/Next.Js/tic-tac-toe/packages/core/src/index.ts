@@ -6,5 +6,7 @@ import Board from './game/Board'
 import HorizontalChecker from './result/HorizontalChecker'
 import VerticalChecker from './result/VerticalChecker'
 import DiagonalChecker from './result/DiagonalChecker'
+import Game from './game/Game'
 
-export { Player, Cell, PlayerType, GameResult, Board, HorizontalChecker, VerticalChecker, DiagonalChecker }
+
+export { Player, Cell, PlayerType, GameResult, Board, HorizontalChecker, VerticalChecker, DiagonalChecker, Game }
