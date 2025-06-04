@@ -17,7 +17,6 @@ test('Should finish a game with Player X\'s victory - Diagonal 2', () => {
     .set(1, 1, PlayerType.X)
     .set(0, 0, PlayerType.X)
   const result = new DiagonalChecker().check(board)
-  console.log(result)
   expect(result.finished).toBeTruthy()
   expect(result.xWins).toBeTruthy()
   expect(result.oWins).toBeFalsy()
