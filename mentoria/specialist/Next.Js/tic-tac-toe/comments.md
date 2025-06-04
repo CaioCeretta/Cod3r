@@ -101,6 +101,12 @@ know how to handle it.
 In POO, we say that a class have rich behaviors when the class isn't only used for storing data, but it also knows and
 execute the business rules or the actions make sense for that object.
 
+So when the instructor talks about riche behaviors, que is referencing the idea that the class should not be just a "grouping
+oda data (attributes)", but should also encapsulate the business rules and relevant behaviors for that object.
+
+In other words, a class stop being anemic (only data and no logic) and start being rich, which means that it also has behaviors
+that make sense for itself.
+
 It other words, it's not just a "bag of data" (row, col, type: in the Cell example), it knows how to behave in the context
 of the tic-tac-toe game.
 
@@ -275,16 +281,47 @@ The `CellChecker` Class will implement `ResultChecker` and on its constructor it
 and in the end it checks the array with rows and cols, and will verify if all those elements are from the same type
 and if yes, it will pass to the GameResult class these winning cells
 
-Its methods are going to be commented on the file itself
+As the final method called in the addMove, is the players one
 
 ### Game Class
 
-Now that we completed all the calculations and verifications, the last class of our domain modeling is the `Game class`.
+Now that we have completed all the calculations and verifications, the final class in our domain modeling is the `Game class`.
 
-. It has an private constructor, meaning that it will have a static method to create one new `Game`
-. Receives: Players, board, firstPlayer, currentPlayer, gameResult — GameResult class which will init empty
-. The static method to create the game, since we are not creating it by the constructor, will simply receive its players,
-the board and the players order, and will return a new Game with those arguments.
+. It has a `private constructor`, meaning that it must have a static method to create a new `Game`
+
+. It receives: `Player`, `board`, `firstPlayer`, `currentPlayer`, and `gameResult` — an instance of theGameResult class,
+which is initialized empty
+
+. The static method to create the game — since we are not using the constructor directly — simply receive the players,
+and return an empty board along with the provided players.
+
+. When a game is created by clicking the button, it starts a new round with the `other player playing first`. To handle
+this, we created a method with rich behavior called `nextRound`, which returns a new `Game` instance with the player
+switched.
+
+. The game results do not reset because they are tied to the player instances within the game. These instances will be
+reused until the end, including the number of ties.
+
+#### Other required methods:
+
+. `clear()`: Similar to nextRound, but it also resets the players' scores.
+. `calculateResult(board)`:  Runs the logic to determine whether there is a winner or a tie based on the current state
+of the board
+. `addMove(row: number, col: number)`: This method is simple:
+
+    . it first checks whether the targeted cell is empty and whether the game is still in progress.
+
+    . If both checks pass:
+
+        . It retrieves the board.
+        . Fills the cell with the current player's symbol
+        . Recalculates the result with the updated board
+
+    . Then, it calls a method named `players()`, which returns an array of players with the updated result, and uses a
+    switchPlayer() method which simply reverse the starting order.
+ 
+    . Lastly, it will return a new `Game`, with the new first player, and everything that is on the state.
+
 
 ### How the code communicates
 
