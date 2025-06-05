@@ -3,34 +3,33 @@
 
 ## Up until now
 
-If we run the project on its root folder, with npm run dev, we'll be able to see that it runs the front-end project defined
-in the apps, but it still doesn't know about the core project, so we also need to establish this connection between the front
-end app and the package we've created.
+If we run the project from its root folder using `npm run dev`, we can see that it runs the front-end app defined
+inside the apps folder. However, it still doesn't recognize the core project yet, so we need to establish the connection
+between the front end app and the package we created in the core workspace.
 
-## How we do this link?
+## How do we create this link?
 
-1. We need to make sure that core's package.json has the main file pointing to the right file. By default it is index.js
-but on our case, ./src/index.ts
-From our src/index.ts we import all the files needed and export these classes/interfaces/types that we defined in our project.
+1. First, we need to make sure that package.json in the core package has its main field pointing to the correct entry file.
+By default this is usually in index.js, but in our case, it should be `./src/index.ts`
+From our src/index.ts, we import all the necessary files and export the classes/interfaces/types defined in the project.
 
-2. If we have a large amount of files to be exported, we can export them within every folder and export everything from
-the main index.ts — we create a index.ts inside every folder, export one part of it, and inside the "general" index we
-group all of them and export.
+2. If we have many files to export, it's a good practice to create an index.ts inside each folder, export the relevant parts
+there, and then aggregate all exports inside the main `index.ts`. This way, we keep the exports organized and maintainable.
 
-3. In the package.json, the `name` of the workspaces is primordial for these links within the monorepo because we use
-them to declare the dependencies within its apps (e.g. inside the front end package.json we'll declare the dependency
-to the core folder)
+3. The `name` field in the `package.json` of each workspace is crucial for linking between packages in the monorepo. We
+use this name to declare dependencies inside other packages, for example, inside the front-end's `package.json`, we declare
+a dependency on the `core` package by its workspace name.
 
-4. After adding the core project in the frontend dependencies, we need to run the `npm i` command in the terminal because
-it'll now add as a node package. Because the only way we would be able to do this type of separation between different
-projects would be by publishing it in npm. And it would be vary time-consuming change, because if we change something in
-the core package, we would need to republish the new change, download it, etc. 
+4. After adding the core package as a dependency in the front-end's package.json, we need to run the `npm i` again in the.
+It ensures the front-end treats core as a local node package.
+Without using a monorepo tool, the only way to separate projects like this would be to publish the `core` to npm, which
+would be very time-consuming because every change would require republishing and reinstalling the package.
 
-5. Turbo-repo idea is having several separate projects, having the possibility of organizing it in the way we want with
-no need involving a repository, such as npm to publish our packages.
+5. The main advantage of using turbo-repo (or similar monorepo tools) is to organize multiple separate projects in one
+repository without the need to publish them individually to npm. This significantly speeds up development and integration.
 
-6. Once we create this core dependency inside the front-end package, we will now be able to import everything exported 
-by the core project. Meaning we now have access to what has been defined in the core of the application.
+6. Once we declare the core package as a dependency in the front-end, we can import everything that the core package exports,
+7.  giving us access to all shared classes, types, and utilities defined at the core of our application.
 
 
 
