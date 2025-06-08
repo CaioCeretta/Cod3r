@@ -4,45 +4,47 @@ import clsx from "clsx"
 export interface CardProps {
   children?: ReactNode
   color: 'primary' | 'secondary' | 'dark' | 'light'
-  noBorder: boolean 
+  noBorder?: boolean 
   hover?: boolean
 }
 
-export const Card = ({ children, color, noBorder, hover }: CardProps) => {
+const baseColor = {
+    primary: 'bg-primary-500',
+    secondary:'bg-secondary-500',
+    dark: 'bg-dark-500',
+    light: 'bg-light-500'
+}
 
-  console.log(color)
+const hoverColor = {
+    primary: 'bg-primary-600',
+    secondary:'bg-secondary-600',
+    dark: 'bg-dark-600',
+    light: 'bg-light-600'
+}
+
+export const Card = ({ children, color, noBorder, hover }: CardProps) => {
   
   return (
-    <article className="flex justify-center items-center"> 
+    <div className="flex justify-center items-center"> 
       <div
         className={clsx(
-          'rounded-xl',
-          {
-            'bg-primary-600': color === 'primary',
-            'bg-secondary-600': color === 'secondary',
-            'bg-dark-600': color === 'dark',
-            'bg-light-600': color === 'light',
-            'hover:shadow-lg transition-shadow': hover,
-          }
+          'rounded-xl', 
+          baseColor[color],
         )}
       >
         <div className={clsx('rounded-xl', { 'mb-2': !noBorder })}>
           <div
             className={clsx(
               'rounded-xl p-2 overflow-auto',
-              {
-                'bg-primary-500': color === 'primary',
-                'bg-secondary-500': color === 'secondary',
-                'bg-dark-500': color === 'dark',
-                'bg-light-500': color === 'light',
-              }
+              baseColor[color],
+              hover && hoverColor[color]
             )}
           >
             {children}
           </div>
         </div>
       </div>
-    </article> 
+    </div> 
   )
 }
 
