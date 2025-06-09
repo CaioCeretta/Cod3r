@@ -1,4 +1,5 @@
-# These comments refer to Tailwind CSS version 3." 
+# These comments refer to Tailwind CSS v3.
+
 
 ## What is the `safelist` declared in the tailwind.config?
 
@@ -173,3 +174,129 @@ clsx({
   'bg-red-500': isError,
   'bg-green-500': isSuccess,
 })
+
+📌 Basically, the first approach, that uses an object inside clsx, as
+
+clsx({
+  'bg-primary-500': color === 'primary',
+  'bg-secondary-500': color === 'secondary'
+})
+
+we use this approach whenever we want to apply conditionally multiple classes at the same time.
+
+Example: 
+
+clsx({
+  'text-white bg-blue-500': isActive, // applies both if isActive is true
+  'text-gray-500 bg-gray-100': !isActive,
+})
+
+this is useful because: 
+
+. Its readable
+. Allow applying many classes at once with a single condition
+. Avoids repetition of condition && 'class´ many times.
+
+📌 When object is not needed? 
+
+If you don't need more than one conditional or just want to apply simple classes based in unique constraints, we can use
+it directly
+
+clsx(
+  'static-class',
+  isActive && 'bg-blue-500',
+  isDark && 'text-white'
+)
+
+or with mapping
+
+clsx(
+  'rounded-xl',
+  baseColor[color],
+  hover && hoverColor[color]
+)
+
+In practice: 
+
+  Situation                                           Best Approach
+
+. We want to apply many classes with one condition    Object { 'a b c': condition}
+. Multiple independent conditions                     List with expressions condition && 'class
+. Classes comes from a variable or mapping            clsx(map[color])
+. Mix of everything                                   clsx(...args) accepts all together
+
+
+
+Further comments: 
+
+1. Inside clsx, we need to have literal keys, or we need to use brackets to dynamically evaluate it
+
+{
+  [darkerColor[color]]: color
+  'mb-2'? !noBorder
+}
+
+2. We must not use dynamic object keys, such as darkerColor[color] inside an object passed to clsx
+
+```ts
+//  e.g.
+
+clsx('rounded-xl', {darkerColor[color]: color, 'mb-2': !noBorder })
+
+```
+
+But in this format, `darkerColor[color]` will be interpreted as the object key, and not the variable name.
+
+In JS it means, `bg-primary-600` is the literal key and the value is `primary`
+
+the correct way of doing this would be
+
+{ 'bg-primary-600': 'primary' }
+
+However this will always be evaluated to true, so the class will be applied even if it's not necessary. Because `clsx`
+expects the value to be boolean to decide whether to include it or not.
+
+Therefore, to correct this, we wouldn't need to pass it is as object  in this case. Use the value directly with `clsx()`
+
+clsx(
+  'rounded-xl',
+  darkerColor[color] // adds the corresponding class
+  !noBorder && 'mb-2' // conditional as a string
+)
+
+### Final clsx summary
+
+✅ When to use direct arguments (no objects) in clsx:
+When using predefined variables or mappings:
+clsx(baseColor[color])
+
+When applying individual classes conditionally:
+clsx('text-white', isActive && 'bg-blue-500')
+
+More concise and readable when conditions are simple.
+
+✅ When to use objects in clsx:
+When applying multiple classes under one condition:
+clsx({ 'bg-red-500 text-white': isError })
+
+When toggling between several mutually exclusive classes:
+
+clsx({
+  'bg-primary': type === 'primary',
+  'bg-secondary': type === 'secondary'
+})
+
+Useful when many conditions are involved in class selection.
+
+Tip:
+Use mappings or direct values when the class comes from a variable.
+Use objects when writing conditions inline for clarity.
+
+
+
+
+
+
+
+
+
