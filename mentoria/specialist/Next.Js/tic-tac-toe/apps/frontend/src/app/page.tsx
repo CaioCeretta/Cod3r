@@ -1,12 +1,9 @@
-import CellArea from "@/components/game/CellArea";
-import { PlayerType } from "core";
+import BoardArea from "@/components/game/BoardArea";
 
 export default function Home() {
   return (
     <div>
-      <CellArea type={PlayerType.X} selected />
-      <CellArea type={PlayerType.O} selected />
-      <CellArea />
+      <BoardArea />
     </div>
   );
 }

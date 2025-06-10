@@ -1,6 +1,6 @@
 # React overall comments
 
-## Comment 1.
+## Comment 1 - passing functions from a server components to a client component as pro
 
 The issue here, was that i tried to pass an onclick function from a server component to a client one
 
@@ -85,3 +85,20 @@ In summary
 Clients component can have onClick
 Server components can't pass functions to client components
 The solution is to encapsulate the behavior inside the Client and pass serializable data that determine the behavior
+
+## Comment 2 - Transpile
+
+Transpile is short for "transform + compile". In web development. It usually means converting code written in one version
+or style of JavaScript into another version that is more compatible with different environments — like older browsers or
+certain framework
+
+There are some cases, when we need to add transpileOnly for certain packages of our project. This may be necessary because
+some third-party packages, especially those not transpiled to ES5, may cause issues when used in modern frameworks like
+Next.js
+
+By default, frameworks like Next.js only transpile your application code and not the dependencies in node_modules. So, if
+a package includes modern JS syntax or features not supported by the current build configuration, it can lead to errors
+during build or runtime.
+
+
+
