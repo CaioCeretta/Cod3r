@@ -1,4 +1,4 @@
-# React overall comments
+# General Comments
 
 ## Comment 1 - passing functions from a server components to a client component as pro
 
@@ -101,4 +101,32 @@ a package includes modern JS syntax or features not supported by the current bui
 during build or runtime.
 
 
+## Display grid recap
 
+Why does the grid become 3x3?
+
+When we create, for instance, this element <div className="grid grid-cols-3 gap-5">{renderCells()}</div>
+
+grid-cols-3 defines that the grid has 3 columns (with auto width for each column by default). With display grid, we don't
+have to manually define the rows. The grid calculates the number of rows automatically based on
+
+.  Total number of child elements
+.  The number of columns
+
+
+In this case, we have 9 elements (3x3) and defined the grid columns as 3. Therefore, grid understands: "Oh, 9 elements with
+3 per row -> 3 rows!"
+
+Visually it would be
+
+<div class="grid grid-cols-3">
+  <div>1</div> <div>2</div> <div>3</div>
+  <div>4</div> <div>5</div> <div>6</div>
+  <div>7</div> <div>8</div> <div>9</div>
+</div>
+
+In conclusion we don't have to specify the number of rows for a grid. Just define the number of columns and the browser
+will take care of the rest, generating rows as needed.
+
+If you want to also control the rows (e.g., fixed heights), then you might use classes like grid-rows-3, but normally this
+is only necessary for more specific layouts.
