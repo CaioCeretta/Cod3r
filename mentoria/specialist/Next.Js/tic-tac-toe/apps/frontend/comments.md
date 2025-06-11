@@ -130,3 +130,47 @@ will take care of the rest, generating rows as needed.
 
 If you want to also control the rows (e.g., fixed heights), then you might use classes like grid-rows-3, but normally this
 is only necessary for more specific layouts.
+
+## Color type as const and  type [number]
+
+We have an constant like: `const colorVariants = ["primary", "secondary", "light", "dark"];`
+
+TypeScript thinks this is a string[], so it doesn't remember the exact values, it just knows it's an array of strings.
+That means if we try to create a type from it like this
+
+`type ColorVariant = typeof colorVariants[number];`
+
+It becomes just `string`, not the specific values we want and that's not helpful because it won't catch mistakes like
+"blue".
+
+The fix is to add `as const` at the end.
+
+`const colorVariants = ["primary", "secondary", "light", "dark"] as const;`
+
+tells typescript these values are exactly as written and shouldn't change. Therefore, now instead of being seen as
+string[] it becomes:  
+
+`readonly ["primary", "secondary", "light", "dark"]`
+
+and now each value is treated like a literal type, not just a string.
+
+We then create the type from the array, because we have the specific values we can do
+
+type ColorVariant = (typeof colorVariants)[number];
+
+and when we use the [number] we are simply not specifying the indexes of the array, but the type of any value that is in
+that array.
+
+In TS, accessing [number] in an array of types return us the `union of array elements types"
+
+And it means: "give me the type fo any value from that array"
+
+and it will turn to type `ColorVariant = "primary" | "secondary" | "light" | "dark"` and typescript will now warn us if 
+we try to use something invalid like "blue" and help us by giving auto complete
+
+
+
+
+
+
+ 
