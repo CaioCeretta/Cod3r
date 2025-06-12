@@ -5,9 +5,10 @@ import { useContext } from "react";
 import Modal from "../shared/Modal";
 import { PlayerType } from "core";
 import { IconCircle, IconX } from "@tabler/icons-react";
+import Button from "../shared/Button";
 
 export const Result = () => {
-  const { result } = useContext(GameContext);
+  const { result, restart, clear } = useContext(GameContext);
 
   return (
     <Modal visible={result.finished}>
@@ -36,6 +37,16 @@ export const Result = () => {
           </div>
         </>
       )}
+      <div className="flex gap-5">
+        <Button color="light" onClick={clear}>
+          <div className="p-2 font-bold uppercase text-dark-400">Clear</div>
+        </Button>
+        <Button color="secondary" onClick={restart}>
+          <div className="p-2 font-bold uppercase text-dark-400">
+            Next Round
+          </div>
+        </Button>
+      </div>
     </Modal>
   );
 };

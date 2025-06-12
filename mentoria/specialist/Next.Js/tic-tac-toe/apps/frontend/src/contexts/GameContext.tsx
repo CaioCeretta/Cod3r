@@ -9,7 +9,10 @@ interface GameContextProps {
   ties: number;
   board: Board;
   result: GameResult;
+  currentPlayer: Player;
   addMove: (row: number, col: number) => void;
+  restart: () => void;
+  clear: () => void;
 }
 
 export const GameContext = createContext<GameContextProps>({} as any);
@@ -17,7 +20,7 @@ export const GameContext = createContext<GameContextProps>({} as any);
 export function GameProvider(props: any) {
   const [game, setGame] = useState<Game>(
     Game.create(
-      new Player("Você", PlayerType.X),
+      new Player("You", PlayerType.X),
       new Player("CPU", PlayerType.O)
     )
   );
@@ -33,6 +36,14 @@ export function GameProvider(props: any) {
     setGame(game.addMove(row, col));
   }
 
+  function restart() {
+    setGame(game.nextRound());
+  }
+
+  function clear() {
+    setGame(game.clear());
+  }
+
   return (
     <GameContext.Provider
       value={{
@@ -42,6 +53,9 @@ export function GameProvider(props: any) {
         addMove,
         board: game.board,
         result: game.result,
+        currentPlayer: game.currentPlayer,
+        restart,
+        clear,
       }}
     >
       {props.children}

@@ -33,13 +33,9 @@ const hoverColor = {
 export const Card = ({ children, color, noBorder, hover }: CardProps) => {
   return (
     <div className="flex justify-center items-center">
-      <div className={clsx("rounded-xl", lightColor[color])}>
+      <div className={clsx("rounded-xl", darkerColor[color])}>
         <div
-          className={clsx(
-            "rounded-xl",
-            darkerColor[color],
-            !noBorder && "mb-2"
-          )}
+          className={clsx("rounded-xl", lightColor[color], !noBorder && "mb-2")}
         >
           <div
             className={clsx(

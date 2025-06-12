@@ -20,7 +20,7 @@ export const ScoreBoard = () => {
   }
 
   return (
-    <div className="flex gap-7 justify-center">
+    <div className="flex gap-7 font-bold text-dark-600 justify-center">
       {renderItem(
         `${player1.type} (${player1.name})`,
         player1.score,
