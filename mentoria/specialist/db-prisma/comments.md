@@ -41,7 +41,31 @@ There are three times of relationships
 `One to One`: Man and woman on a monogamic relation, we have the id of the man, the id of the woman, and we have the
 freedom of choosing which primary key will travel to the other table, everything depends on the most frequent type
 of queries, for example, a woman's health management system and the table can have a column of the spouse id, which is
-the `husband_id`, and for it, on the woman's table we have a unique foreign key (otherwise it would be one to many), 
+the `husband_id`, and for it, in the woman's table we have a unique foreign key (otherwise it would be one to many). Therefore
+we are saying that a woman with the id 7 and a man with the id 3 which are married, they will only have a unique foreign
+key related to each other. By the time we have this constraint, we have a one to one relation
 
+`One to Many`: Mother and children table, and we want to say that a mother has many children, in every row of the children
+table we are going to have a `mother_id` column.
 
-  
+`Many to Many`: For this example, let's say we have a uncle table and a nephew table, in the nephews table we have two rows
+'Pedro' with the id 7 and 'Ana' with the id 8. In the uncle with have 'João' with the id of 2 and 'Maria' with the id of 3.
+Now, to establish a many to many relation we have an intermediate table, such as `Uncle_Nephew` table, and basically we
+essentially are going to have the `uncle_id` fk, and also the `nephew_id` fk, and now to relate them, by saying that João
+is Ana's uncle, we simply create a row with both of them.
+
+## ER Model !== POO
+
+These are two models that are not completely different, because sometimes we can even translate one into the other.
+However, the way of thinking is very different. What often happen is that when someone takes an E/R model and tries to
+replicate it using OOP, they end up bringing a design that was originally intended for a relational model into an OOP
+application. This is problematic because it contaminates the object-oriented design, limiting it to the paradigm we are
+used to.
+
+Many developers start by modeling the database — creating tables, thinking about how data will be persisted, and then
+building the project based on that. The problem is that the paradigm influences how we think and plan. Paradigms don't
+change easily. Just like in coding, frameworks may change, but the way developers are used to program typically doesn't.
+
+Therefore, when modeling our OOP application, the more decoupled it is from the the E/R model — and the less it is contaminated
+by the DB structure — the better. Of course, we still need to consider performance, and every application has its own specific
+needs. However, we must be careful not to create "poor" OOP design by simply replicating the relational database structure.
