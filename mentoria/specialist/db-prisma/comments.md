@@ -69,3 +69,47 @@ change easily. Just like in coding, frameworks may change, but the way developer
 Therefore, when modeling our OOP application, the more decoupled it is from the the E/R model — and the less it is contaminated
 by the DB structure — the better. Of course, we still need to consider performance, and every application has its own specific
 needs. However, we must be careful not to create "poor" OOP design by simply replicating the relational database structure.
+
+### In the OOP world the types of relationships are different
+
+In the OOP world, relationships are not through keys — primary key and foreign key. The relationship is created when an
+object having a reference to the another one, we essentially have three ways of reuse, the inheritance, composition and
+`ctrl c + ctrl v`. Therefore, most of the time we are working with composition, which is the most common way we find relations
+in the real world, e.g. a car HAS an engine which HAS a piston, a car HAS a door that HAS a handle and so on, we start
+compounding complex objects with others more simple objects.
+
+## Cascade 
+When we have, for instance, an order (which is an object) and order items (which are objects related to that order), we can
+configure operations between them to behave in a `cascade` manner.
+
+When we persist and order and the operation is marked as `Cascade`, the related order items will automatically generate
+as well — that is, when an order is saved with cascading enable, its items will be created automatically through cascading
+behavior. The same applies to other applications, such as deletion; when a order is deleted, all related order items will
+also be deleted automatically if cascade deletion is enabled.
+
+Cascade functionality is also useful for avoiding foreign key constraint errors. Using the same example,. we cannot delete
+an order if its item still exist,due to the foreign key constraint. But when we use Cascade on delete, we are essentially
+saying "delete this order and all the order items that are related to it".
+
+## ORM — Object Relational Mapping
+
+ORM sites between the Entity-Relationship(E/R) model and Object-Oriented-Programming (OOP). It provides abstraction layer
+that allows us to map database entities in the application, enabling a more natural object-oriented approach. This includes
+features like inheritance and composition on the application side, while still working with primary and foreign keys on the
+database side. The ORM handles the translation between these two representations.
+
+### Intrusive Framework
+However, when we use a highly opinionated or intrusive framework — one that enforces specific patterns and conventions — it
+may strongly influence the way we write our code. These frameworks typically require an explicit mapping between tables
+and objects.
+
+For example, a table has columns, while an object has attributes with values. The ORM mapping ensures that a column X in
+the database corresponds to an attribute X in the object, But it might  also impose strict requirements such as.
+
+. You must follow a specific naming pattern.
+. You must use getters and setters.
+. Attributes cannot be private
+
+This tight coupling can lead to problems. To satisfy all the framework's requirements, we end up introducing boilerplate
+code and structural constraints that are not necessarily aligned with the application's needs — compromising maintainability
+and design flexibility.
