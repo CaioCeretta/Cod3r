@@ -137,3 +137,7 @@ skip proper design decision.
 In the past, many systems relied heavily on eager loading (automatically loading all related entities), which led to serious
 performance issues. Later, when developers tried to fix this "technical debt" by switching to lazy loading, they often ran
 into new problems: null pointers exceptions, unexpected data access errors, and a lot of debugging headaches.
+
+Prisma, on the other hand, is a good option in these cases because it does not interfere with our modeling. In fact, our
+domain modeling isn't even aware that Prisma is being used. From this perspective, prisma ends up being a very solid and
+non-intrusive choice for working with databases.
