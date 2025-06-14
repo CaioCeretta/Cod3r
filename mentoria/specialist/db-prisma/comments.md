@@ -113,3 +113,27 @@ the database corresponds to an attribute X in the object, But it might  also imp
 This tight coupling can lead to problems. To satisfy all the framework's requirements, we end up introducing boilerplate
 code and structural constraints that are not necessarily aligned with the application's needs — compromising maintainability
 and design flexibility.
+
+Let's think in this example
+
+We have a table named `Organization`, which has a relationship with another table called `Companies`, This table is related to
+a third table called `Sites`, which interacts with a table named `Sectors`, and that in turn has a relationship with a table
+called `Employees`. 
+
+If we start fetching data in a cascade manner — loading all related data in one go — querying a single record in the organization
+table could trigger a fetch for all its related companies, then all related sites, then sectors, and finally employees. 
+As a result, instead of retrieving one single record, we might end up loading thousands of records from multiple related
+tables. 
+
+ORM frameworks can simplify this process significantly, but it's essential that we remain in control of what is being
+loaded. While an ORM helps avoid doing the manual labor of mapping every table and column, it should be used when it
+adds value. There will always be situations where it's more appropriate to write raw SQL queries to retrieve exactly
+the data we need, in the most efficient way possible.
+
+An ORM framework can often help, but it can also hinder performance and flexibility if not used properly. The issue is not
+with the technology itself, but with how we choose to use it — especially when we're working under time pressure and
+skip proper design decision.
+
+In the past, many systems relied heavily on eager loading (automatically loading all related entities), which led to serious
+performance issues. Later, when developers tried to fix this "technical debt" by switching to lazy loading, they often ran
+into new problems: null pointers exceptions, unexpected data access errors, and a lot of debugging headaches.
