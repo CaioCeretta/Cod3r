@@ -141,3 +141,22 @@ into new problems: null pointers exceptions, unexpected data access errors, and 
 Prisma, on the other hand, is a good option in these cases because it does not interfere with our modeling. In fact, our
 domain modeling isn't even aware that Prisma is being used. From this perspective, prisma ends up being a very solid and
 non-intrusive choice for working with databases.
+
+## Prisma Comments
+
+In SQL we have DDL "Data Definition Language", basically, we have to create a structure in the database so we can use our
+data, the DDL is when we create a table in the database, for instance, a `User` table that will have an id of type number,
+aa `VARCHAR` name, another field of type boolean, etc. And after we define this structure we are going to be able to persist
+records on the db. 
+
+
+
+
+
+
+### Random Comments
+
+1. A schema is also a metadata, is the data definition, metadata is essentially a data that describes a data. Basically
+   on our `schema.prisma` file we have a metadata file, that describe the db structure, and whenever we run a command
+   to make a new migration, it executes all this steps again, if we remove password, add password, and so on, it describes
+   the data in the way it evolve over time. 
