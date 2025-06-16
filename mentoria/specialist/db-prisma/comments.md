@@ -142,21 +142,69 @@ Prisma, on the other hand, is a good option in these cases because it does not i
 domain modeling isn't even aware that Prisma is being used. From this perspective, prisma ends up being a very solid and
 non-intrusive choice for working with databases.
 
-## Prisma Comments
+## Prisma Comments / Database comments
 
-In SQL we have DDL "Data Definition Language", basically, we have to create a structure in the database so we can use our
-data, the DDL is when we create a table in the database, for instance, a `User` table that will have an id of type number,
-aa `VARCHAR` name, another field of type boolean, etc. And after we define this structure we are going to be able to persist
-records on the db. 
+### Table names in client and after mapping
+
+In Prisma, the name of the model (e.g., User) defines how you access it in the Prisma Client: prisma.user.
+
+If you use @@map("users"), you're telling Prisma:
+
+"The actual table name in the database is users, but I want to refer to it as User in my code."
+
+So:
+
+```ts
+model User {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  @@map("users")
+}
+```
+
+Database table: users
+
+Prisma Client access: prisma.user (model name in lowercase)
+
+In short:
+Model name → Prisma Client
+@@map → Actual table name in the database
 
 
+### Repository
+
+Repositories, such as the `UserRepository`, are layers responsible for accessing and manipulating data from the db.
+
+The Repository Pattern is very common in oop applications and is used to abstract away the data access logic.
+
+Therefore, a repository is a class or an object that encapsulates the set of operations (such as save, get, delete and update)
+for a specific entity. 
+Instead of having this logic being spread throughout the application, it is centralized within this class.
+
+
+
+
+## Code comments
+
+We'll start by creating an user interface inside `src/model`. However, this interface user in the model doest't have
+anything to do with the model created on prisma's schema.ts
 
 
 
 
 ### Random Comments
 
-1. A schema is also a metadata, is the data definition, metadata is essentially a data that describes a data. Basically
+   1. A schema is also a metadata, is the data definition, metadata is essentially a data that describes a data. Basically
    on our `schema.prisma` file we have a metadata file, that describe the db structure, and whenever we run a command
    to make a new migration, it executes all this steps again, if we remove password, add password, and so on, it describes
-   the data in the way it evolve over time. 
+   the data in the way it evolve over time. However we need to understand one thing. They have to do with each other because
+   we are going to save in that place, but it isn't coupled logically or physically that we need to fit its requirements.
+      We could use in this interface an attribute named code instead of div: which isn't the same as our schema and other
+   data. This means, that the interface is not tied to the schema, even though we still need to do the "for to", and as
+   closer it is to the schema, better.
+      Many people, create attributes like "pk_user" "u_name" "dt_birth", there is no problem on having these patterns,
+   sometimes the company or enterprise have this specific guidelines. However, is a good approach to always use the column
+   names as closest to object attributes, because this way, the conversion from one to the other won't be as difficult
+   as it would be.
+
