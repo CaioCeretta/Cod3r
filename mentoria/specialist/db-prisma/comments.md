@@ -182,8 +182,11 @@ Therefore, a repository is a class or an object that encapsulates the set of ope
 for a specific entity. 
 Instead of having this logic being spread throughout the application, it is centralized within this class.
 
+## Communication
 
-
+We can notice that internally, `SQL` interacts with the database, and it is precisely through Prisma that we are enabled
+to do so, via the `relation-object` mapping. In this aspect, we are able to use a single line of code to interact with
+the database.
 
 ## Code comments
 
