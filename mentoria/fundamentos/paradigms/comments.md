@@ -76,7 +76,7 @@ work with mutable data — values that can change overtime. A valuable practice 
 immutability, which can lead to fewer bugs, and make it easier to reason about code, specially in concurrent or multi-threaded
 environments.
 
-Even though immutability is not a strict requirement in OOP, We can simply "import" this mindset, and start applying itgg
+Even though immutability is not a strict requirement in OOP, We can simply "import" this mindset, and start applying it
 to our object-oriented code to improve safety and maintainability 
 
 ### What are I/Os (Inputs / Outputs ) in an application
@@ -153,57 +153,60 @@ This separation allows us to:
 
 ## Data vs Data Structure
 
-○ One important thing to clarify, is that there is a clear difference between what is data and the structures that organize
-this data. For example, we can have multiple numbers, which within the computer it has a structure defined in any given
-format, number of bits to specify its signal, and so on. Therefore, data is one thing and data structures are other.
+One important distinction to clarify is the clear difference between data and the structures that organize this data.
+For example, we can have multiple numbers, and within the computer, each number has a defined structure in a given
+format (like the number of bits to specify its signal, etc.) Therefore, data is one thing and data structures are another.
 
-○ For example, Number, Boolean and String are structures, they are the basic blocks of a programming language, and we have
-more complex structures such as trees, queues, stacks, custom structures (like objects).  
+For instance, Number, Boolean and String are data structures—they are the basic building blocks of a programming language.
+We also have more complex structures such as trees, queues, stacks, and custom structures (like objects).  
 
 ● System for a basic school
 
-  ○ Let's say we talked to a specialist, and ask what the institution needs for the first version
-    ■ The specialist may tell us that it needs to have the rooms, patrimony, students, professors registration, and what
-    is the relationship between teachers and classrooms, and so on.
-    ■ This would demand a data structure that will represent the student, other one that represent a teacher, other one
-    for the classrooms, and so on
-    ■ Now 'John Doe' who is seven years old, is a data part of the custom structure we've just created, and we should
-    already understand that objects are these structures, ones which uses other kinds of more basic data to compose it.
-    Meaning it could exist more complex structures that compose other structures and so on
-    ■ We can have, for example, a responsible for a student, and this responsible can have an address, that is other
-    object/structure which in turn, composes the responsible object. It can also be related to other students in the
-    same schools, etc.
+  Imagine we spoke to a specialist about the institution's needs for the first version of a system: 
+
+    ○ The specialist might say that the system needs to manage rooms, assets, students, and teacher registrations, and
+    define the relationship between teachers and classrooms.
+
+    ○ This would require creating different data structures to represent a student, a teacher, a classroom, and so on
+
+    ○ Now 'John Doe' who is seven years old, becomes a piece of data inside the custom structure we just created. We should
+    already understand that objects are these structures, where basic data types combine to form more complex structures.
+
+    ○ For example, we might have a guardian object for a student, and this guardian object can have an address, which is
+    another object/structure. The guardian object can also be related to other students in the
+    same school, and so on.
     
-■ Most common paradigms
+● Most common programming paradigms
 
-  ○ We mainly have three paradigms, created almost 70 years ago and no other new one was created, it may exist new ones
-  but they are built on top of these existing ones.
-
-
-
+  ○ We mainly have three core paradigms, all of which were created almost 70 years ago. While new paradigms may emerge
+  they are generally build upon these foundational ones"
 
 
   ○ Structured Programming (1970)
 
-    ■ When thinking about structured or procedural programming, we think of two similar programming languages, which are
-    very similar but they ar not the exact same thing. Structured is more about the control structures and procedural is
-    more about procedures / functions. However, they are two things that walk alongside and we can think of both in the
-    same paradigm group.
-    ■ Functions have inputs (parameters) and outputs, essentially functions have the role of transforming those data
-    and inside this paradigm, it is very common for us to use global data, which means they'll be available to multiple
-    parts of the app and we have it as the main character.
-    In this type of programming, the objective is to transform data — we receive any desired type of data and transform
-    it into something else.
-    Functions can be: 
-      □ No inputs: Only the outcome when invoked is important
-      □ Ones that receive a parameter but doesn't return anything: Only processes the argument
-    ■ When thinking of functions, there are multiple variations and relation between functions and inputs. In practice
-    we can have a series of functions we can use to transform values and variables like we desire.
-    ■ One example would be a `power` function, it would receive the base and the exponent, and when passing these two
-    parameters it will return us the power, such as 2, 8 that would return 256.
-    ■ We may use it in other paradigms, such as `OOP`, but it comes from structured programming.
+    ■ When thinking about structured or procedural programming, we often refer to them together. While they are not exactly
+    the same, they go hand in hand. Structured programming focuses on control flow (like if, while, for) while procedural
+    programming emphasizes procedures o  functions. 
 
-    ■ One important concept, that came from structured programming, is the execution stack.
+    ■ In this paradigm: 
+    
+    □ Functions have inputs (parameters) and outputs — their role is to transform data.
+
+    □ It is common to use global variables, which are accessible from different parts of the app.
+
+    □ Example of functions: 
+      - Functions with no inputs: Only their result matters.
+      - Functions that take parameters but return nothing: They simply process the input
+     
+    
+    □ A function like `power(base, exponent)` would return a result such as `power(2, 8) -> 256`
+    □ While we also use functions in other paradigms like `OOP` or `FP`, the functional concept comes of transforming data
+    through functions comes from structured programming.
+
+  
+  ○ Key concepts introduced by Structured Programming
+
+    ■  Execution Stack: 
       □ It is the whole application execution pile showing who called who, for us to know that: "oh, the main function
       called the function x that called function y, which called the function z that returned the error¨.
       □ When there's an error in the stack, it returns to us that giant message full of errors, but inside of it, it shows
@@ -225,11 +228,58 @@ more complex structures such as trees, queues, stacks, custom structures (like o
         4. After each invocation, when it finishes, it will leave the pile and the stack control will go back to the function
         that called it.
   
-      □ This is called direct control transference, 
-      
+      □ This is called direct control transference, and from goto to now, every paradigm "took away powers" from the programmer,
+      in the same way that traffic signals, traffic direction, signs, also take power from the drivers, because if we
+      don't take it away, it would become chaotic.
+      □ We can now think: "Ok, but which kind of resource was brought with structured programming?". It brought order and
+      discipline for the direct control transference, which is the big addition procedural programming presented for the
+      way developer used before to program.
 
-       
-      
+    ■ Control Structures: 
+      □ Such as if, else, for, while. The control flow would take us to any place of the application, and now we have a
+      sequential program that transfers the control to other applications.
+
+    ■ Scopes:
+      □ The scope is basically function levels, within a scope we can create or destruct variables, that they're going to
+      be restrained within that scope and we have the global scope, which is the scope outside of functions, let's use
+      this example
+
+      ```ts
+        let lastResult = 0;
+
+        function sum(a: number, b: number): number {
+          const result = a + b
+          lastResult = result
+          return result
+        }
+
+      ```
+
+      result belongs to the sum function scope and lastResult belongs to the global scope. Which means that the result\
+      constant is only visible and can only be modified within the function scope, which gives us more control over the
+      code and we can, inside that small block, to know which variables were modified/created/read, givin us a bigger
+      control over the local scope.
+
+      However, inside structured programming, there is still the idea of shared values, specially when we have shared
+      values that are mutable, which could lead us to multiple problems.
+      For example, in that sum function, we sum the two arguments received, and assign them to the global lastResult, but
+      if two threads call that function simultaneously, we won't be able to know what was the last result because other
+      thread can turned this code unpredictable, we can think that this last result was the one we've just processed, but
+      it is not. 
+      We must be very careful, because even though structured programming works with global scope and local scope, mutable
+      data must be avoided since it can bring many problems.
+
+    ○ Functional Programming x Structured Programming
+
+    ■ Different from structured programming, functional programming also works with functions, but it doesn't work with
+    mutable data, specially data on the global scope.
+    ■ When working with node/ts, in addition to have the local scope of the function, we have the modules scope. Each file
+    represent a module and will only be visible within that file  
+    ■ Functional programming also have pure functions, which are functions that can't modify or read anything outside its
+    scope, so that `sum` function, because it changes a global variable, it will already become an impure function, a
+    pure function can only make use of the input arguments, and an output, it must also be predictable, it can't have a
+    Math.random() for instance. 
+
 
     ■ Whereas in a procedural paradigm, the procedure is the main character,
 
