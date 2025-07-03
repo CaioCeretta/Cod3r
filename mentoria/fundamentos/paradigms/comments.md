@@ -150,3 +150,93 @@ This separation allows us to:
 . Write business code that is easy to understand and test.
 . Swap out I/O mechanisms like changing databases or APIs without rewriting our domain logic
 . Avoid tightly coupling our core logic with specific frameworks or tools.
+
+## Data vs Data Structure
+
+○ One important thing to clarify, is that there is a clear difference between what is data and the structures that organize
+this data. For example, we can have multiple numbers, which within the computer it has a structure defined in any given
+format, number of bits to specify its signal, and so on. Therefore, data is one thing and data structures are other.
+
+○ For example, Number, Boolean and String are structures, they are the basic blocks of a programming language, and we have
+more complex structures such as trees, queues, stacks, custom structures (like objects).  
+
+● System for a basic school
+
+  ○ Let's say we talked to a specialist, and ask what the institution needs for the first version
+    ■ The specialist may tell us that it needs to have the rooms, patrimony, students, professors registration, and what
+    is the relationship between teachers and classrooms, and so on.
+    ■ This would demand a data structure that will represent the student, other one that represent a teacher, other one
+    for the classrooms, and so on
+    ■ Now 'John Doe' who is seven years old, is a data part of the custom structure we've just created, and we should
+    already understand that objects are these structures, ones which uses other kinds of more basic data to compose it.
+    Meaning it could exist more complex structures that compose other structures and so on
+    ■ We can have, for example, a responsible for a student, and this responsible can have an address, that is other
+    object/structure which in turn, composes the responsible object. It can also be related to other students in the
+    same schools, etc.
+    
+■ Most common paradigms
+
+  ○ We mainly have three paradigms, created almost 70 years ago and no other new one was created, it may exist new ones
+  but they are built on top of these existing ones.
+
+
+
+
+
+  ○ Structured Programming (1970)
+
+    ■ When thinking about structured or procedural programming, we think of two similar programming languages, which are
+    very similar but they ar not the exact same thing. Structured is more about the control structures and procedural is
+    more about procedures / functions. However, they are two things that walk alongside and we can think of both in the
+    same paradigm group.
+    ■ Functions have inputs (parameters) and outputs, essentially functions have the role of transforming those data
+    and inside this paradigm, it is very common for us to use global data, which means they'll be available to multiple
+    parts of the app and we have it as the main character.
+    In this type of programming, the objective is to transform data — we receive any desired type of data and transform
+    it into something else.
+    Functions can be: 
+      □ No inputs: Only the outcome when invoked is important
+      □ Ones that receive a parameter but doesn't return anything: Only processes the argument
+    ■ When thinking of functions, there are multiple variations and relation between functions and inputs. In practice
+    we can have a series of functions we can use to transform values and variables like we desire.
+    ■ One example would be a `power` function, it would receive the base and the exponent, and when passing these two
+    parameters it will return us the power, such as 2, 8 that would return 256.
+    ■ We may use it in other paradigms, such as `OOP`, but it comes from structured programming.
+
+    ■ One important concept, that came from structured programming, is the execution stack.
+      □ It is the whole application execution pile showing who called who, for us to know that: "oh, the main function
+      called the function x that called function y, which called the function z that returned the error¨.
+      □ When there's an error in the stack, it returns to us that giant message full of errors, but inside of it, it shows
+      the `stack trace`, that is the trace from the whole stack until the error, this is a way for us to know where it
+      was that caused the problem, and where it originated.
+      □ In the beginning, with `goto` paradigm, it could go to any place of the code, the line 287 could send to the line
+      4, for example, which is why it is the most flexible existent pattern. However, flexibility is not everything and
+      in some cases it can be undesired when looking for having a more readable and maintainable program. Since that using
+      goto we can take city streets as an example, it would be like allowing driving the wrong way, going against traffic,
+      taking prohibited turns, and so on.  
+      □ On the non-structured programming, that is a more flexible kind, it was shown after multiple debates, that it could
+      be a problematic way to program, and structured programming started being used, because it is "verifiable", we can
+      isolate parts of the application, what we could'nt using goto
+      □ Therefore, the idea of a stack, is that one function calls other one, and it would work like: 
+        
+        1. Call a function main, which is now the base of the stack
+        2. Through the main function, we call another function named initialize, which will now on one level above
+        3. Through initialize, we call other function named environmentVars()
+        4. After each invocation, when it finishes, it will leave the pile and the stack control will go back to the function
+        that called it.
+  
+      □ This is called direct control transference, 
+      
+
+       
+      
+
+    ■ Whereas in a procedural paradigm, the procedure is the main character,
+
+
+  ○ Object Oriented Programming (1960)
+  ○ Functional Programming (1950)
+
+
+
+  
