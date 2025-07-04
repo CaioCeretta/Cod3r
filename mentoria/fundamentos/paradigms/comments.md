@@ -186,7 +186,7 @@ We also have more complex structures such as trees, queues, stacks, and custom s
 
     ■ When thinking about structured or procedural programming, we often refer to them together. While they are not exactly
     the same, they go hand in hand. Structured programming focuses on control flow (like if, while, for) while procedural
-    programming emphasizes procedures o  functions. 
+    programming emphasizes procedures or functions. 
 
     ■ In this paradigm: 
     
@@ -200,6 +200,7 @@ We also have more complex structures such as trees, queues, stacks, and custom s
      
     
     □ A function like `power(base, exponent)` would return a result such as `power(2, 8) -> 256`
+
     □ While we also use functions in other paradigms like `OOP` or `FP`, the functional concept comes of transforming data
     through functions comes from structured programming.
 
@@ -207,47 +208,41 @@ We also have more complex structures such as trees, queues, stacks, and custom s
   ○ Key concepts introduced by Structured Programming
 
     ■  Execution Stack: 
-      □ It is the whole application execution pile showing who called who, for us to know that: "oh, the main function
-      called the function x that called function y, which called the function z that returned the error¨.
+      □ It shows the sequence of function calls during program execution, helping trace the origin of an error — known as
+      the `stack trace`
+
       □ When there's an error in the stack, it returns to us that giant message full of errors, but inside of it, it shows
       the `stack trace`, that is the trace from the whole stack until the error, this is a way for us to know where it
       was that caused the problem, and where it originated.
-      □ In the beginning, with `goto` paradigm, it could go to any place of the code, the line 287 could send to the line
-      4, for example, which is why it is the most flexible existent pattern. However, flexibility is not everything and
-      in some cases it can be undesired when looking for having a more readable and maintainable program. Since that using
-      goto we can take city streets as an example, it would be like allowing driving the wrong way, going against traffic,
-      taking prohibited turns, and so on.  
-      □ On the non-structured programming, that is a more flexible kind, it was shown after multiple debates, that it could
-      be a problematic way to program, and structured programming started being used, because it is "verifiable", we can
-      isolate parts of the application, what we could'nt using goto
-      □ Therefore, the idea of a stack, is that one function calls other one, and it would work like: 
-        
-        1. Call a function main, which is now the base of the stack
-        2. Through the main function, we call another function named initialize, which will now on one level above
-        3. Through initialize, we call other function named environmentVars()
-        4. After each invocation, when it finishes, it will leave the pile and the stack control will go back to the function
-        that called it.
-  
-      □ This is called direct control transference, and from goto to now, every paradigm "took away powers" from the programmer,
-      in the same way that traffic signals, traffic direction, signs, also take power from the drivers, because if we
-      don't take it away, it would become chaotic.
-      □ We can now think: "Ok, but which kind of resource was brought with structured programming?". It brought order and
-      discipline for the direct control transference, which is the big addition procedural programming presented for the
-      way developer used before to program.
+      □ Before structured programming, `goto` was used, allowing jumps to any part of the code (e.g., from line 287 to line
+      4), which made code chaotic and hard to maintain. 
+      □ Structured programming replaced `go to` with `direct control transfer`, making programs easier to understand and
+      verify
+
+      □ Example of a call stack: 
+        1. The program starts at `main()` — base of the stack
+        2. `main()` calls `initialize()` — added to the top of the stack
+        3. `initialize()` calls `environmentVars()` — added above
+        4. When a function finishes, it is removed from the stack, and control returns to the caller.
+
 
     ■ Control Structures: 
-      □ Such as if, else, for, while. The control flow would take us to any place of the application, and now we have a
-      sequential program that transfers the control to other applications.
+      □ Controls such as `if`, `else`, `for`, and while define the flow of a program.
+
+      □ These allow for sequential, conditional, and loop based execution in readable, structured manner.
 
     ■ Scopes:
-      □ The scope is basically function levels, within a scope we can create or destruct variables, that they're going to
-      be restrained within that scope and we have the global scope, which is the scope outside of functions, let's use
-      this example
+      □ Scope refers to the visibility and lifetime of variables.
+
+      □ There are two main types
+
+        - Global Scope: Outside of functions
+        - Local Scope: Inside functions
 
       ```ts
         let lastResult = 0;
 
-        function sum(a: number, b: number): number {
+        function sum(a: number, b: number): number {,
           const result = a + b
           lastResult = result
           return result
@@ -255,30 +250,36 @@ We also have more complex structures such as trees, queues, stacks, and custom s
 
       ```
 
-      result belongs to the sum function scope and lastResult belongs to the global scope. Which means that the result\
-      constant is only visible and can only be modified within the function scope, which gives us more control over the
-      code and we can, inside that small block, to know which variables were modified/created/read, givin us a bigger
-      control over the local scope.
+      □ 'result' is local to the `sum()` function.
+      □ 'lastResult' is global.
 
-      However, inside structured programming, there is still the idea of shared values, specially when we have shared
-      values that are mutable, which could lead us to multiple problems.
-      For example, in that sum function, we sum the two arguments received, and assign them to the global lastResult, but
-      if two threads call that function simultaneously, we won't be able to know what was the last result because other
-      thread can turned this code unpredictable, we can think that this last result was the one we've just processed, but
-      it is not. 
-      We must be very careful, because even though structured programming works with global scope and local scope, mutable
-      data must be avoided since it can bring many problems.
+      — Local scopes give developers better control and predictability
+
+      - However, structured programming often allows `mutable shared data', which can lead to 'unpredictable behavior',
+        especially with concurrency  (e.g., two threads modifying lastResult simultaneously) 
 
     ○ Functional Programming x Structured Programming
 
-    ■ Different from structured programming, functional programming also works with functions, but it doesn't work with
-    mutable data, specially data on the global scope.
-    ■ When working with node/ts, in addition to have the local scope of the function, we have the modules scope. Each file
-    represent a module and will only be visible within that file  
-    ■ Functional programming also have pure functions, which are functions that can't modify or read anything outside its
-    scope, so that `sum` function, because it changes a global variable, it will already become an impure function, a
-    pure function can only make use of the input arguments, and an output, it must also be predictable, it can't have a
-    Math.random() for instance. 
+    ■ Both programming use functions, but
+
+      □ Structured programming allows multiple global data
+      □ Functional programming avoids shared and mutable data.
+
+    ■ In environments like node/ts, each file is treated as a module, giving us module-level scope in addition to function
+    scope.
+
+    ■ Functional programming emphasizes pure functions:
+    
+      □ A pure functions only uses its input parameters and returns a value
+    
+      □ It does not read or write external variables.
+      
+      □ It must be predictable — for example, it cannot use `Math.random()` or `Date.now()`, since they are modified on
+      each invocation
+
+      □ In our early example, `sum()` would be considered impure since it modifies `lastResult`.
+
+      □ Modifying a global variable within a function is unacceptable in fp but ok in the structured paradigm
 
 
     ■ Whereas in a procedural paradigm, the procedure is the main character,
