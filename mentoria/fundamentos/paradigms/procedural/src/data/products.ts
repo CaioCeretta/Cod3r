@@ -4,7 +4,7 @@ const products: Product[] = [
   {
     id: 1,
     name: "Pen",
-    price: 9.5,
+    price: 9.49,
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const products: Product[] = [
   {
     id: 4,
     name: "Eraser",
-    price: 8.5,
+    price: 8.49,
   },
 ];
 

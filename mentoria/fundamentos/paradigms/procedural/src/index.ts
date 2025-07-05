@@ -1,5 +1,3 @@
-function sum(a: number, b: number): number {
-  return a + b;
-}
+import { menu } from "./ui/menu";
 
-console.log(sum(1, 2));
+menu();
