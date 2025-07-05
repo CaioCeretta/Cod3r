@@ -17,3 +17,7 @@ export function getTotal() {
     0
   );
 }
+
+export function getItems() {
+  return [...items];
+}

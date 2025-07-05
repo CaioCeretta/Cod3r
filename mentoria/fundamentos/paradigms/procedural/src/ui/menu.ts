@@ -1,5 +1,5 @@
 import products from "../data/products";
-import { addItem, getTotal } from "../store/Cart";
+import { addItem, getItems, getTotal } from "../store/Cart";
 import { renderMenu, success, waitForEnter } from "./terminal";
 
 export async function menu() {
@@ -20,7 +20,12 @@ export async function menu() {
 
     await waitForEnter();
   } else if (answer.selectedIndex === 1) {
-    success(`Total amount: $ ${getTotal()}`);
+    const items = getItems().forEach((item) => {
+      success(
+        `${item.product.name} - $${item.price.toFixed(2)} x${item.quantity}\n`
+      );
+    });
+    success(`Total amount: $${getTotal()}`);
     await waitForEnter();
   } else if (answer.selectedIndex === 2) {
     process.exit(0);
