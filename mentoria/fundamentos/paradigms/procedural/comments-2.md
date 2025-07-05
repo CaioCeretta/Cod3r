@@ -48,5 +48,18 @@
         - const { selectedIndex } = await renderMenu, passes the title and the products list, waits for the user to select
         an item and assigns to selectedIndex the index of the option selected by the user.
 
+      3. View Items
+        - We have the items array where we store every added item
+        - In the  viewItems function, we won't return the original array, but a spread copy of it with [...items]
+        - The reason for it is that this way we are not getting direct access to the items array, and in order to change
+        the original array, we would have to pass through the addItem and it would give us more control over the array and
+        it wouldn't be available outside of the file
 
-      
+
+
+● Final Comments
+
+ . We made a miniscule modeling where we create `Product`, `Item`, `Cart` types, where the Item is the cart item and the
+ Cart is where we store the functions
+ 
+ . Using procedural programming, we will work with these elements,
