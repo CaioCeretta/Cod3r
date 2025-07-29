@@ -1,3 +1,5 @@
-import { menu } from "./ui/menu";
+import Menu from "./ui/menu";
 
-menu();
+const menu = new Menu();
+
+menu.render()

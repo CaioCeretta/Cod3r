@@ -1,35 +1,41 @@
 import products from "../data/products";
 import { cart } from "../store/Cart";
-import { renderMenu, success, waitForEnter } from "./terminal";
+import Terminal from "./terminal";
 
-export async function menu() {
-  const answer = await renderMenu("My Store", ["Add", "View Cart", "Exit"]);
+export default class Menu {
 
-  if (answer.selectedIndex === 0) {
-    const items = products.map(
-      (product) => `${product.name} - $ ${product.price}`
-    );
+  async render() {
+    const answer = await Terminal.renderMenu("My Store", ["Add", "View Cart", "Exit"]);
 
-    const { selectedIndex } = await renderMenu("Registered Products", items);
-
-    const selectedProduct = products[selectedIndex];
-
-    cart.add(selectedProduct, 1);
-
-    success("\nProduct added to cart!\n");
-
-    await waitForEnter();
-  } else if (answer.selectedIndex === 1) {
-    const items = cart.getItems().forEach((item) => {
-      success(
-        `${item.product.name} - $${item.price.toFixed(2)} x${item.quantity}\n`
+    if (answer.selectedIndex === 0) {
+      const items = products.map(
+        (product) => `${product.name} - $ ${product.price}`
       );
-    });
-    success(`Total amount: $${cart.total}`);
-    await waitForEnter();
-  } else if (answer.selectedIndex === 2) {
-    process.exit(0);
+
+      const { selectedIndex } = await Terminal.renderMenu("Registered Products", items);
+
+      const selectedProduct = products[selectedIndex];
+
+      cart.add(selectedProduct, 1);
+
+      Terminal.success("\nProduct added to cart!\n");
+
+      await Terminal.waitForEnter();
+    } else if (answer.selectedIndex === 1) {
+        cart.getItems().forEach((item) => {
+          Terminal.success(
+            `\n${item.formatted}`
+          );
+        });
+      Terminal.success(`\nTotal amount: ${cart.formattedTotal}`);
+      await Terminal.waitForEnter();
+    } else if (answer.selectedIndex === 2) {
+      process.exit(0);
+    }
+
+    await this.render()
+
   }
 
-  await menu();
+
 }

@@ -1,26 +1,26 @@
-import type { Product } from "../store/Product";
+import { Product } from "../store/Product";
 
 const products: Product[] = [
-  {
-    id: 1,
-    name: "Pen",
-    price: 9.49,
-  },
-  {
-    id: 2,
-    name: "Pencil",
-    price: 5,
-  },
-  {
-    id: 3,
-    name: "Notebook",
-    price: 20.99,
-  },
-  {
-    id: 4,
-    name: "Eraser",
-    price: 8.49,
-  },
+  new Product(
+    1,
+    "Pen",
+    9.49,
+  ),
+  new Product(
+    2,
+    "Pencil",
+    5,
+  ),
+  new Product(
+    3,
+    "Notebook",
+    20.99,
+  ),
+  new Product(
+    4,
+    "Eraser",
+    8.49,
+  ),
 ];
 
 export default products;
