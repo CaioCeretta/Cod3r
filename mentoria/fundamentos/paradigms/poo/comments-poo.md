@@ -66,7 +66,31 @@
     ○ We can also change the getTotal method, to a new `get` total() method. This way, total is now been treated as an attribute
     and do not need to be called with parentheses
 
-    
+    ○ Product will be a class, where we instantiate a Product. This class can only have a constructor and every attribute
+    is informed in the constructor with readonly.
+
+    ○ Where we call the full string using the product name and product price toFixed, we can now create on method in the
+    Product class to format the same string and increase readability on the code. And since now, Product class has a behavior
+    it makes even more sense for it to be a class and not just a type
+
+    ○ The same thing we will do for the Item, which, since we have the product on the item class, we can call the product's
+    formatted method and concat it with the quantity
+
+    ○ Now, when we add a new item, since the items is an array of item and item is a class, we no longer can simply pass
+    an object to the add function, but we need to use it inside an Item constructor
+
+    ○ The cart total, since it is now a class, we can add a get formattedTotal where it will already format for the
+    menu and we would'nt need to code how it should be displayed
+
+    ○ We also have many functions related to the terminal in its file, which they turn into class methods. and each one
+    will become static so there is no need to instantiate the terminal. One note is that a class where every method is
+    static, and we can simply use a module with named functions (as we were doing, or a literal object) 
+
+    ○ Menu can also become a class, but instead of creating attributes, we just want to use the methods inside the function
+    similar to Product, but the opposite, it will simply have a render method, which will wrap the whole code, no constructor
+    and instantiate it with new and no parameters, and call menu.render()
+
+    ○ We'll also create a merge function, on the `Item` class for merging items that are bought more than once
 
   ● Comments about POO code
 
@@ -86,6 +110,18 @@
       ■ get total(): number {}: Defines a getter, also called a property accessor, we can access it like a property without
       parentheses — cart.total. Even though it's a function behind the scenes, it feels like reading a variable. It is good
       for computed properties that should behave like normal fields
+
+    ○ Product can be a simple interface, as we did in procedural, but it could also be a class. However, since Product do
+    not have any behavior and serves only to represent data, as in our case, it can remain an interface, because a `class`
+    is necessary when we want to encapsulate behavior related to the data, such as an  `applyDiscount` method
+
+    ○ Classes are made to create instances, with the this state and behavior, if we never instantiate one and make all the
+    methods static, it will only be used as a virtual namespace — which is not the original intention of a class. Therefore,
+    is more idiomatic export functions or an object, but in the program code, we'll keep it as a class for education purposes.
+
+
+
+    
 
 
 
