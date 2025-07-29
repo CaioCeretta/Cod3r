@@ -119,6 +119,14 @@
     methods static, it will only be used as a virtual namespace — which is not the original intention of a class. Therefore,
     is more idiomatic export functions or an object, but in the program code, we'll keep it as a class for education purposes.
 
+    ○ One thing we did that may sound wrong is, the product quantity is on the cart item and not on the cart, but why is it?
+      ■ Since we can start "delegating" these responsibilities on different classes, we chose to make the merge responsibility
+      on the cart quantity, inside the own item, because it understands its identity, know its responsibilities, and is the
+      owner of the attributes, so it end up being the right place.
+
+      ■ In OOP, since the class is the owner of its attributes, we end up bringing the behaviors to the class to make the
+      relationships more close and makes more sense at the end of the day.
+
 
 
     
