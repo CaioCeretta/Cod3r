@@ -1,0 +1,148 @@
+import type Candidate from "../models/Candidate";
+
+export default [
+	{
+		id: 1,
+		number: 10101,
+		name: "Zé do Pão",
+		party: "PCT - Partido do Café com Tapioca",
+		description:
+			"Promete pão quente todo dia e fila menor na padaria do bairro.",
+	},
+	{
+		id: 2,
+		number: 20202,
+		name: "Mãe do Wi-Fi",
+		party: "NET - Nova Esperança Tecnológica",
+		description: "Vai lutar por Wi-Fi forte até na praça da igreja.",
+	},
+	{
+		id: 3,
+		number: 30303,
+		name: "Tonho da Kombi",
+		party: "KMB - Kombinados pelo Brasil",
+		description:
+			"Vai levar você e suas demandas, mesmo sem freio, direto pra câmara!",
+	},
+	{
+		id: 4,
+		number: 40404,
+		name: "Professor Preguiça",
+		party: "ZZZ - Zona de Zelo e Zelo",
+		description: "Lutará por mais feriados e cochilos institucionais.",
+	},
+	{
+		id: 5,
+		number: 50505,
+		name: "Dona Marmita",
+		party: "PFM - Partido Feijão com Mistura",
+		description: "Almoço digno e quentinho pra todo trabalhador!",
+	},
+	{
+		id: 6,
+		number: 60606,
+		name: "Capitão Cuscuz",
+		party: "CZZ - Cuscuz com Zelo",
+		description: "Café da manhã é coisa séria. Vote com o estômago!",
+	},
+	{
+		id: 7,
+		number: 70707,
+		name: "MC Sinaleiro",
+		party: "RAP - Rumo ao Progresso",
+		description: "Promete batidas nas ruas e respeito nas esquinas.",
+	},
+	{
+		id: 8,
+		number: 80808,
+		name: "Batata Revoltada",
+		party: "FRY - Frente Republicana Yummy",
+		description: "Contra a opressão das dietas e pelo direito de repetir!",
+	},
+	{
+		id: 9,
+		number: 90909,
+		name: "Seu Neném",
+		party: "NAN - Novo Amanhã Nacional",
+		description:
+			"Com 89 anos e muita energia, promete fraldas gratuitas para todas as idades.",
+	},
+	{
+		id: 10,
+		number: 11111,
+		name: "Marinalva do Churras",
+		party: "BBQ - Bloco da Brasa Queima",
+		description:
+			"Defende mais áreas de lazer e churrasqueiras públicas com carvão do governo.",
+	},
+	{
+		id: 11,
+		number: 12121,
+		name: "Pastor do Pix",
+		party: "PIX - Partido da Inclusão X",
+		description: "Promete benção com comprovante. Aceita votos via QR Code.",
+	},
+	{
+		id: 12,
+		number: 13131,
+		name: "DJ Calota",
+		party: "PAN - Partido Automotivo Nacional",
+		description: "Quer som alto liberado e lombada com beat.",
+	},
+	{
+		id: 13,
+		number: 14141,
+		name: "Jéssica da Rifa",
+		party: "SRT - Solidariedade Rifa e Torta",
+		description: "Lutará por rifas oficiais e prêmios que funcionem.",
+	},
+	{
+		id: 14,
+		number: 15151,
+		name: "General do Brechó",
+		party: "MOD - Movimento Organizado de Desapegos",
+		description: "Um novo mandato com roupas usadas e ideias novas.",
+	},
+	{
+		id: 15,
+		number: 16161,
+		name: "Nando dos Memes",
+		party: "LOL - Liga da Ordem Leve",
+		description: "Menos impostos, mais risadas. O meme é uma arma política!",
+	},
+	{
+		id: 16,
+		number: 17171,
+		name: "Clotilde do Gás",
+		party: "GLP - Gás, Luz e Progresso",
+		description: "Promete gás barato e botijão com rodinha.",
+	},
+	{
+		id: 17,
+		number: 18181,
+		name: "Val do Arroz Doce",
+		party: "DOC - Doce Ordem Comunitária",
+		description: "Distribuição de sobremesas em sessões da câmara.",
+	},
+	{
+		id: 18,
+		number: 19191,
+		name: "Zoinho do Grau",
+		party: "MTB - Movimento da Tradição Bike",
+		description: "Quer pista de grau regulamentada e capacete com estilo.",
+	},
+	{
+		id: 19,
+		number: 20220,
+		name: "Dona Graça do Bingo",
+		party: "BGO - Bloco dos Gritos Organizados",
+		description: "Quer bingo legalizado e sorteio toda sexta na praça.",
+	},
+	{
+		id: 20,
+		number: 21212,
+		name: "Guto do Bar",
+		party: "BOT - Bloco Organizado da Tarde",
+		description: "Vai transformar a câmara em happy hour permanente.",
+	},
+] as Candidate[];
