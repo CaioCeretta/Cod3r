@@ -42,4 +42,4 @@
   ● For excluding candidates, the delete candidate function could not belong to the list of candidates, since it do not
   "own" the state. Therefore, what we have to pass down a function to the children for indirect communication.
 
-  ● 
+  ● When dea                                                                    

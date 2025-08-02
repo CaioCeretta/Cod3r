@@ -8,8 +8,8 @@ import { useState } from "react";
 export const PageCandidate = () => {
 	const [candidates, setCandidates] = useState<Candidate[]>(candidatesJSON);
 
-	function deleteFirstCandidate() {
-		const remainingCandidates = candidates.slice(1);
+	function deleteCandidate(candidate: Candidate) {
+		const remainingCandidates = candidates.filter((c) => candidate !== c);
 		setCandidates(remainingCandidates);
 	}
 
@@ -23,7 +23,10 @@ export const PageCandidate = () => {
 				Delete First
 			</button> */}
 			<button type="button">New Candidate</button>
-			<CandidatesList candidates={candidates} />
+			<CandidatesList
+				deleteCandidate={deleteCandidate}
+				candidates={candidates}
+			/>
 		</div>
 	);
 };
