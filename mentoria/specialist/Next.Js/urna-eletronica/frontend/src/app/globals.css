@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -27,6 +23,12 @@ body {
 
 
 @layer components {
+  
+  .input {
+    @apply py-2 px-3 bg-zinc-800 rounded;
+    @apply text-white;
+  }
+
   .container {
     @apply mx-auto max-w-7xl p-4;
   }
@@ -37,5 +39,9 @@ body {
 
   .botao.azul {
     @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md;
+  }
+
+  .botao.cinza {
+    @apply bg-zinc-500 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded-md;
   }
 }
