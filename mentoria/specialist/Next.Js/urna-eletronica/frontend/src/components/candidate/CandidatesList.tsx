@@ -2,7 +2,8 @@ import type Candidate from "@/data/models/Candidate";
 
 export interface CandidatesListProps {
 	candidates: Candidate[];
-	deleteCandidate: (candidate: Candidate) => void;
+	deleteCandidate?: (candidate: Candidate) => void;
+	selectCandidate?: (candidate: Candidate) => void;
 }
 
 export const CandidatesList = (props: CandidatesListProps) => {
@@ -17,13 +18,21 @@ export const CandidatesList = (props: CandidatesListProps) => {
 						{candidate.name} ({candidate.party})
 					</h2>
 					<p>{candidate.description}</p>
-					<div>
+					<div className="flex py-5 gap-2">
 						<button
-							onClick={() => props.deleteCandidate(candidate)}
+							onClick={() => props.selectCandidate?.(candidate)}
+							className="botao azul my-3"
+							type="button"
+						>
+							Select
+						</button>
+
+						<button
+							onClick={() => props.deleteCandidate?.(candidate)}
 							className="botao vermelho my-3"
 							type="button"
 						>
-							Delete Candidate
+							Delete
 						</button>
 					</div>
 				</div>,
