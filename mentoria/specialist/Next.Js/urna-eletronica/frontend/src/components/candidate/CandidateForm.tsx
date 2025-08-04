@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import type Candidate from "@/data/models/Candidate";
 
 export type CandidateFormProps = {
 	candidate: Partial<Candidate>;
-	// saveCandidate: (candidate: Candidate) => void;
+	saveCandidate: (candidate: Partial<Candidate>) => void;
 	cancel?: () => void;
 };
 
@@ -13,6 +13,8 @@ export const CandidateForm = (props: CandidateFormProps) => {
 	const [candidate, setCandidate] = useState<Partial<Candidate>>(
 		props.candidate,
 	);
+
+	console.log(candidate);
 
 	return (
 		<div className="flex flex-col gap-7">
@@ -38,21 +40,26 @@ export const CandidateForm = (props: CandidateFormProps) => {
 				className="input"
 				placeholder="Digite a descrição do candidato"
 				value={candidate.party}
-				onChange={(e) => setCandidate({ ...candidate, party: e.target.value })}
+				onChange={(e: ChangeEvent<HTMLInputElement>) =>
+					setCandidate({ ...candidate, party: e.target.value })
+				}
 			/>
 
 			<textarea
 				className="input"
 				placeholder={candidate.description || "Digite a descrição do candidato"}
-				onChange={(e) =>
+				value={candidate.description}
+				onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
 					setCandidate({ ...candidate, description: e.target.value })
 				}
-			>
-				{candidate.description}
-			</textarea>
+			/>
 
 			<div className="flex gap-3">
-				<button type="button" className="botao azul">
+				<button
+					type="button"
+					className="botao azul"
+					onClick={() => props.saveCandidate?.(candidate)}
+				>
 					Salvar
 				</button>
 				<button type="button" onClick={props.cancel} className="botao cinza">
