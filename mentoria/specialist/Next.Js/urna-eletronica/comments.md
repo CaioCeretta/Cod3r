@@ -42,3 +42,33 @@
   ● For excluding candidates, the delete candidate function could not belong to the list of candidates, since it do not
   "own" the state. Therefore, what we have to pass down a function to the children for indirect communication.
 
+  ● After finishing the frontend project, there are several ways we can scale it to also include a separate backend
+  project
+
+    ○ In the project root, create a package.jon file outside of all individual projects, and use Node's workspace feature
+      ■ a folder that contains multiple projects. This allows us to create both the frontend and backend, as well as share
+      share code between them. A common approach is to have a core folder, which does not contain any application or
+      framework-specific logic, but only utility libraries such as `uuid`. This way we can keep our business rules in one
+      place and use them separately in different applications.
+      ■ There also an option of placing every project into an apps folder and within package.json workspace simply use
+      workspaces: ["apps/*"], since apps will not be considered a node project in the workspace
+      ■ It will be a project in a single repository with both the applications that are going to be deployed, and also
+      internal packages that we are willing to reuse between projects.
+
+      ■ This node workspace is similar to turborepo, however, turborepo automates some things, such as separating consoles
+      for each application being ran.
+        □ Behind the curtains turbo-repo uses node workspaces. But adds some other features.
+
+      ■ We will also create a packages folder for holding the core module and our graphics, and initially, it will be
+      {
+        "name": "urna",
+        "version": "1.0.0",
+        "workspaces": [
+          "apps/*",
+          "packages/*"
+        ]
+      }
+      
+
+
+
