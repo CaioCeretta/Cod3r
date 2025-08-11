@@ -68,6 +68,22 @@
           "packages/*"
         ]
       }
+
+      ■ Within the core package, in the package.json, we need to make the main property to point to the main attribute of
+       our package
+        □ to understand how a function from a project, is available to other applications, we will follow these steps
+          1 - Create a simple function inside the main file of printing a string
+          2 - Within the frontend's package.json, we are now going to treat the core package as a dependency package and
+          use the name defined in core's package.json. Since we now depend on the core package, we simply add something
+          like: 
+
+            "dependencies": {
+              "@urna/core": "*",
+              ...
+            }
+
+          3 - And to make use of it, within our project root, outside all apps, install this package with npm install,
+          since even though it is an internal package, it needs to make the necessary adjustements
       
 
 
