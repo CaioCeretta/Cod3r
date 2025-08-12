@@ -84,7 +84,20 @@
 
           3 - And to make use of it, within our project root, outside all apps, install this package with npm install,
           since even though it is an internal package, it needs to make the necessary adjustements
+
+          4 - We can now import the function exported by core, simply as importing a normal library as we are used to.
       
+          5 - For running all apps at once, inside the outer package.json, we can install a library named `npm-run-all`
+          and create new scrips
+
+            . dev script where it runs in paralell all the scripts that start with dev, with a run-p dev:* , this will
+            make it unnecessary to go into each folder and run the dev script
+
+            . we can also explicitly say that a dev:frontend script will go into the frontend folder and run the dev
+            with "cd apps/frontend && npm run dev"
+
+            . with the dev script running in parallel all dev scripts from the workspaces, we run all together
+
 
 
 
