@@ -58,7 +58,33 @@
           stop rendering all the time
 
       ■ In simple terms, the return function is executed before a useEffect fires after the second time it runs, it is
-      useful for cleaning any "residue" of previous calls
+      useful for cleaning any "residue" of previous calls.
+
+    ○ But there is a caveat, what if we would like to update the `caracteresRestantes` on every typing? would we need to
+    sacrifice a bit of performance? 
+
+      ■ What we are doing here is because we've set a `manual debounce` with setTimeout, meaning that the state will only
+      be updated when there is a one second inactivity, even though this prevents re-renders at each keypress, it will
+      create the delay in the characters counting
+
+      ■ What if we want this character counting to be real time? 
+
+        □ If we would like the `caracteresRestantes` value to be updated at each keypress with no delay, we should calculate
+        it inside the onInput (or even in onChange) instead of using useEffect.
+
+        □ This way, we would eliminate the setTimeout. The calculus performed is simple and direct, and does not have any
+        performance impact in this case, because calculating texto.length é O(1) (Constant, extremely cheap)
+
+      ■ When we should keep the timeout/debounce
+
+        □ We would only use debounce if
+
+          1. We would fire a request (ex: save in the server, consult suggestion API, etc).
+          2. Or the calculus is very heavy and demanding (ex: large texts processing, full regex, AI, etc).
+
+      ■ In summary, for characters counting, do it realtime, no need for the timeout, and for heavy operations, we can
+      use debounce with setTimeout or libraries like lodash.debounce 
+
   
   ● useRef:
 
@@ -94,6 +120,56 @@
       useState we can initialize the current property in any way we want, be it a primitive value, or an object, or an
       array.
         □ By using a simple object as a ref, and console.logging this reference.current, we will see the object logged
+
+    ○ useRef for manipulating DOM nodes
+
+      ■ Let's we have this p tag with some text in it, and we want to, on button click, to erase the text.
+
+        1. First we define a reference and associate it to the DOM element, in this case, the p tag, with p's ref attribute
+        2. Define a function, that will be assigned as button onClick, to update the referencia.current value
+
+        □ Therefore, in this example we created a reference, linked it to a DOM node, and its `current` represent that
+        reference value
+
+    ○ Making the same as we were doing with the `contagemCaracteres` useEffect, but with ref
+
+      ■ First, remove the useEffect, the texto state, as well as its use on the textarea
+      ■ Create two references, one for the textarea, and the other is a `contador` ref where we will store that char
+      counting.
+
+      ■ In the useEffect example, we are creating the timer on change useEffect, meaning the timer will be redeclared on
+      each `texto` state change.
+
+      ■ Since we are using refs, we are going to create the variable once and manipulate the same variable since useRef
+      will always return the same object, different from the effect example.  
+
+      ■ We are now going to associate a timeout to our ref, meaning that anything can be assigned to this property — arrays,
+      objects, functions, etc.
+
+      ■ Steps to follow
+
+        1. Inside the timeout, create const `quantidadeCaracteresDigitados` and assign to it, the value of the text reference
+        2. With this constant, update the `caracteresRestantes` state with the subtracted value
+
+      ■ These steps are going to lead us to the same problem, that the timeout is always going to add a delay to our counting
+
+      ■ To fix this, on the iniciaContagem function, we are going to clear the timeout, in the beginning of the function.
+        □ We are going to clear the timeout, passing the contador.current as the clear timeout argument, since its value
+        is the timeout function
+
+  ● Custom hooks
+
+    
+
+
+
+
+    
+
+
+
+  
+
 
 
 
