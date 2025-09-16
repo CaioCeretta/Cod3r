@@ -20,6 +20,7 @@ export default function Botao(props: BotaoProps) {
 
 	return (
 		<button
+			type="button"
 			className={`
             flex items-center gap-2 px-5 h-${tamanho()}
             hover:bg-opacity-80 select-none

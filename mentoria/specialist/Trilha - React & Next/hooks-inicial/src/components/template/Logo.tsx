@@ -1,5 +1,6 @@
-import { IconFishHook } from "@tabler/icons";
+import { IconFishHook } from "@tabler/icons-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import Flex from "./Flex";
 
 interface LogoProps {
@@ -10,6 +11,9 @@ interface LogoProps {
 }
 
 export default function Logo(props: LogoProps) {
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => setMounted(true), []);
+
 	return (
 		<Link href="/" className="cursor-pointer">
 			<Flex col={props.col} centerCross className={props.className}>
@@ -20,7 +24,7 @@ export default function Logo(props: LogoProps) {
                     ${props.grande ? "w-[150px] h-[150px]" : "w-[50px] h-[50px]"}
                 `}
 				>
-					<IconFishHook size={props.grande ? 100 : 30} />
+					{mounted && <IconFishHook size={props.grande ? 100 : 30} />}
 				</div>
 				<Flex col centerCross gap={0}>
 					<div

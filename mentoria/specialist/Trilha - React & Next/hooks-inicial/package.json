@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tabler/icons": "^1.119.0",
+    "@tabler/icons-react": "^3.35.0",
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18",

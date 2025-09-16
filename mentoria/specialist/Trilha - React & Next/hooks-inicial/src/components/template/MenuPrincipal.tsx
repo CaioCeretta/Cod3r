@@ -1,10 +1,19 @@
-import { IconArrowsLeftRight, IconNumbers, IconUsers, IconMenu, IconMathGreater, IconLetterCase, IconRefreshAlert } from "@tabler/icons";
-import { MenuItem } from "../../data/models/MenuItem";
-import { MenuSecao } from "../../data/models/MenuSecao";
+import {
+    IconArrowsLeftRight,
+    IconLetterCase,
+    IconMathGreater,
+    IconMenu,
+    IconNumbers,
+    IconRefreshAlert,
+    IconSettings,
+    IconUsers,
+} from "@tabler/icons-react";
+import type { MenuItem } from "../../data/models/MenuItem";
+import type { MenuSecao } from "../../data/models/MenuSecao";
+import Flex from "./Flex";
 import Logo from "./Logo";
 import MenuPrincipalItem from "./MenuPrincipalItem";
 import MenuPrincipalSecao from "./MenuPrincipalSecao";
-import Flex from "./Flex";
 
 export default function MenuPrincipal() {
     const secoes = [
@@ -12,20 +21,60 @@ export default function MenuPrincipal() {
             titulo: "Essenciais",
             aberta: true,
             itens: [
-                { titulo: "Contador", url: "/essenciais/contador", tag: "useState", icone: <IconNumbers /> },
-                { titulo: "Votação", url: "/essenciais/votacao", tag: "useState", icone: <IconUsers /> },
-                { titulo: "Consulta API", url: "/essenciais/consultaAPI", tag: "useEffect", icone: <IconArrowsLeftRight /> },
-                { titulo: "Maior", url: "/essenciais/maior", tag: "useEffect", icone: <IconMathGreater /> },
-                { titulo: "Contagem Caracteres", url: "/essenciais/contagemCaracteresEffect", tag: "useEffect", icone: <IconLetterCase /> },
-                { titulo: "State VS Referência", url: "/essenciais/stateVSRef", tag: "useRef", icone: <IconRefreshAlert /> }
+                {
+                    titulo: "Contador",
+                    url: "/essenciais/contador",
+                    tag: "useState",
+                    icone: <IconNumbers />,
+                },
+                {
+                    titulo: "Votação",
+                    url: "/essenciais/votacao",
+                    tag: "useState",
+                    icone: <IconUsers />,
+                },
+                {
+                    titulo: "Consulta API",
+                    url: "/essenciais/consultaAPI",
+                    tag: "useEffect",
+                    icone: <IconArrowsLeftRight />,
+                },
+                {
+                    titulo: "Maior",
+                    url: "/essenciais/maior",
+                    tag: "useEffect",
+                    icone: <IconMathGreater />,
+                },
+                {
+                    titulo: "Contagem Caracteres",
+                    url: "/essenciais/contagemCaracteresEffect",
+                    tag: "useEffect",
+                    icone: <IconLetterCase />,
+                },
+                {
+                    titulo: "State VS Referência",
+                    url: "/essenciais/stateVSRef",
+                    tag: "useRef",
+                    icone: <IconRefreshAlert />,
+                },
+                {
+                    titulo: "Referenciando Elemento",
+                    url: "/essenciais/refElemento",
+                    tag: "useRef",
+                    icone: <IconSettings />,
+                },
             ],
         },
-
     ];
     const mini = false;
     function renderizarSecoes() {
         return secoes.map((secao: MenuSecao) => (
-            <MenuPrincipalSecao key={secao.titulo} titulo={secao.titulo} mini={mini} aberta={secao.aberta}>
+            <MenuPrincipalSecao
+                key={secao.titulo}
+                titulo={secao.titulo}
+                mini={mini}
+                aberta={secao.aberta}
+            >
                 {renderizarItens(secao)}
             </MenuPrincipalSecao>
         ));
