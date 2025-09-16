@@ -1,0 +1,22 @@
+{
+  "name": "@urna/votacao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --dts --minify",
+    "build:packages": "tsup src/index.ts --dts --minify",
+    "dev": "tsup src/index.ts --dts --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@urna/shared": "*"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
+}
