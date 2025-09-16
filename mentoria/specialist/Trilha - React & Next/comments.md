@@ -95,6 +95,23 @@
       array.
         □ By using a simple object as a ref, and console.logging this reference.current, we will see the object logged
 
+    ○ useRef for manipulating DOM nodes
+
+      ■ Let's we have this p tag with some text in it, and we want to, on button click, to erase the text.
+
+        1. First we define a reference and associate it to the DOM element, in this case, the p tag, with p's ref attribute
+        2. Define a function, that will be assigned as button onClick, to update the referencia.current value
+
+        □ Therefore, in this example we created a reference, linked it to a DOM node, and its `current` represent that
+        reference value
+
+    
+
+
+
+  
+
+
 
 
 
