@@ -63,6 +63,12 @@ export default function MenuPrincipal() {
                     tag: "useRef",
                     icone: <IconSettings />,
                 },
+                {
+                    titulo: "Contagem Caracteres",
+                    url: "/essenciais/contagemCaracteresRef",
+                    tag: "useRef",
+                    icone: <IconLetterCase />,
+                },
             ],
         },
     ];
