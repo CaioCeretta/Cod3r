@@ -19,7 +19,7 @@ export default function MenuPrincipal() {
     const secoes = [
         {
             titulo: "Essenciais",
-            aberta: true,
+            aberta: false,
             itens: [
                 {
                     titulo: "Contador",
@@ -71,6 +71,11 @@ export default function MenuPrincipal() {
                 },
             ],
         },
+        {
+            titulo: "Personalizados",
+            aberta: true,
+            itens: []
+        }
     ];
     const mini = false;
     function renderizarSecoes() {
