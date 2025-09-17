@@ -159,6 +159,16 @@
 
   ● Custom hooks
 
+    ○ useToggle
+
+      ■ We defined a custom hook called useToggle, where it receive an active parameter, to tell with the hook is active
+      or inactive, created a `toggleAtivo()` function, that will change, wherever the ativo is to true or false
+
+      ■ We then return it, similar to useState with [ativo, setAtivo]
+
+      ■ When destructuring the constants like `const [mostrar, toggleMostrar] = useToggle(false)`, we can choose whatever
+      name we would like, and the argument passed to useToggle, is going to be the parameter `ativo` it requires
+
     
 
 
