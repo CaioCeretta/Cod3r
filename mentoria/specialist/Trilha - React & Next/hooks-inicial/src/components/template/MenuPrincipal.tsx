@@ -1,4 +1,5 @@
 import {
+    IconAppWindow,
     IconArrowsLeftRight,
     IconLetterCase,
     IconMathGreater,
@@ -74,7 +75,14 @@ export default function MenuPrincipal() {
         {
             titulo: "Personalizados",
             aberta: true,
-            itens: []
+            itens: [
+                {
+                    titulo: "Modal",
+                    url: "/personalizados/modal",
+                    tag: "Customs (useToggle)",
+                    icone: <IconAppWindow />
+                }
+            ]
         }
     ];
     const mini = false;
