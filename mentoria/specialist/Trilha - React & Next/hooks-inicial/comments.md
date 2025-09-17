@@ -150,7 +150,6 @@
 
         1. Inside the timeout, create const `quantidadeCaracteresDigitados` and assign to it, the value of the text reference
         2. With this constant, update the `caracteresRestantes` state with the subtracted value
-
       ■ These steps are going to lead us to the same problem, that the timeout is always going to add a delay to our counting
 
       ■ To fix this, on the iniciaContagem function, we are going to clear the timeout, in the beginning of the function.
@@ -168,6 +167,50 @@
 
       ■ When destructuring the constants like `const [mostrar, toggleMostrar] = useToggle(false)`, we can choose whatever
       name we would like, and the argument passed to useToggle, is going to be the parameter `ativo` it requires
+
+      ■ In our hook, we return an array with ativo (boolean) and toggleAtivo (function with no parameters that alters
+      the state), and this caused an issue inside the onClick
+
+        □ Therefore, the inferred type is [boolean, () => void], and we are using it with [mostrar, toggleMostrar], and
+        onClick expects a function that receive an argument `e`, which is the click event. But we are passing the toggleMostrar
+        that is a function defined with
+
+          function toggleAtivo() {
+          	setAtivo(!ativo);
+          }
+        which does not receive any parameter
+
+        □ Why typescript complains? 
+
+          . When we type `onClick={toggleMostrar}`, ts checks if toggleMostrar is compatible with (e: any) => void
+
+            - Expected (e: any) => void
+            - Received: () => void
+             
+
+            - These functions are not compatible because the function passed to onClick should accept one parameter (even
+            if unused)    
+      
+        □ To fix this issue, we can type the exact hook return with: 
+
+          . const r: [boolean, () => void] = [ativo, toggleAtivo];
+
+            return r
+
+          . Now typescript certainly knows that the hook returns an array of that type, with no ambiguous inference
+          . It avoid assignments errors
+
+          
+
+
+
+
+
+
+
+
+
+
 
     
 
