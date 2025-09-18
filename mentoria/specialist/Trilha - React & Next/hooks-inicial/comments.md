@@ -200,6 +200,65 @@
           . Now typescript certainly knows that the hook returns an array of that type, with no ambiguous inference
           . It avoid assignments errors
 
+
+  ● Object Keys
+
+    ○ Issue with "2xl" and xl2
+
+      ■ Rules
+
+        □ When declaring an object in TS, it must be `const obj = {key: value }`
+
+        □ If the key is a valid JS identifier, we can write it without quotes, Ex: foo, bar, xl2, maxValue
+
+        □ If the key is not a valid identifier, we must use quotes
+
+          . Keys that  start with number -> 2xl, 123, 7days
+          . Keys with special characters not allowed in identifiers -> background-color, margin-top
+
+      ■ Summary
+
+        . xl2 works without quotes because it starts with a letter
+        . 2xl throws an error without quotes, because it starts with a number
+    
+    ● Dimensoes object from useTamanhoJanela hook
+
+      ○ 1. `dimensoes` object
+
+        ■ We are creating an object where each key: (sm. md, lg, xl, 2xl) represents breakpoints, each value is a result
+        of the function `entre(min, max)`
+
+          □ Example: sm: entre(640, 768) // true or false
+
+          □ At the end of the day, the dimensions array will turn out to be something as
+
+            {
+              sm: false,
+              md: true,
+              lg: false,
+              xl: false,
+              2xl: false
+            }
+
+            depending on the return of entre
+
+      ○ 2. Object.entries(dimensoes)
+
+          ■ This transform the object n a list of [key, value] pairs, which in the example above, it becomes
+            [
+              ["sm", false],
+              ["md", true],
+              ["lg", false],
+              ["xl", false],
+              ["2xl", false],
+            ]
+
+      ○ 3. .filter(el => el[1])
+        ■ Here it filters only the elements which value is e[1] is true
+
+      ○ 4. tamanhoVerdadeiro[0]?.[0]
+
+        ■ 
           
 
 
