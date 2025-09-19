@@ -301,6 +301,36 @@
           5. Filters only the active breakpoints
           6. Returns the name of the current breakpoint ("sm" | "md" | "lg" | "xl" | "2xl").
 
+  ● When do we need to wrap it in brackets during destructuring? 
+
+    ■ 1. If the function returns only one primitive value, we don't need keys by destructuring it, e.g
+      function useTamanho() {
+        return "lg"
+      } 
+
+      const tamanho = useTamanho();
+
+    ■ 2. Where do curly braces come in? 
+    
+     □ We use the {} only if the hook return an object. e. g.
+      function useTamanho() {
+        return { tamanho: "lg }
+      }
+
+      const { tamanho } = useTamanho()
+
+    ■ 3. And square brackets []? 
+
+      □ Only if the hook returned an array/tuple. e.g.
+
+        function useTamanho () {
+          return ["lg", 1024]
+        }
+
+        const [tamanho, largura] = useTamanho();
+        
+
+
 
 
           
