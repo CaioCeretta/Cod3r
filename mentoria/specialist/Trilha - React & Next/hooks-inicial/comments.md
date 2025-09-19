@@ -221,12 +221,39 @@
         . xl2 works without quotes because it starts with a letter
         . 2xl throws an error without quotes, because it starts with a number
     
-    ● Dimensoes object from useTamanhoJanela hook
+    ● useTamanhoJanela hook
 
-      ○ 1. `dimensoes` object
+      ○ 1. `getTamanhoDaJanela` function
 
-        ■ We are creating an object where each key: (sm. md, lg, xl, 2xl) represents breakpoints, each value is a result
-        of the function `entre(min, max)`
+        ■ The objective of this function is to retrieve the height and width of the browser window.
+        ■ The typeof window !== 'undefined' is a protection to avoid SSR (Server Side Rendering) errors, since window
+        might not exist in the browser
+        ■ It returns the { largura, altura } object, if the client is on the browser, return the true values, otherwise,
+        if the  client is on the server, it returns -1
+
+      ○ `tamanhoDaJanela` state
+
+        ■ Creates a state with width and height of the current window
+        ■ Initially, getTamanhoJanela() is called to define the initial values, meaning the ts will know the object shape
+
+      ○ useEffect to listen to resizes
+
+        ■ It defines a function named `tamanhoMudou()` that updates the state with the new window size
+        ■ Adds an event listener on window resize
+        ■ Returns a cleanup function when the component unmounts
+        
+        ■ As a result, the hook will always know the window size
+      
+      ○ `entre` function
+
+        ■ This function returns true or false if the current width is inside the [min, max] interval
+        ■ Example:
+          □ entre(768, 1024) -> true if tamanhoDaJanela.largura is between 768 and 1023px
+
+      ○ `dimensoes` object`
+
+        ■ We are creating an object where each key: (sm. md, lg, xl, 2xl) represents breakpoints, each value is true or
+        false depending on the current width passed as argument
 
           □ Example: sm: entre(640, 768) // true or false
 
@@ -234,31 +261,55 @@
 
             {
               sm: false,
-              md: true,
-              lg: false,
+              md: false,
+              lg: true,
               xl: false,
               2xl: false
             }
 
-            depending on the return of entre
+            if the width is 1100px, for example.
+          
+      ○ Filtering the true size
 
-      ○ 2. Object.entries(dimensoes)
+        ■ const tamanhoVerdadeiro = Object.entries(dimensoes).filter((el) => el[1]);
 
-          ■ This transform the object n a list of [key, value] pairs, which in the example above, it becomes
-            [
-              ["sm", false],
-              ["md", true],
-              ["lg", false],
-              ["xl", false],
-              ["2xl", false],
-            ]
+          □ Object.entries(dimensoes) -> transforms the object in a key arrow value:
 
-      ○ 3. .filter(el => el[1])
-        ■ Here it filters only the elements which value is e[1] is true
+            ```ts
 
-      ○ 4. tamanhoVerdadeiro[0]?.[0]
+              [
+                ["sm", false],
+                ["md", false],
+                ["lg", true],
+                ["xl", false],
+                ["2xl", false],
+              ]
+            
+            ```
+          
+          ■ .filter((el) => el[1]) -> it will only keep the true valor. e.g. lg
 
-        ■ 
+            □ Gets the first filtered value, (lg) and returns just the ("lg") key
+            □ If none is true, it returns undefined
+
+        ○ Hook's flow summary
+
+          1. Initializes the state with the current width of the window
+          2. Listens to change of sizes with `resize`
+          3. `entre` function verifies if the current width belongs to any breakpoint
+          4. Defines `dimensions` with all breakpoints and boolean values
+          5. Filters only the active breakpoints
+          6. Returns the name of the current breakpoint ("sm" | "md" | "lg" | "xl" | "2xl").
+
+
+
+            
+
+          
+
+
+
+      
           
 
 
