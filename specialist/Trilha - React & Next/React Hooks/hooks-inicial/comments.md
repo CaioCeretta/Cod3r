@@ -200,6 +200,41 @@
           . Now typescript certainly knows that the hook returns an array of that type, with no ambiguous inference
           . It avoid assignments errors
 
+      ○ useStateValidate
+
+        ■ Development
+
+          □ This hook receive an initial value, which will be used to set the state valor, and a validationFunction. Every
+          time we update this `valor` we would like to execute this validationFunction. Which could be done through a useEffect
+          but the approach of using a setValorValidado state is the approach we choose to update both states at once.
+
+          □ It has a function setValorValidado, which receives a value, set the state value with it, and calls setValidado
+          state with the value returned by: setValidado(funcaoValidacao(novoValor))
+
+          □ In the end, it returns the valor state, the validado state and the setValorValidado function, that uses the
+          setValidado state, but we are not going to expose it
+
+        ■ Use
+
+          □ The hook will allow us to have a state and this state will also have a validation function that will be fired
+          every time we update the value of our state to see if this state is valid or not, according to some criteria.
+          Which will be defined in the `funcaoValidacao`
+
+          □ This hook will be used as an example inside "senha.tsx", the validation function passed as argument will check
+          if the function passed matches a simple regex of 8 characters
+
+            . Regex returns an array, so this function will validate if `correspondencia[0].length` is going to be equal
+            to be equal the length of the `senha` parameter.
+
+            .  `return correspondencia?.[0].length === senha.length` the ? will make the code to avoid errors in case
+            correspondencia has no matches
+
+            . destructure the three constants returned by useStateValidado, where the value, in the senha case, will be
+            the valor,   ,and the senhaEhValida will be the function to update the valor state in useStateValidado
+
+
+
+
 
   ● Object Keys
 
@@ -328,6 +363,7 @@
         }
 
         const [tamanho, largura] = useTamanho();
+
         
 
 
