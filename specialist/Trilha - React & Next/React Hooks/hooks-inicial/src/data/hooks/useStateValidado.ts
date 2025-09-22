@@ -8,9 +8,9 @@ export default function useStateValidado(
 	const [validado, setValidado] = useState(false);
 
 	function setValorValidado(novoValor: any) {
-		setValor(valor);
+		setValor(novoValor);
 		setValidado(funcaoValidacao(novoValor));
 	}
 
-	return [valor, validado, setValorValidado];
+	return [valor, setValorValidado, validado];
 }

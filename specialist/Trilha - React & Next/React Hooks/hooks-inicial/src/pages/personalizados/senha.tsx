@@ -9,20 +9,19 @@ export default () => {
     space, so it accepts even 12345678 */
     const correspondencia = senha.match(/[\d\S]{8,}/);
 
-    return correspondencia?.[0].length === senha.length
+    return correspondencia?.[0].length === senha.length;
   }
 
   const [senha, setSenha, senhaEhValida] = useStateValidado("", validaSenha);
 
-  let borda: string;
 
-  if (senha === '') {
-    borda = 'border-none'
-  } else if (senhaEhValida) {
-    borda = 'border-green-500'
-  } else if (!senhaEhValida) {
-    borda = 'border-red-500'
-  }
+  const borda =
+    senha === ""
+      ? "border-none"
+      : senhaEhValida
+        ? "border-green-500"
+        : "border-red-500";
+
 
   return (
     <Pagina
@@ -31,10 +30,10 @@ export default () => {
     >
       <InputFormatado
         valor={senha}
-        onInput={e => setSenha(e.target.value)}
+        onInput={(e) => setSenha(e.target.value)}
         label="Senha"
         tipo="text"
-        className={` ${borda} border-4 w-8 flex`}
+        className={`${borda} border-4 flex`}
       />
     </Pagina>
   );
