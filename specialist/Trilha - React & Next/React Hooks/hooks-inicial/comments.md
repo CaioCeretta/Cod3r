@@ -374,8 +374,8 @@
   
   ● Minified State Control
 
-    ■ To manage the `mini` variable of the `MenuPrincipal` component, which was once defaulted to false, we are going to
-    make use of the useToggle hook
+    ■ To manage the `mini` variable of the `MenuPrincipal` component sections, which was once defaulted to false, we are
+    going to make use of the useToggle hook
 
       □ useToggle has a state containing the state and its toggler, it "activates" on click, so we are going to use
       `[mini, setMini] = useToggle(false)` since it returns an array with the state value and the setter.
@@ -385,6 +385,14 @@
 
       □ The sections are going to have the mini state attached to it, and use a div after the Logo icon component, this
       div will hold the toggleMini function, which will collapse or expand the menu on click
+    
+    ■ Sections lessons minify
+
+      □ What defines if the section lessons are expanded or not, is the `aberta` property, so to fix this, we are going
+      to, instead of receiving the aberta as props, we are also going to use a useToggle hook to this
+
+      □ On the MenuPrincipalSecao component, that is rendered on each iteration of the renderizarSecoes component, we are
+      going to use the property aberta to manage this useToggle
 
 
 
