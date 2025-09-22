@@ -230,10 +230,8 @@
             correspondencia has no matches
 
             . destructure the three constants returned by useStateValidado, where the value, in the senha case, will be
-            the valor,   ,and the senhaEhValida will be the function to update the valor state in useStateValidado
-
-
-
+            the `valor`, the `senhaEhValida` will the `validado` state and `setSenha`, the `setValorValidado` function.
+            e.g. `const [senha, setSenha, senhaEhValida] = useStateValidado("", validaSenha)`;
 
 
   ● Object Keys
@@ -363,6 +361,35 @@
         }
 
         const [tamanho, largura] = useTamanho();
+
+  ● Borda not defined
+
+    ■ At one time in our code, we defined a variable `borda` but didn't assigned to it a value
+
+      □ Then, we created some ifs to assign some value to borda and used it on our className, but typescript added a red
+      squiggly line to the `borda` constant being used in the class because it said that it was being used before it was
+      assigned... Why this happened? 
+    
+    ■ Even though we defined the ifs to assign a value to borda, typescript couldn't be certain that borda 
+  
+  ● Minified State Control
+
+    ■ To manage the `mini` variable of the `MenuPrincipal` component, which was once defaulted to false, we are going to
+    make use of the useToggle hook
+
+      □ useToggle has a state containing the state and its toggler, it "activates" on click, so we are going to use
+      `[mini, setMini] = useToggle(false)` since it returns an array with the state value and the setter.
+
+      □ We are going to start it as false, and now we have `mini`, which is a controlled variable through our useToggle
+      hook. 
+
+      □ The sections are going to have the mini state attached to it, and use a div after the Logo icon component, this
+      div will hold the toggleMini function, which will collapse or expand the menu on click
+
+
+
+  ● Applying Hooks
+    
 
         
 
