@@ -3,13 +3,17 @@ import {
     IconArrowsLeftRight,
     IconDimensions,
     IconLetterCase,
+    IconLock,
     IconMathGreater,
     IconMenu,
+    IconMinus,
     IconNumbers,
     IconRefreshAlert,
     IconSettings,
     IconUsers,
+    IconX,
 } from "@tabler/icons-react";
+import useToggle from "@/data/hooks/useToggle";
 import type { MenuItem } from "../../data/models/MenuItem";
 import type { MenuSecao } from "../../data/models/MenuSecao";
 import Flex from "./Flex";
@@ -81,18 +85,25 @@ export default function MenuPrincipal() {
                     titulo: "Modal",
                     url: "/personalizados/modal",
                     tag: "Customs (useToggle)",
-                    icone: <IconAppWindow />
+                    icone: <IconAppWindow />,
                 },
                 {
                     titulo: "Tamanho Janela",
                     url: "/personalizados/tamanhoJanela",
                     tag: "Customs",
-                    icone: <IconDimensions />
-                }
-            ]
-        }
+                    icone: <IconDimensions />,
+                },
+                {
+                    titulo: "Validando Senha",
+                    url: "/personalizados/senha",
+                    tag: "Personalizados",
+                    icone: <IconLock />,
+                },
+            ],
+        },
     ];
-    const mini = false;
+    const [mini, toggleMini] = useToggle(false);
+
     function renderizarSecoes() {
         return secoes.map((secao: MenuSecao) => (
             <MenuPrincipalSecao
@@ -131,6 +142,9 @@ export default function MenuPrincipal() {
         >
             <Flex center className="m-7">
                 {!mini && <Logo />}
+                <div className="cursor-pointer" onClick={toggleMini}>
+                    {mini ? <IconMenu /> : <IconX />}
+                </div>
             </Flex>
             <nav className="flex flex-col gap-4 m-7">{renderizarSecoes()}</nav>
         </aside>
