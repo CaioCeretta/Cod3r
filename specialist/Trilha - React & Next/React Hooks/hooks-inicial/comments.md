@@ -370,34 +370,50 @@
       squiggly line to the `borda` constant being used in the class because it said that it was being used before it was
       assigned... Why this happened? 
     
-    ■ Even though we defined the ifs to assign a value to borda, typescript couldn't be certain that borda 
-  
-  ● Minified State Control
+    ■ Even though we defined the ifs to assign a value to borda, typescript couldn't be certain that borda has a value
 
-    ■ To manage the `mini` variable of the `MenuPrincipal` component sections, which was once defaulted to false, we are
+
+
+  ● Applying developed hooks
+
+      
+  ○ Minified State Control
+
+    ○ To manage the `mini` variable of the `MenuPrincipal` component sections, which was once defaulted to false, we are
     going to make use of the useToggle hook
 
-      □ useToggle has a state containing the state and its toggler, it "activates" on click, so we are going to use
+      ■ useToggle has a state containing the state and its toggler, it "activates" on click, so we are going to use
       `[mini, setMini] = useToggle(false)` since it returns an array with the state value and the setter.
 
-      □ We are going to start it as false, and now we have `mini`, which is a controlled variable through our useToggle
+      ■ We are going to start it as false, and now we have `mini`, which is a controlled variable through our useToggle
       hook. 
 
-      □ The sections are going to have the mini state attached to it, and use a div after the Logo icon component, this
+      ■ The sections are going to have the mini state attached to it, and use a div after the Logo icon component, this
       div will hold the toggleMini function, which will collapse or expand the menu on click
     
-    ■ Sections lessons minify
+    ○ Sections lessons minify
 
-      □ What defines if the section lessons are expanded or not, is the `aberta` property, so to fix this, we are going
+      ■ What defines if the section lessons are expanded or not, is the `aberta` property, so to fix this, we are going
       to, instead of receiving the aberta as props, we are also going to use a useToggle hook to this
 
-      □ On the MenuPrincipalSecao component, that is rendered on each iteration of the renderizarSecoes component, we are
+      ■ On the MenuPrincipalSecao component, that is rendered on each iteration of the renderizarSecoes component, we are
       going to use the property aberta to manage this useToggle
-
-
-
-  ● Applying Hooks
     
+  ○ useTamanhoJanela use
+
+    ■ Inside MenuPrincipal, we define a variable `tamanho`
+
+      □ We are going to use this to automatically define the mini value as true
+      □ Since mini is a state within useToggle, we need to be careful and prevent the multiple rerenders, and to it, we
+      are going to make use of useEffect
+
+    ■ useEffect to avoid multiple renders
+
+      □ Even though a logic could be simple as `if (tamanho === 'md' || tamanho === 'sm')`, there is a small issue with it.
+        . Our useToggle hook, only provides a function to invert the current state, and do not offer us some way for us to
+        set the variable as desired.
+
+
 
         
 
