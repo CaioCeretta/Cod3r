@@ -1,29 +1,38 @@
 import { IconMinus, IconPlus } from "@tabler/icons-react";
+import useToggle from "@/data/hooks/useToggle";
 import Flex from "./Flex";
 
 interface MenuSecaoProps {
-    titulo: string
-    mini: boolean
-    aberta: boolean
-    children: any
-    onClick?: () => void
+    titulo: string;
+    mini: boolean;
+    aberta: boolean;
+    children: any;
+    onClick?: () => void;
 }
 
 export default function MenuSecao(props: MenuSecaoProps) {
-    const { titulo, mini, aberta } = props;
+    const { titulo, mini } = props;
+    const [aberta, toggleAberta] = useToggle(props.aberta);
 
     return (
         <Flex col gap={4} className={`${mini && "items-center"}`}>
-            <button type="button"
+            <button
+                type="button"
                 className={`
                 flex items-center justify-between
                 text-zinc-400 uppercase font-bold 
                 ${mini && "text-[11px]"} cursor-pointer
-            `} onClick={() => props.onClick?.()}>
-                {mini ? titulo : (
+            `}
+                onClick={() => props.onClick?.()}
+            >
+                {mini ? (
+                    titulo
+                ) : (
                     <>
                         {titulo}
-                        {aberta ? <IconMinus size={15} /> : <IconPlus size={15} />}
+                        <button onClick={toggleAberta} type="button">
+                            {aberta ? <IconMinus size={15} /> : <IconPlus size={15} />}
+                        </button>
                     </>
                 )}
             </button>

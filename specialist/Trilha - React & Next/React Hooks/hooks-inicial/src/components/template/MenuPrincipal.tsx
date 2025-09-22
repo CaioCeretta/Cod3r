@@ -142,9 +142,20 @@ export default function MenuPrincipal() {
         >
             <Flex center className="m-7">
                 {!mini && <Logo />}
-                <div className="cursor-pointer" onClick={toggleMini}>
+                {/* <button type="button" onClick={toggleMini}>
+                    <div className="cursor-pointer">
+                        {mini ? <IconMenu /> : <IconX />}
+                    </div>
+                </button> 
+                
+                or we can use just the button and remove the default stylings to look more like a div*/}
+                <button
+                    type="button"
+                    onClick={toggleMini}
+                    className="cursor-pointer bg-transparent border-none p-0 m-0"
+                >
                     {mini ? <IconMenu /> : <IconX />}
-                </div>
+                </button>
             </Flex>
             <nav className="flex flex-col gap-4 m-7">{renderizarSecoes()}</nav>
         </aside>
