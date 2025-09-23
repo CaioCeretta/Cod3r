@@ -13,6 +13,9 @@ import {
     IconUsers,
     IconX,
 } from "@tabler/icons-react";
+import { useEffect } from "react";
+import useBoolean from "@/data/hooks/useBoolean";
+import useTamanhoJanela from "@/data/hooks/useTamanhoJanela";
 import useToggle from "@/data/hooks/useToggle";
 import type { MenuItem } from "../../data/models/MenuItem";
 import type { MenuSecao } from "../../data/models/MenuSecao";
@@ -102,7 +105,19 @@ export default function MenuPrincipal() {
             ],
         },
     ];
-    const [mini, toggleMini] = useToggle(false);
+    const [mini, toggleMini, miniTrue, miniFalse] = useBoolean();
+
+    const tamanho = useTamanhoJanela();
+
+    //sm md
+    useEffect(() => {
+        if (tamanho === "md" || tamanho === "sm") {
+            // set mini as true
+            miniTrue();
+        } else {
+            miniFalse();
+        }
+    }, [tamanho, miniTrue, miniFalse]);
 
     function renderizarSecoes() {
         return secoes.map((secao: MenuSecao) => (
