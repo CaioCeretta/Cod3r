@@ -411,7 +411,13 @@
 
       □ Even though a logic could be simple as `if (tamanho === 'md' || tamanho === 'sm')`, there is a small issue with it.
         . Our useToggle hook, only provides a function to invert the current state, and do not offer us some way for us to
-        set the variable as desired.
+        set the variable as desired and set mini as true
+
+        . This is a problem that we will solve by creating a new useBoolean hook, similar to useToggle hook, this, in turn,
+        instead of returning a function that simply inverts the state, it will now return two new functions to set the state
+        as true or false
+
+        . Invoke this function to define if mini is true or mini is false on useEffect
 
 
 
