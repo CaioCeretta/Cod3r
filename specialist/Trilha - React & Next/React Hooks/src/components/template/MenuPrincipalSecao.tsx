@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import useBoolean from "@/data/hooks/useBoolean";
 import useToggle from "@/data/hooks/useToggle";
@@ -17,14 +18,12 @@ export default function MenuSecao(props: MenuSecaoProps) {
 
     return (
         <Flex col gap={4} className={`${mini && "items-center"}`}>
-            <button
-                type="button"
+            <div
                 className={`
                 flex items-center justify-between
                 text-zinc-400 uppercase font-bold 
                 ${mini && "text-[11px]"} cursor-pointer
             `}
-                onClick={() => props.onClick?.()}
             >
                 {mini ? (
                     titulo
@@ -36,7 +35,7 @@ export default function MenuSecao(props: MenuSecaoProps) {
                         </button>
                     </>
                 )}
-            </button>
+            </div>
             {aberta && (
                 <Flex col gap={1.5}>
                     {props.children}

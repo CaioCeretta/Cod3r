@@ -6,17 +6,16 @@ import {
     IconLock,
     IconMathGreater,
     IconMenu,
-    IconMinus,
     IconNumbers,
     IconRefreshAlert,
     IconSettings,
+    IconShoppingCart,
     IconUsers,
     IconX,
 } from "@tabler/icons-react";
 import { useEffect } from "react";
 import useBoolean from "@/data/hooks/useBoolean";
 import useTamanhoJanela from "@/data/hooks/useTamanhoJanela";
-import useToggle from "@/data/hooks/useToggle";
 import type { MenuItem } from "../../data/models/MenuItem";
 import type { MenuSecao } from "../../data/models/MenuSecao";
 import Flex from "./Flex";
@@ -101,6 +100,18 @@ export default function MenuPrincipal() {
                     url: "/personalizados/senha",
                     tag: "Personalizados",
                     icone: <IconLock />,
+                },
+            ],
+        },
+        {
+            titulo: "Contextos",
+            aberta: true,
+            itens: [
+                {
+                    titulo: "Loja",
+                    url: "/contexto/loja",
+                    tag: "useContext",
+                    icone: <IconShoppingCart />,
                 },
             ],
         },

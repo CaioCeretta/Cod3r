@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/noLabelWithoutControl: <explanation> */
 interface InputFormatadoProps {
     label?: string;
     tipo: string;

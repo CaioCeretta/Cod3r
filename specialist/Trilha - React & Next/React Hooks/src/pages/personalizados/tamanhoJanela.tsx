@@ -15,8 +15,6 @@ export default function () {
           lg:bg-green-400
           xl:bg-purple-400
           2xl:bg-orange-400`}>
-
-
       </div>
 
     </Pagina>
