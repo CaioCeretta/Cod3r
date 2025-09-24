@@ -486,6 +486,45 @@
         component would basically be a 'fill' component which has the only task of centralizing the states and prop drill
         them across the app.
 
+        □ This approach can also lead to another problems, such as if in some moment, we choose to change the way some
+        of the components are structured, which would need to do look across all the components, and make changes to fit
+        in the new structure we moved to. Which will also increase the complexity and make it difficult to maintain.
+
+        □ Another problem is when the information a child received from its parent, needs also to be shared to this
+        component siblings.
+          . Let's use <Comp2> component which returns:
+            ```ts
+              function Comp2(props) {
+                <Flex col gap={4}>
+                  <Comp1 carrinho={props.carrinho} />
+                  <Carrinho carrinho={props.carrinho} />
+                </Flex>
+              }   
+          ```
+
+          . Comp1 could need something defined in the Carrinho, and the Carrinho might also need some state defined in
+          Comp1. In this case, we would need to do a workaround of passing information to the parent and having it to
+          store information that are not even relevant to it, but are information that will be necessary to allow this
+          hypothetical communication, and so on. This is another thing that would complicate the app and add unnecessary
+          complexity to it. 
+        
+        □ Therefore, we should always look for ways to minimize the amount of code we write in, and look for avoiding
+        unnecessary code.
+
+        □ And the best solution to fix all of this, is using useContext 
+      
+      ■ useContext is a hook in react that allows us to provide functionalities across multiple different components.
+      Therefore, through useContext, we can make that one component store a list of information, which in turn can be
+      a list of variables, functions, and so on.
+
+        □ And we are going to be able to create a Component that will store this information and provide them to other
+        components. 
+
+        
+        
+          
+
+
 
 
 
