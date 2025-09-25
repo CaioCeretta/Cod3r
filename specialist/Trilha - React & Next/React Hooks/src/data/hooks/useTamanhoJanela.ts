@@ -37,8 +37,6 @@ export default function useTamanhoJanela() {
 		"2xl": entre(1536, Number.MAX_VALUE),
 	};
 
-	console.log(dimensoes);
-
 	const tamanhoVerdadeiro = Object.entries(dimensoes).filter((el) => el[1]);
 
 	return tamanhoVerdadeiro[0]?.[0];

@@ -23,11 +23,10 @@ export default function () {
 	/* With an empty dependency array, this fetch happens only once*/
 	useEffect(() => {
 		fetch("https://dog.ceo/api/breeds/image/random")
-		.then((data) => data.json())
-		.then((obj) => {
-			console.log(obj)
-			setUrl(obj.message)
-		});
+			.then((data) => data.json())
+			.then((obj) => {
+				setUrl(obj.message)
+			});
 	}, [])
 
 	return (
