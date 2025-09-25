@@ -520,7 +520,108 @@
         □ And we are going to be able to create a Component that will store this information and provide them to other
         components. 
 
+        □ Therefore, on top of our default function, we are going to create a context and assign it to a `Contexto` const.
+
+      □ As the argument, we are going to pass the initial interface that represents this context, we can and should create
+      an interface to represent its keys and types, but we are going to initialize it empty with `{} as any`
+
+        . This approach of creating it empty, which is able to receive an object with any keys and values, since by typing it as
+        any, typescript turns off the typing system and won't validate anything. Therefore, it's advised to avoid typing
+        anything as any and use as many type guards as possible.
+    
+      □ With the context created and assined to this context, but how are we going to make this context to store our
+      `carrinho` and `setCarrinho` created with useState and allow it to be available on other places? 
+
+        . After a context is created we have to provide this context to the other components, and we need to show to
+        the other componentes that this context is available and can be accessed.
+
+      □ <ContextName.Provider> component: This component is our is as it name says, the provider of our context, and it
+      will encapsulate our Pagina component, which means that it will be used to provide our context, and our context is
+      that constand we just assigned createContext to
+
+        . In ContextName.Provider, the ContextName is simply the one we used to assign our createContext() to, so if it
+        was Blablabla = createContext, the provider will be named as Blablabla.Provider
+
+        . The provider will make the context state available to all its child components. No matter how inside of the tree
+        it its, if it is a child of a child of a child, that is wrapped with the provider, will know its state. The only
+        thing we will need to do is to "ask" the provider for these variables
+
+        . The context is there, it is wrapping, but if a component wrapped by it, choose to no call any provided constant,
+        it can.
+
+      □ Context.Provider value property
+
+        . We have defined, when creating the context, the shape it should have — in our case, an object with no particular
+        keys and types — the value property, needs to fit this initial context structure.
+
+        . Since we have an empty object with no defined structure, we are going to create the carrinho and setCarrinho with
+        useState, and provide them by returning them as a value, e. g.
+
+        ```ts
+          export const Contexto = createContext({} as any);
+
+          const [carrinho, setCarrinho] = useState([])
+
+          const ctx = { carrinho, setCarrinho }
+
+          return (
+            <Contexto.Provider value={obj}>
+          )
+        ```
+        . With all the internal components "aware" of the context state, they can all share the same state
+
+  ● Using useContext hook inside child components
+
+    ○ Carrinho component
+      ■ For example, in the carrinho component, we simply use `const [carrinho, setCarrinho] = useContext(Contexto)`
+
+      ■ Since we can have multiple Providers wrapping a single component that it would like to share its state, we
+      have to inform which context we want through useContext 
+
+      ■ To alter the context state, since we are receiving and using the state provided by it, if we change it, it
+      the change will be shared across all components
+    
+    ○ AddProduct component
+
+      ■ The add product also receives the carrinho and the setCarrinho, the adicionar function will add products with the
+      id based on the carrinho.length
+
+      ■ The quantidade and preco inputs, are going to have within the onInput function, a + before the e.target.value so
+      they are immediately converted for numerical values
+
+
         
+
+  ● console.table inside arrays
+
+    ○ We used console.table when creating inside the `adicionar` function, and what is difference between console.log and
+    console.table? 
+
+      ■ console.table(carrinho) get the current value of the carrinho state and by the time this function runs.
+      ■ Since `carrinho` is an array of products, console.table will show this array in the shape of a table
+
+        □ With each line of the table corresponding to an index of the array
+        □ Each column corresponmd to the key/properties inside the array (ex: nome, preço, quantidade, etc)
+      
+      ■ If the elements are only primitive values like 1, 2, 3, the table will have a column named Values
+      ■ If they are objects, the table will have columns for each object property, which eases the reading comparing to
+      console.log
+
+    ○ Why on the first submit on the add product to cart function, this console.error shown an empty value?
+
+      ■ The simple reason is because when the console.error was displayed, since the console.table is part of the same rendering,
+      when the carrinho state caused a new render on the page, the console was already displayed
+
+      ■ As soon as we create a useEffect, the will run on every `carrinho` change, if we console.table inside this useEffect
+      we are going to be able to see it updating
+
+
+
+
+
+
+
+
         
           
 
