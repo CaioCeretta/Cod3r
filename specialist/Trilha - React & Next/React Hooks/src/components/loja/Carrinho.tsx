@@ -1,18 +1,25 @@
+import { useContext } from "react";
+import { Contexto } from "@/pages/contexto/loja";
 import Janela from "../template/Janela";
 
 export default function Carrinho() {
-    const produtos = [{
+    const { carrinho, setCarrinho } = useContext(Contexto);
+
+    const produtos = [
+        {
             id: 1,
             nome: "Produto 1",
             quantidade: 2,
-            preco: 10.00,
-        }, {
+            preco: 10.0,
+        },
+        {
             id: 2,
             nome: "Produto 2",
             quantidade: 20,
-            preco: 20.00,
-        }];
-    let total = produtos.reduce((acc, produto) => acc + +produto.preco, 0);
+            preco: 20.0,
+        },
+    ];
+    const total = produtos.reduce((acc, produto) => acc + +produto.preco, 0);
     return (
         <Janela titulo="Carrinho" cor="bg-green-700" vertical>
             <div className="overflow-y-auto relative max-h-60 h-fit min-w-full">
@@ -37,11 +44,11 @@ export default function Carrinho() {
                     </tbody>
                 </table>
             </div>
-                <div className="text-2xl">
-                    <span>
-                        Total: <strong>{total}</strong>
-                    </span>
-                </div>
+            <div className="text-2xl">
+                <span>
+                    Total: <strong>{total}</strong>
+                </span>
+            </div>
         </Janela>
     );
 }
