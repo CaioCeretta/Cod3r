@@ -10,9 +10,16 @@ export const Contexto = createContext({} as any);
 
 export default function () {
 
-  const [carrinho, setCarrinho] = useState([])
+  const [carrinho, setCarrinho] = useState<any>([])
 
-  const ctx = { carrinho, setCarrinho }
+
+  const ctx = {
+    carrinho,
+    setCarrinho,
+    total() {
+      return carrinho.reduce((acc: any, produto: any) => acc + (produto.preco * produto.quantidade), 0);
+    }
+  }
 
   return (
     <Contexto.Provider value={ctx}>

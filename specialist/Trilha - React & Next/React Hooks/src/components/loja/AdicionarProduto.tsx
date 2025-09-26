@@ -8,7 +8,7 @@ import Janela from "../template/Janela";
 export default function AdicionarProduto() {
 
     const [quantidade, setQuantidade] = useState<number>(0)
-    const [preco, setPreco] = useState(1.99);
+    const [preco, setPreco] = useState<number>(1.99);
 
     const { carrinho, setCarrinho } = useContext(Contexto);
 
@@ -17,7 +17,7 @@ export default function AdicionarProduto() {
         const produto = {
             id: sequencia,
             nome: `Produto ${sequencia}`,
-            quantidade: setQuantidade((prev) => prev + 1),
+            quantidade: quantidade,
             preco: preco,
         };
         setCarrinho((carrinhoAtual: any) => [...carrinhoAtual, produto])
