@@ -570,6 +570,19 @@
         ```
         . With all the internal components "aware" of the context state, they can all share the same state
 
+  ● Applying Contexts
+
+    ○ SeletorDeCor component
+
+      ■ This component will have a `cores` array, which multiple tailwind color classes and based on clicks, the color
+      will be applied as the default color of our project
+
+      ■ It will have a listaCores constant which will map over all the colors in that array, and return a Button for each
+      one of them.
+
+       
+
+
   ● Using useContext hook inside child components
 
     ○ Carrinho component
