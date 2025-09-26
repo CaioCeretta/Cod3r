@@ -590,7 +590,15 @@
       they are immediately converted for numerical values
 
 
-        
+  ● Arrays, when we want them to be exactly as the state, which returns an array, we simple use the spread operator, so if
+  the state carrinho is an array and we want to replicate this state, we use [...carrinho]     
+
+  ● Calculating cart total
+
+    ○ Total was once being calculated on the Carrinho component, but now we are going to move it to the context file.
+
+      ■ Once inside `loja.tsx`, we are going to add a new property to the ctx that will be returned as a value, where it
+      is a function that will run a reduce over the `carrinho` state, which holds the cart items, and sum all prices.
 
   ● console.table inside arrays
 
@@ -614,6 +622,7 @@
 
       ■ As soon as we create a useEffect, the will run on every `carrinho` change, if we console.table inside this useEffect
       we are going to be able to see it updating
+  
 
 
 
