@@ -580,8 +580,39 @@
       ■ It will have a listaCores constant which will map over all the colors in that array, and return a Button for each
       one of them.
 
-       
+      ■ Define a variable in the `Cabecalho`, assigning to it if the button for SelectorComponent is visible or not
 
+    ○ Context to store the  theme
+
+      ■ Now that we have the SeletorCor component, and its buttons on the Cabecalho, we are going to create the context
+      that will store its value
+
+      ■ The context will be named `TemaProvider`, and why not `ContextoTema`? 
+
+        □ The reason is because inside this `data/context` folder we are going to have tsx components, they will share the
+        context but will have as their export the context provider allowing it to be directly imported in the main component.
+
+        □ Different from the context we have created for `loja`, instead of in the tsx component, the Provider being returned
+        directly as default, we are going to create a `TemaProvider` function
+
+        □ We now create a corDestaque state and initialize it with one of the colors defined in the `SeletorDeCor` comp.
+
+        □ Since the SeletorDeCor component returns multiple buttons with the defined colors. Instead of using this cores
+        state inside it, we are going to move it to the TemaProvider context. And we now initialize the corDestaque state
+        with the first index of the array
+
+        □ Inside the `TemaProvider` function, we return ContextoTema.Provider, passing the colors and the state as its
+        values, so that its children know about the theme.
+
+      ■ Exporting the Contexto as default and not the function
+
+        □ Inside the TemaProvider, we were used to, in contexts, returning an object as default with all the functions and
+        values we want. However, in this case, we created the context, and below it, we created at TemaProvider function,
+        which we didn't export, with the values, functions, and simply return the ContextoTema.Provider
+
+        □ After the definition of the function, we export the Context as default, and export the provider as a named export
+        
+         
 
   ● Using useContext hook inside child components
 
