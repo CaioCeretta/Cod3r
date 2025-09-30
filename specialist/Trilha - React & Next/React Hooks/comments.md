@@ -611,8 +611,18 @@
         which we didn't export, with the values, functions, and simply return the ContextoTema.Provider
 
         □ After the definition of the function, we export the Context as default, and export the provider as a named export
-        
-         
+
+      ■ Why was the strategy different from the loja context? 
+
+         □ Instead of returning a component (provider) with the `children` inside of it, we are returning a component in
+         a way it can receive children later
+
+         □ Since the ContextoLoja, in the its default return, it had already established which will be the children of
+         that context, on the TemaContexto case, by wrapping a {props.children} with the Provider, will make the code more
+         flexible. Being able to be reused across the app, more scalable and with a more separation of concerns.
+
+
+
 
   ● Using useContext hook inside child components
 
