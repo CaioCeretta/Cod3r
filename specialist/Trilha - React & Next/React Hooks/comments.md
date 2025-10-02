@@ -621,9 +621,115 @@
          that context, on the TemaContexto case, by wrapping a {props.children} with the Provider, will make the code more
          flexible. Being able to be reused across the app, more scalable and with a more separation of concerns.
 
+    ○ useTema hook
+
+      ■ useTema hook will be used for encapsulating the access logic of our context.
+
+      ■ We are going to have a function named useTema which will return the useContext passing the contexto tema as argument
+        □ This function will be returned as default. With this custom hook, we are able to extract and minimize our work
+        when using the context on the components since this function already encapsulates the useContext logic and importing
+        the context.
+
+      ■ So recapping. we have the TemaProvider component, where we create our context and return in a function named
+      `TemaProvider` a provider component of the context we created.
+
+        □ This component may receive children, and these children are going to be wrapped with our provider, 
+
+    ○ If only the context is used with useContext, why do we also need to export the provider?
+
+      ■ There is a reason for the Provider to be exported along with the context,  
+
+        □ 1. Context vs Provider — two different roles
+
+          . `Context` (the thing we pass into useContext): When we want to consume the value we use something as
+          `const {corDestaque} = useContext(ContextoTema). It is a reader of the context
+
+          . `Provider`: is the writer of the context
+
+          They complement each other
+
+        □ 2. Why export both and not just the context? 
+
+          . We need the provider to wrap our app, usually at the root or around specific features
+          . We need the context itself for useContext in our child components
+
+          That's why both are expected
+
+          . Consumers import the context
+          . The app root (higher-level) imports the provider.
+
+        □ 3. Why not only export the context?
+
+          . Because then we'd have to write the Provider inline everywhere we want to wrap things. That means repeating
+          the state setup (useState, cores, etc.) every time.
+          By creating and exporting TemaProvider, we encapsulate all that boilerplate in one place.
+
+    ○ Summary
+
+      ■ We have the TemaProvider component where we create our context and return in a function named TemaProvider a context
+      provider component
+
+      ■ This component may receive children, which are going to be wrapped with our provider, and when we call the TemaProvider
+      component and pass child components to it, those children will be wrapped by this provider.
+
+      ■ We also created the useTema hook to create the context invocation logic.
+
+      ■ To provide this theme to our application, we move into `_app.tsx` and wrap our Component component with our
+      TemaProvider
+
+    ○ Applying `useTema`
+
+      ■ Inside Logo component, import the corDestaque from useTema, and since Logo is going to be a children of ContextoTema,
+      we can use the corDestaque, that the context provides to us, and change wherever we have a hardcoded bg-color, change
+      this color to the corDestaque returned by the context
+
+      ■ There are other places where this state color should be used, `MenuPrincipalItem` link's color also need to be
+      dynamic to the theme color
+
+      ■ setCorDestaque implementation code
+
+        □ SeletorDeCor component has all the colors constant returned by useTema and returns a button for each one of them
+        □ SeletorDeCor is used in the `Cabecalho` whenever the user clicks the paint brush
+        □ Inside SeletorDeCor, on the button click, implement the method to set the global state with the clicked color
 
 
 
+
+    ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
+
+      ■ They are similar in function but with some important differences
+
+      ■ _app.tsx (pages router (legacy))
+        □ Controls how every page is rendered
+        □ Is placed in /pages/_app.tsx
+        □ Used for providers and global CSS 
+        □ Does not have suported to nested layouts
+
+      ■ layout.tsx (App router (new))
+        □ Partially replaces the role of the _app.tsx
+        □ It is inside any route folder inside app/
+        □ Define a persistent layout — one that does recreated from scratch every time the user navigates between folders
+        and keep mounted on React's component tree while only the internal content changes — for that route
+        □ Can be nested — any folder can have its own
+        □ Always involves the `page.tsx` from that folder
+
+      ■ The differences are
+
+        □ Placement
+          - _app.tsx: Unique, inside pages/
+          - layout.tsx: Can have multiple, one for each folder inside app/
+
+        □ Flexibility:
+          - _app.tsx: one global layout
+          - layout.tsx: nested layouts for specific routes
+
+        □ Rendering:
+          - _app.tsx: runs on the client and on the server
+          - layout.tsx: by default it is a server component, which is more secure and performatic
+
+      ■ Layout.tsx is the modern evolution of _app.tsx, it became more powerful because there can be one for each section,
+      with no need to logic repetition. 
+           
   ● Using useContext hook inside child components
 
     ○ Carrinho component
