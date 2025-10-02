@@ -7,7 +7,7 @@ export function TemaProvider(props: any) {
 
   const cores = [
     "blue-500",
-    "red-400",
+    "red-500",
     "pink-500",
     "orange-500",
     "green-500",

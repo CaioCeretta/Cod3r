@@ -2,6 +2,7 @@ import { IconCode } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { ReactElement } from "react";
+import useTema from "@/data/hooks/useTema";
 
 interface MenuItemProps {
     icone?: ReactElement;
@@ -12,6 +13,8 @@ interface MenuItemProps {
 }
 
 export default function MenuItem(props: MenuItemProps) {
+    const { corDestaque } = useTema();
+
     const { icone, titulo, tag, url, mini } = props;
 
     const router = useRouter();
@@ -24,7 +27,7 @@ export default function MenuItem(props: MenuItemProps) {
             className={`
             flex items-center gap-2 text-zinc-400 rounded-md
             hover:bg-zinc-800 px-3 py-2
-            ${ativo && `text-blue-500 bg-zinc-900`}
+            ${ativo && `text-${corDestaque}-500 bg-zinc-900`}
         `}
         >
             {icone ?? <IconCode />}
@@ -32,7 +35,7 @@ export default function MenuItem(props: MenuItemProps) {
             {!mini && tag && (
                 <span
                     className={`
-                    ${ativo ? `bg-blue-500` : "bg-zinc-700"}
+                    ${ativo ? `bg-${corDestaque}-500` : "bg-zinc-700"}
                     text-white text-[11px] rounded-full px-2
                 `}
                 >
