@@ -692,8 +692,28 @@
         □ SeletorDeCor is used in the `Cabecalho` whenever the user clicks the paint brush
         □ Inside SeletorDeCor, on the button click, implement the method to set the global state with the clicked color
 
+    ○ Contexto Menu
 
+      ■ First of all, we will start by extracting the codes inside MenuPrincipal, which are not concern of the page exactly
+      so the useBoolean, useToggle, useMini hooks, are going to be placed inside the context where we will share the state
 
+        □ This is a good example of separation of concerns and reusability of logic, because:
+
+            1. Initial component (MenuPrincipal): It mixed the view logic (what to render) with the state/behavior
+            logic (hooks) 
+
+            2. Context creation: By creating a context and moving these hooks inside it, we are:
+                 - Centralizing State: The whole state logic and the functions to modify it, live in one place, the Context's
+                Provider 
+
+                - Decoupling logic: You remove the direcrt state logic from MenuPrincipal (or other components that used
+                it), making it a ¨dumber" componeent or presentional component, focused only on the way that the UI looks
+                like
+
+                - Sharing the state: Any component in the tree that is below the context provider, will be able to consume
+                the state and the functions, with no need to prop drill or having MenuPrincipal high up in the tree
+
+      ■ Now that we have our ContextoMenu, first we move all the hooks for the context, 
 
     ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
 
