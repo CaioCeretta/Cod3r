@@ -116,19 +116,7 @@ export default function MenuPrincipal() {
             ],
         },
     ];
-    const [mini, toggleMini, miniTrue, miniFalse] = useBoolean();
 
-    const tamanho = useTamanhoJanela();
-
-    //sm md
-    useEffect(() => {
-        if (tamanho === "md" || tamanho === "sm") {
-            // set mini as true
-            miniTrue();
-        } else {
-            miniFalse();
-        }
-    }, [tamanho, miniTrue, miniFalse]);
 
     function renderizarSecoes() {
         return secoes.map((secao: MenuSecao) => (
