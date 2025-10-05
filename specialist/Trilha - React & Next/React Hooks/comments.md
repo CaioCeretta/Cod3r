@@ -713,7 +713,30 @@
                 - Sharing the state: Any component in the tree that is below the context provider, will be able to consume
                 the state and the functions, with no need to prop drill or having MenuPrincipal high up in the tree
 
-      ■ Now that we have our ContextoMenu, first we move all the hooks for the context, 
+      ■ Now that we have our ContextoMenu, first we move all the hooks for the context, and we also move the secoes for
+      its own context secoes file, which will be imported by the MenuProvider and provided by it.
+        □ Since we are not importing the mini and the toggleMini from its respective context, they are now going to be
+        centralized and exported by this context
+
+      ■ By extracting those functions from the context, there will be no need for changes on the code, it will continue
+      working as it was before.
+
+    ○ Extracting the logic from MenuPrincipalItem
+
+      ■ Inside `MenuPrincipalItem` component, we have a specific logic where we highlight the selected component. This
+      is made by the following steps
+
+        □ The components are created by iterating over the itens attributes inside each secao
+        □ Each secao has a url attribute, e.g. "/personalizado/modal", and this is the "path" of the route
+        □ Inside MenuPrincipalItem component, we define a router, which is equal to useRouter returned by next/router
+        and assigning to a ativo constant the comparison of the router.asPath (which holds the current browser path)
+        and the url used on this secao item
+        □ Then, after defining the ativo constant, inside each returned item, on the Link className we check if ativo
+        is true, and assign to it the text color as the one defined by the theme as the highlight color
+
+    
+
+
 
     ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
 
