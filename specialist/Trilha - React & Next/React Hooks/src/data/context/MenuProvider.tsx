@@ -1,13 +1,12 @@
 import { createContext, useEffect } from "react";
+import secoes from "../constants/secoesMenu";
 import useBoolean from "../hooks/useBoolean";
 import useTamanhoJanela from "../hooks/useTamanhoJanela";
 
 const ContextoMenu = createContext({} as any);
 
-
 export function MenuProvider(props: any) {
-
-  const [mini, toggleMini, miniTrue, miniFalse] = useBoolean();
+  const [mini, toggleMini, miniTrue] = useBoolean();
 
   const tamanho = useTamanhoJanela();
 
@@ -16,13 +15,13 @@ export function MenuProvider(props: any) {
     if (tamanho === "md" || tamanho === "sm") {
       // set mini as true
       miniTrue();
-    } else {
-      miniFalse();
     }
-  }, [tamanho, miniTrue, miniFalse]);
+  }, [tamanho, miniTrue]);
+
+  const ctx = { secoes, mini, toggleMini }
 
   return (
-    <ContextoMenu.Provider value={{ secoes }}>
+    <ContextoMenu.Provider value={ctx}>
       {props.children}
     </ContextoMenu.Provider>
   );
