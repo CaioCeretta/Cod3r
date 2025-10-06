@@ -105,4 +105,4 @@ const secoes = [
   },
 ];
 
-export default secoes
+export { secoes }
