@@ -734,8 +734,71 @@
         □ Then, after defining the ativo constant, inside each returned item, on the Link className we check if ativo
         is true, and assign to it the text color as the one defined by the theme as the highlight color
 
-    
+      ■ One thing we can notice about this logic, is that even we expand a menu, or minify it, by clicking in any other
+      item we are going to be resetted to the initial state (e.g., if one `secao` is defined with the aberta property
+      as false, by maxizing it, and choosing any item on the sidebar, it will be automatically minimized).
+        □ So the examples in the `contexto` and `personalizado` secao they are set to aberta but in the `essenciais`
+        section is closed, if we maximize essenciais, and choose any item from any secao, `essenciais` will minimize
+        again. This will be solved with the context
 
+      ■ We are now going to move the router logic for the MenuProvider and refactor the logic. Inside the router hook, we
+      have the current path for the page we are in, and inside the provider we are going to create this respective logic
+        □ 
+          ```ts
+              function selecionarItens(url: string) {
+                const novasSecoes = secoes.map((secao) => {
+                  const novosItens = secao.itens.map((item) => {
+                    return {
+                      ...item,
+                      selecionado: item.url === url,
+                    };
+                    });
+
+                    return novosItens;
+                  });
+
+                  return novasSecoes;
+                }
+            ```
+
+          □  What this logic is doing is, it is creating a selecionarItens which receive the current url on the string,
+          the one we are going to pass in, map over the secoes array, and for each sessao being iterated, map over it
+          to fetch its items. Then, when iterating over, each item will have its url attribute, which will be checked
+          if this url matches the function parameter, then, assign to the object returned by the map, the selecionado
+          attr as true or false.
+
+        ■ And finally, we are going to create another useEffect will watch for updates on our url through `router.asPath`
+        and everytime the router.asPath change, we will select a new item and update our `secoes`
+
+          □ If we want our `secoes` to be updated, we can't simply import them with ES6 Import statement, we are going to
+          need a state that represent our secoes
+            . If we are willing to use another name for the secoes, named export as secoes, with other name, we must
+            wrap it on curly braces, and use {secoes as desiredName}
+            . since secoes is a default export, it won't understand this named import, so we have to, inside the secoes,
+            instead of exporting it as default, export it as a named object
+            . And the reason for this transformation is simple, we can't alter the constants inside a file that was imported
+            from the outside, we need to turn this into a state, so we can manipulate it inside the provider.
+        
+        ■ Now that we imported secoes with the alias s, and created a state which will hold this value, we are going to
+        use it inside our second use effect for when the route is changed
+        
+          □ Now, we call the setSecoes using the selecionarItem function just created and pass to it the new route
+            ** My Note **
+              . One thing the code warned me but did not warn the instructor, since she is not using any linter, is the
+              fact that selecionarItem should be inside useEffect dependency array, since the linter doesn't know that
+              this function will never change.
+              However, by adding it to the dependency array, the linter will now say that this function will be rendered
+              every time the component re-renders, so to fix this, i used the useCallback function and assigned
+              the selecionarItem function to it.
+
+        ■ We are now able to identify which is the selected item, map over it, and return a new object with all the
+        existing properties but adding a new selecionado property for it
+
+        ■ We now return to our MenuPrincipal and where we call the MenuPrincipalItem component, we pass the selecionado
+        property defined in our model which wasn't being passed until now
+          
+
+        
 
 
     ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
