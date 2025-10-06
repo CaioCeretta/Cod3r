@@ -1,6 +1,5 @@
 import { IconCode } from "@tabler/icons-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import type { ReactElement } from "react";
 import useTema from "@/data/hooks/useTema";
 
@@ -10,15 +9,13 @@ interface MenuItemProps {
     tag?: string;
     url: string;
     mini?: boolean;
+    selecionado?: boolean | undefined
 }
 
 export default function MenuItem(props: MenuItemProps) {
     const { corDestaque } = useTema();
 
     const { icone, titulo, tag, url, mini } = props;
-
-    const router = useRouter();
-    const ativo = url === router.asPath;
 
     return (
         <Link
