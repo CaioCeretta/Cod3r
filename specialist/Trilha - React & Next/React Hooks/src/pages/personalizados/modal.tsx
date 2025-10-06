@@ -7,8 +7,6 @@ import useToggle from "@/data/hooks/useToggle";
 
 export default function () {
   const [mostrar, toggleMostrar] = useToggle(false);
-  const [tamanho] = useTamanhoJanela();
-
   return (
     <Pagina
       titulo="Modal"
