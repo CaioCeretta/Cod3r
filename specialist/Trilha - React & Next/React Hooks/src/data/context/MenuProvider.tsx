@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import { useRouter } from "next/router";
 import { createContext, useCallback, useEffect, useState } from "react";
 import { secoes as s } from "../constants/secoesMenu";
@@ -8,7 +9,7 @@ const ContextoMenu = createContext({} as any);
 
 export function MenuProvider(props: any) {
   const [mini, toggleMini, miniTrue] = useBoolean();
-  const [secoes, setSecoes] = useState<any>(s)
+  const [secoes, setSecoes] = useState<any>(s);
 
   const tamanho = useTamanhoJanela();
 
@@ -22,27 +23,19 @@ export function MenuProvider(props: any) {
     }
   }, [tamanho, miniTrue]);
 
+  useEffect(() => {
+    setSecoes(() => selecionarItem(router.asPath));
+  }, [router.asPath]);
 
-
-  const selecionarItem = useCallback((url: string) => {
+  function selecionarItem(url: string) {
     const novasSecoes = secoes.map((secao: any) => {
       const novosItens = secao.itens.map((item: any) => {
-        return {
-          ...item,
-          selecionado: item.url === url,
-        };
+        return { ...item, selecionado: item.url === url };
       });
-
-      return novosItens;
+      return { ...secao, itens: novosItens };
     });
-
     return novasSecoes;
-  }, [secoes])
-
-  useEffect(() => {
-    setSecoes(() => selecionarItem(router.asPath))
-  }, [selecionarItem, router.asPath])
-
+  }
 
   const ctx = { secoes, mini, toggleMini };
 
