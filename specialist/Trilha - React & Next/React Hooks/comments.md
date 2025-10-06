@@ -794,8 +794,13 @@
         ■ We are now able to identify which is the selected item, map over it, and return a new object with all the
         existing properties but adding a new selecionado property for it
 
+        ■ Since we are encapsulating the whole app with this MenuProvider, whenever we access any route, this useEffect
+        will be fired, and one object will be returned with selecionado being true, and since selecionado is optional
+        it will work as expected for the highlighting, and we won't have to do any more code for this.
+
         ■ We now return to our MenuPrincipal and where we call the MenuPrincipalItem component, we pass the selecionado
-        property defined in our model which wasn't being passed until now
+        property defined in our model which wasn't being passed until now. And we are also going to update the MenuItemProps
+        to add the selecionado property
           
 
         
