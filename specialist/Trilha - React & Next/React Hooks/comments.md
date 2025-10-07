@@ -876,6 +876,48 @@
       
       ■ Now, since there is no state being updated within each component, when we open a minified secao, and click on any
       item, it won't reset to the initial state and will keep expanded.
+
+      ■ And why was this problem happening? 
+
+        □ What was happening is a classical problem about where the state is stored and how it is updated related to the
+        components lifecycle
+
+        □ the main problem was in the fact that the menu state (if a section is open or closed) was being controlled locally
+        by each section using useToggle
+
+        □ After changing the state control for a centralized place, this problem was fixed. But why?
+
+          . Before change:  
+          
+            - With the local state problem, the state was mounted with the useToggle as false, which was the current value
+            of aberta.
+            - When clicking on the component´s useToggle, it changed the local aberta state to true, but this would result
+            in a reset, since it would invoke a route or a change in the app's global state
+            - This change would force the parent component to re-render
+            - When a parent re-renders, he re-renders all the <MenuPrincipalSecao>   
+              - If React decided that the compoennt was the same, useToggle wouild keep the state as true
+              - BUT if the re-rendering made that the component was unmounted and remounted (which can happen for multiple
+              - reasons, such as key change or component tree restructuring), in other words, if the parent's re-rendering
+               was too "agressive" it would be re-initialized
+            - By being re-reinitialized, it would go back to the initial value
+
+            - In summary: The aberto state was living inside each secao. Anything that makes the component to be re-mounted
+            or re-initialized would force it to go back to the default value
+
+          . What happened after the change (Centralized State)
+
+            - The solution worked perfectly when we applied the "Lifting State Up" pattern
+
+              1. Source of truth: All the secoes state now reside in the context, where we define the setSecoes
+              2. Controlled Update: the alternarSecao function is the only point where we can alter the aberta status. And
+              it does it immutably (creating a novasSecoes array).
+              3. Dumb Components: Menu Sections don't use anymore the useToggle. They simply receive the property aberta
+              as a prop from the parent and use it to render (turning out to be just a presentation component).
+            
+          
+
+
+        
        
 
 

@@ -15,6 +15,7 @@ interface MenuSecaoProps {
 export default function MenuSecao(props: MenuSecaoProps) {
     const { titulo, mini, aberta } = props;
 
+
     return (
         <Flex col gap={4} className={`${mini && "items-center"}`}>
             <button
