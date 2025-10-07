@@ -839,7 +839,48 @@
              
         □ Basically, the functionality is as follows: 
 
-          The array returned by the outer map (the one creating novasSecoes) is made up of new section objects. Each section contains a new variable called novosItens, which is created by another map inside it. In that inner loop, each item gets a new property called selecionado. Then, each section is returned as a spread copy of the original, but with its itens property replaced by this new novosItens array. As a result, the novasSecoes array represents all the updated sections after this transformation.
+          The array returned by the outer map (the one creating novasSecoes) is made up of new section objects. Each
+          section contains a new variable called novosItens, which is created by another map inside it. In that inner loop,
+          each item gets a new property called selecionado. Then, each section is returned as a spread copy of the original,
+          but with its itens property replaced by this new novosItens array. As a result, the novasSecoes array
+          represents all the updated sections after this transformation.
+
+    ○ Extracting the logic from MenuPrincipalSecao
+
+      ■ We also need to fix the problem in our app, that is our MenuItems state being resetted every time we change examples.
+      And for this we are going to extract this state internal logic, to say if it is open or not from our components state
+      to our context.
+
+      ■ Inside MenuSecao, we have this [aberta, toggleAberta] state that is toggled on click. And we are going to move this
+      state to our MenuProvider context 
+      
+      ■ Since our `secoes` are objects very similar to our items, and now we are going to modify the secao `aberta` prop.
+
+      ■ The logic for this, is going to be similar as the one to select an item. This alternarSecao is going to receive the
+      sessao as parameter, iterate through the `secoes` and find the right place to update
+        □ After finding it, we return a new object, destructuring the current sessao but modifying the aberta property
+        to the opposite of the current value
+
+      ■ After exporting this new function, go back to the MenuPrincpal, and utilize this function inside the 
+      MenuPrincipalSecao component onClick prop
+
+      ■ Inside MenuSecao component, where we used to have the toggleAberta, where we were manipulating the state inside each
+      component, we replace it by props.onClick, which will update the context state
+      
+      ■ We are now receiving an error that the secaoSelecionada, which we pass in the MenuProvider function is undefined.
+        □ We may think, ok, so this function needs to receive with is the secao, but MenuSecao does not have access to the
+        secao, should i pass it as prop?
+          . The answer is no, when we pass the onClick alternarSecao from the MenuPrincipal to the MenuPrincipalSecao
+          component as onClick, we can pass it already with the parameter, so when we call, on the child, the alternarSecao(secao)
+          this component will already call the function with this parameter with no need for us to inform it.
+      
+      ■ Now, since there is no state being updated within each component, when we open a minified secao, and click on any
+      item, it won't reset to the initial state and will keep expanded.
+       
+
+
+
+
 
            
 
