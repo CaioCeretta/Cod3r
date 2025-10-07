@@ -31,7 +31,7 @@ export default function MenuItem(props: MenuItemProps) {
             {!mini && titulo}
             {!mini && tag && (
                 <span
-                    className={`
+                    className={`B
                     ${selecionado ? `bg-${corDestaque}` : "bg-zinc-700"}
                     text-white text-[11px] rounded-full px-2
                 `}
