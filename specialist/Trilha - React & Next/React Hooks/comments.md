@@ -801,6 +801,45 @@
         ■ We now return to our MenuPrincipal and where we call the MenuPrincipalItem component, we pass the selecionado
         property defined in our model which wasn't being passed until now. And we are also going to update the MenuItemProps
         to add the selecionado property
+
+        ■ And how does the selecionarItem function works?
+
+          □ This function receive a url as argument and runs through an existing data strucuture (which is the `secoes`).
+          The reult is a new `secoes` array, where the item with the corresponding url is marked with the property
+          selecionado: true.
+
+          □ Line to line detialing
+
+            1. Mapping The Sections
+
+              . Creates a new variable `novasSecoes`
+              . Utilizes the method .map in the secoes array
+              . map iterates over each array section and returns a NEW array (novasSecoes)  with the transformed sections.
+              This ensures that the original structure secoes is not modified (imutability)
+            
+            2. Mapping the data inside each secao
+
+              . const novosItens = secao.itens.map((item: any)) => {...}
+              . inside each `secao`, is created  a new array called new itens
+              . the map iterates over each item inside the current secao, creating a transformed version of the itens
+              array
+
+            3. Selection Logic
+              . return {...item, ...}  this is the main part. it spreads the item to copy all properties inside of it to
+              a new object
+              . selecionado: item.url === url is added or overriten in the new object
+                . true if the url is equal to the url property
+            
+            4. Returning the updated section
+              . return { ...secao, itens: novosItens}
+              . original section is copied, and the itens array inside of it, is replaced with the newItens recently
+              created, which contain the applied logic.
+            
+            5. Outside all the mappings, return the newArray
+
+             
+
+
           
 
         
