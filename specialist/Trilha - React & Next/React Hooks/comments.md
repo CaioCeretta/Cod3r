@@ -836,13 +836,19 @@
               created, which contain the applied logic.
             
             5. Outside all the mappings, return the newArray
-
              
+        □ Basically, the functionality is as follows: 
+
+          The array returned by the outer map (the one creating novasSecoes) is made up of new section objects. Each section contains a new variable called novosItens, which is created by another map inside it. In that inner loop, each item gets a new property called selecionado. Then, each section is returned as a spread copy of the original, but with its itens property replaced by this new novosItens array. As a result, the novasSecoes array represents all the updated sections after this transformation.
+
+           
+
+
 
 
           
 
-        
+
 
 
     ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
