@@ -13,29 +13,29 @@ interface MenuSecaoProps {
 }
 
 export default function MenuSecao(props: MenuSecaoProps) {
-    const { titulo, mini } = props;
-    const [aberta, toggleAberta] = useToggle(props.aberta);
+    const { titulo, mini, aberta } = props;
 
     return (
         <Flex col gap={4} className={`${mini && "items-center"}`}>
-            <div
+            <button
+                type="button"
                 className={`
                 flex items-center justify-between
                 text-zinc-400 uppercase font-bold 
                 ${mini && "text-[11px]"} cursor-pointer
-            `}
+            `} onClick={() => props.onClick?.()}
             >
                 {mini ? (
                     titulo
                 ) : (
                     <>
                         {titulo}
-                        <button onClick={toggleAberta} type="button">
+                        <button onClick={() => props.onClick?.()} type="button">
                             {aberta ? <IconMinus size={15} /> : <IconPlus size={15} />}
                         </button>
                     </>
                 )}
-            </div>
+            </button>
             {aberta && (
                 <Flex col gap={1.5}>
                     {props.children}

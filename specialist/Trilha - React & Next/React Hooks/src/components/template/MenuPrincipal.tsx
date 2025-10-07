@@ -8,7 +8,7 @@ import MenuPrincipalItem from "./MenuPrincipalItem";
 import MenuPrincipalSecao from "./MenuPrincipalSecao";
 
 export default function MenuPrincipal() {
-    const { secoes, mini, toggleMini, miniTrue } = useMenu();
+    const { secoes, mini, toggleMini, alternarSecao } = useMenu();
 
     function renderizarSecoes() {
         return secoes.map((secao: MenuSecao) => (
@@ -17,6 +17,7 @@ export default function MenuPrincipal() {
                 titulo={secao.titulo}
                 mini={mini}
                 aberta={secao.aberta}
+                onClick={() => alternarSecao(secao)}
             >
                 {renderizarItens(secao)}
             </MenuPrincipalSecao>

@@ -4,6 +4,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import { secoes as s } from "../constants/secoesMenu";
 import useBoolean from "../hooks/useBoolean";
 import useTamanhoJanela from "../hooks/useTamanhoJanela";
+import type { MenuSecao } from "../models/MenuSecao";
 
 const ContextoMenu = createContext({} as any);
 
@@ -27,6 +28,18 @@ export function MenuProvider(props: any) {
     setSecoes(() => selecionarItem(router.asPath));
   }, [router.asPath]);
 
+  function alternarSecao(secaoSelecionada: MenuSecao) {
+    const novasSecoes = secoes.map((secao: any) => {
+      if (secao.titulo === secaoSelecionada?.titulo) {
+        return { ...secao, aberta: !secao.aberta }
+      } else {
+        return secao
+      }
+    });
+
+    setSecoes(() => novasSecoes)
+  }
+
   function selecionarItem(url: string) {
     const novasSecoes = secoes.map((secao: any) => {
       const novosItens = secao.itens.map((item: any) => {
@@ -37,7 +50,7 @@ export function MenuProvider(props: any) {
     return novasSecoes;
   }
 
-  const ctx = { secoes, mini, toggleMini };
+  const ctx = { secoes, mini, toggleMini, alternarSecao };
 
   return (
     <ContextoMenu.Provider value={ctx}>{props.children}</ContextoMenu.Provider>
