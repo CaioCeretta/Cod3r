@@ -1,6 +1,7 @@
 import {
   IconAppWindow,
   IconArrowsLeftRight,
+  IconBrain,
   IconDimensions,
   IconLetterCase,
   IconLock,
@@ -102,6 +103,18 @@ const secoes = [
         icone: <IconShoppingCart />,
       },
     ],
+  },
+  {
+    titulo: "Others",
+    aberta: true,
+    itens: [
+      {
+        titulo: "Memoização",
+        url: "/outros/memoizacao",
+        tag: "useMemo",
+        icone: <IconBrain />
+      }
+    ]
   },
 ];
 
