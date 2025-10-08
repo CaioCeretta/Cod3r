@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 function getTamanhoJanela() {
 	if (typeof window !== "undefined") {
 		const { innerWidth: largura, innerHeight: altura } = window;
-
 		return { largura, altura };
 	} else {
-		return { largura: -1, altura: -1 };
+		// SSR: returns a neutral and predictble size
+		return { largura: 1280, altura: 720 }; // "lg" by default
 	}
 }
 
