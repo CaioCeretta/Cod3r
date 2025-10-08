@@ -1021,55 +1021,116 @@
 
       ■ As soon as we create a useEffect, the will run on every `carrinho` change, if we console.table inside this useEffect
       we are going to be able to see it updating
-  
 
+  ● Other Hooks
 
+    ○ Memoization
 
+      ■ We will start looking at the other hooks using the useMemo hook, the memoization concept consist of a computacional
+      technique for us to improve the performance of our applications when we have very "expensive"/"complex" calculus, that
+      take too long to be executred
 
+      ■ useMemo hook
 
+        □ For this example, we define four states
 
+  ● Possible hydration errors
 
+    ○ 1 - MenuProvider
 
-        
-          
+      ■ The hydration error may be caused by the useTamanhoJanela hook. Since in the beginning of the component we check if
+      window is true or undefined, when JS first executes the code in the server, window will be undefined and the values of
+      largura and altura are going to be -1. Therefore, tamanhoVerdadeiro is undefined
 
+      ■ In the client, as soon as the page loads, the hook runs again with window.innerWidth and finds out if the window
+      is "md" or "lg" — And the tamanho state changes. Which on the MenuProvider, will trigger the effect of checking if
+      the tamanho is md or smaller, that the mini is set to true, otherwise, false.
+        □ As a result, server renders mini = false and the client, after mounting, renders mini = true
+        □ Then the SSR's HTML (wide) will not match the client (narrow)
 
+      ■ Possible solutions
 
+        □ 1. To render only on the client
 
+          . This makes that the menu is rendered only after the client mounts, using a state hydrated
 
+          ```ts
+            //In MenuPrincipal
+            // imports and useMenu call
+            useEffect(() => {
+              setHydrated(true)
+            }, []);
 
-        
+            if(!hydrated) {
+              // while the client hasn't mounted, doesn´t render anything
+              return null;
+            }
 
+            // rest of code
+          ```
 
-
-
-          
-
-
-
+          . This will delay the rendering until the client mounts, avoiding anyu difference between SSR and client-side
       
-          
+        □ 2. Ideal Solution (consistent SSR)
 
+          . This more refined approach will be to ensure that euseTamanhoJanela return a fixed value on the server, such as
+          "lg", and only update it after the mounting on the client
 
+          ```ts
+            function getTamanhoJanela() {
+              if (typeof window !== "undefined") {
+                const { innerWidth: largura, innerHeight: altura } = window;
+                return { largura, altura };
+              } else {
+                // SSR: returns a neutral and predictble size
+                return { largura: 1280, altura: 720 }; // "lg" by default
+              }
+            }
+          ```
 
+    ○ MenuSecao - button inside button
 
+      ■ If we look into the MenuSecao, we have a snippet where we have an external button that involves everything
+        □ And inside of it, when mini is false, we render another internal button for the icons +/-
+      
+      ■ This is an invalid HTML, since a button can't contain another button and this generated React's hydration mismatch,
+      because the rendered HTML in the servver is different from what the client expects.
 
+      ■ How to fix this? 
 
+        □ We need to, in this case, look forward to place the clickable button only on the outer part
 
+          ```ts
+             <Flex col gap={4} className={`${mini && "items-center"}`}>
+                {/* 1. We use the tag button for the clickable area */}
+                <button
+                    type="button"
+                    className={buttonClasses}
+                    onClick={props.onClick} // We pass the onClick to the main button
+                    aria-expanded={aberta} // Accessibility property to indicate that the section is expanded
+                >
+                    {/* 2. Button content, icon and title */}
+                    {mini ? (
+                        titulo
+                    ) : (
+                        <>
+                            {/* Title */}
+                            <span>{titulo}</span>
 
+                            {/* Icons (button visual) */}
+                            {aberta ? <IconMinus size={15} /> : <IconPlus size={15} />}
+                        </>
+                    )}
+                </button>
 
-
-
-    
-
-
-
-
-    
-
-
-
-  
+                {/* Rest of content */}
+                {aberta && (
+                    <Flex col gap={1.5}>
+                        {props.children}
+                    </Flex>
+                )}
+            </Flex>
+          ```
 
 
 
