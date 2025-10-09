@@ -7,6 +7,7 @@ import {
   IconLock,
   IconMathGreater,
   IconNumbers,
+  IconPin,
   IconRefreshAlert,
   IconSettings,
   IconShoppingCart,
@@ -105,15 +106,21 @@ const secoes = [
     ],
   },
   {
-    titulo: "Others",
+    titulo: "Outros",
     aberta: true,
     itens: [
       {
-        titulo: "Memoização",
+        titulo: "Memoizando Elementos",
         url: "/outros/memoizacao",
         tag: "useMemo",
-        icone: <IconBrain />
-      }
+        icone: <IconPin />
+      },
+      {
+        titulo: "Memoizando Funções",
+        url: "/outros/memoizandoFuncoes ",
+        tag: "useCallback",
+        icone: <IconPin />
+      },
     ]
   },
 ];
