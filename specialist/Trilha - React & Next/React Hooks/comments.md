@@ -1096,7 +1096,7 @@
 
           . The button will be rendered again having a function insie of it, or not, since the component is inside the
           input that changes the state, but the point is the optimization, the function finalizar, which will be recreated
-          everytime, may be very costly, and this is what we need to prevent. Just a small component would cause a negligible
+          everytime, may be very expensive, and this is what we need to prevent. Just a small component would cause a negligible
           lost of performance.
 
         □ And how we can prevent this? 
@@ -1113,8 +1113,40 @@
 
             - By doing this, our function is memoized, but this is not everything for us to fix our problem.
               - To fix the problem, in addition to memoize our function, we have to memoize the `Botao`
-              - First, we duplicate the Botao component, and create a BotaoMemoizado (this name does not make any difference
-              , is just for educational purposes) 
+              - First, we duplicate the Botao component, and create a BotaoMemoizado (this name does not make any difference,
+              it is just for educational purposes).
+              - The button will be practically the same, with the only difference being that instead of default exporting
+              the component Botao, we now, in the end of file, export default a React.memo(Botao) and the whole component
+              will be now memoized
+
+            - Now, with the BotaoMemoizado created, we go back to the memoizandoFuncoes component, and instead of using
+            the Botao component, we modify it for the new one
+
+            - By going back to the browser, and changing the input value, the button is not being re-rendered
+
+            - However, there are going to be cases when we can't memoize this function, for example:
+              . If we would like to print the quantidade state, instead of "finalizado"
+              . If we do this, go back to the browser, change the quantity to 5, and click on the button, even by saying
+              `window.alert(`${quantidade} produtos`)` the message will be 0 produtos, why is that? 
+                - Because at the moment the function was memoized, the value of the state quantidade was 0 and it simply
+                kept this value. And if we need this function to interact with new values, maybe useCallback is not the
+                best option. But in cases where it does not need to deal with data that will be updated, we can use it
+                to improve our component performance
+
+                - However, when a function is complex and expensive (e.g. it does a complex calculus) and need a dinamic
+                state, we are required to include it in the dependency array. The function changes every time the state
+                change. But the optimization useCallback provides (maintaining the reference) is canceled in each state
+                change
+                  . What we win: The function is not recreated when other states or props (that are not quantidade) from
+                  the parent change. This is still a performance gain
+                  . What we lose?: Function is recreated every time quantidade change, which is inevitable
+                
+                  . But yet, if we have multiple states in the component, and these components may change at a higher
+                  frequency than the ones that cause the function to rerender, it will reinforce the idea of using
+                  useCallback to improve performance
+
+
+
 
 
 
@@ -1418,7 +1450,7 @@
             - When we have a function declared inside the component (which uses state/props) and need to pass it as prop
              for an optimized child
 
-            - When the function is costly and complex, and we need to avoid its unnecessary re-render
+            - When the function is expensive and complex, and we need to avoid its unnecessary re-render
 
 
 
