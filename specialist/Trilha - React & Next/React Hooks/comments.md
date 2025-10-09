@@ -1,4 +1,4 @@
-# Overall Comments
+# Overall Comments, both of the lessons as well as eventual questions
 
   ● Template Strings and Object Literals in console.log
 
@@ -1032,7 +1032,92 @@
 
       ■ useMemo hook
 
-        □ For this example, we define four states
+        □ For this example, we define four states of n1...n4, create a constant which will be n1 to the power of n2 and
+        create a div whjjich will display the value of n1, n2 and the potencia constant. Finally, an input for defining the
+        value of n1, and another one for the value of n2
+
+        □ Duplicate the same div, with the two inputs, but this time, for n3 and n4. Different from the powered calculus,
+        here we will execute a sum between both.
+        
+        □ Now that we have our structure we are going to make modifications to exemplify use cases for useMemo
+
+          1. Turn the potencia constant, to use a more complex calculus
+            . Instead of just `const potencia = n1 ** n2;` we are going to create a function to calculate the power.
+              - Within this function, we are going to define a constant `future` equal to Date.now() + 3000, and create a
+              while loop that checks if the current time is bigger than the future variable (when we don't want further
+              processing of a while loop, instead of open and closing brackets, we can simply use semi colon). After this
+              time is passed and Date.now() is bigger than future, we return n1 to the power of                
+
+          2. With time out, our "longer" calculus are going to execute whenever we change the input value and we will have
+          this timeout every single time. However, we are going to notice, that if we try to change the n3 or n4 states
+          that are not even related to the values used by the function potencia, they are also going to have the same
+          delay to execute. Why is it?
+
+          3. When we increment a value and change the state, we are forcing a new render to the page, and this new render
+          also include the potencia function which calls the setTimeOut, and here is where the memoization enter
+
+          4. Memoization is a technique which give us the ability to improve the performance of the apps and through it
+          we are able to always return the same result a given time we receive the same parameters in a function, which
+          we won't have to make this same calculus over and over again. useMemo allow us to memoize this potencia function
+          so its result, that its complex, don't need to be calculated if n1 or n2 didn't change 
+
+          5. To fix this, we create a new variable potencia with the memoized value, which is going to be a callback
+          function that does exactly what the function did, but it is now wrapper in a useMemo with the states n1, n2 as
+          dependencies.
+
+          6. Now, when we update n3, the longer function won't trigger and it will happen with no delay
+           
+      ■ useCallback hook
+
+        □ For this hook, we are going to store products inside a state
+        □ We create a state to store the quantity of product, and an input to update this state
+        □ Apparently everything is working, the input updates the state onChange, the button click calls a function that
+        alerts that the purchase was made, set the quantity back to 0, and in the beginning it prevents a reload. But
+
+        □ There is a small problem inside this example that is not very obvious, but it is the problem that will be solved
+        with useCallback.
+          . The problem is that our button is being defined in the component, receiving a property texto and a click func
+          . If we go into our Button component and place a log saying to inform that the component render we are going to
+          notice that this component does not render only on the click, but everytime we type change the input, which
+          will cause a new render to the input and this new render, renders the Button again
+          . Which means that, even if we are not updating what we are passing to the button, the button is built multiple
+          times as we click on the increase or decrease arrow of the input number.
+          
+        □ We know that a component in react will be rendered when we change its state, or when some property it receives
+        changes. But we may think: "Ok, but i don't have a state in our button, nor changing any property inside of it".
+        And indeed, we as developers are not altering these variables, but react is altering on his own, and by this, we
+        mean that when we alter the input, we modifyy the state and render the component again. After this change, we have
+        recreate this function `finalizar` and in each time we are going to have a new version of this function. 
+
+          . We know the function is the same and it do the same thing, but React does not know it, he only knows that the
+          finalizar function it receives, is not exactly the same function, in the same memory address that he had previously.
+          So by this, react understands that we have a different function, thinks that we changed the parameters, and renders
+          our button again.
+
+          . The button will be rendered again having a function insie of it, or not, since the component is inside the
+          input that changes the state, but the point is the optimization, the function finalizar, which will be recreated
+          everytime, may be very costly, and this is what we need to prevent. Just a small component would cause a negligible
+          lost of performance.
+
+        □ And how we can prevent this? 
+
+          . Using the useCallback hook
+
+            - With useCallback, the syntax is very similar to the useMemo's one, we do basically the same thing, but while
+            useMemo memoize the result of a function, useCallback memoizes the entire function itself so it is not rebuilt
+            over and over again.
+
+            - In the dependency array, we specify the dependencies that will make our function to re-render. Since in this
+             case we don't want it to be computed, we simply pass an empty [], which mean that this callback will only
+             execute when the component is rendered for the first time
+
+            - By doing this, our function is memoized, but this is not everything for us to fix our problem.
+              - To fix the problem, in addition to memoize our function, we have to memoize the `Botao`
+              - First, we duplicate the Botao component, and create a BotaoMemoizado (this name does not make any difference
+              , is just for educational purposes) 
+
+
+
 
   ● Possible hydration errors
 
@@ -1132,7 +1217,208 @@
             </Flex>
           ```
 
+  ● Component's State Control
 
+    ○ This question arose when in the memoization text, i used the input's value as a state, and inside its onChange, i
+    modified the same state, and i was not sure if i was allowed to do so, if it would block the input or something
+    
+    ○ When input's value is a state
+
+      ■ In our example, we are controlling the value of <InputFormatado /> with the n1 state via useState. This means that
+      the input is "controlled" by React. The value of the input is always in sync with the state, and any input alteration
+      will update the state, since the state reflects in the input value
+
+    ○ The issue i'm mentioning
+
+      ■ In cases like this, there is no rule that forbids changing the state of a controlled input. In fact, it is expected
+      that React's state be the "single source of truth".
+      ■ In the n1 example, where we have the value property equal to the state and the onChange a setter for the same state,
+      the input will reflect n1, and because we have the setter, everytime we type, the input value is updated by the state,
+      and this is normal React way of creating controlled inputs
+
+      ■ But there is one thing we must be careful
+        □ e.target.value always come as string, even if the input the type is numer, so if we want n1 to be a number, we
+        have to prefix e.target.value with a + sign or cast it  with Number(e.target.value).
+
+      ■ The problem of "blocking" the input and nothing can be typed  iun it, happen if the parent pass the state via prop
+      and we try to update the input locally without updating the parent state correctly
+
+        □ function Child({value, setValue}) { return <input value={value} onChange={e => setValue(e.target.value)} />}
+
+          . Here, setValor updates the parent state. But if we try to "override" it locally without updating the parent,
+          or if the value stays the same because the parent didn't change, input will look "blocked"
+
+        □ Other common case
+
+          function Child({value}) {
+            const [local, setLocal] = useState(value)
+
+            return <input type="text" value={value} onChange={(e) => setLocal(e.target.value)} />
+          }
+
+          . Here the input does not change because value come from the prop value, and we arer updating only the local,
+          which is not used in the value
+          . Even typing, React always puts back the prop value as the value
+        
+        □ In summary, the blocked input usually gaooeb wgeb tge value comes from the prop and we are not updating this
+        prop correctly.
+
+      
+    ○ What is single source of truth?
+      ■ When controlling an input with a React state, this means that: 
+        □ The input value is not inside the HTML element itself, but yet, on the state of the React component
+        □ Which means that the input shows the value stored in the state
+        □ Any change the user makes (typing, deleting, etc) triggers a function (usually via onChange) that updates the
+        state, and then the input reflects the new value
+
+        □ This is what we call "source of truth" - the actual value of the input lives in the state
+
+      ■ Example: 
+
+        ```ts
+          import { useState } from 'react';
+
+          function MyComponent() {
+            const [name, setName] = useState('');
+
+            function handleChange(e) {
+              setName(e.target.value);
+            }
+
+            return (
+              <div>
+                <input value={name} onChange={handleChange} />
+                <p>You typed: {name}</p>
+              </div>
+            );
+          }
+        ```
+
+        □ `name` is the state -> the only source of truth
+        □ The `input` displays the value from name
+        □ When we type iun the input, onChange changes the state
+        □ The <p> also uses the state to display what was typed
+
+        So the input value can be used elsewhere (like in the `<p>` above) — And that's exactly the power of having the value
+        centralized in the state
+
+      ■ What this does not mean:
+
+        □ It does not mean the input's value can only be used in the input itself.
+        □ It also doesn't mean the value can't be changed from somewhere else.
+          . We can update the state in many ways, and the input will reflect the updated value automatically
+
+      ■ In Summary:
+
+        □ When we say that the input's value lives in React state , we mean that the state is only reliable source of that
+        data. The input just reflects what's in the state. And any other part of the app can also use that value — because
+        it is centralized.
+
+      ■ But if it can be altered in more places than one, and also can be used in more places, why is it called single
+      source? 
+
+        □ In the web dev context, it means:
+          . The main and reliable place where a data lives.
+          . All the other parts of the app read this value from this source and do not keep independent copies what can
+          be "out dated"
+
+        □ Applying this to React: 
+          . When we say the state is the only source of truth of a controlled input, we are saying that:
+            - The real valie is only in the state
+            - The input does not keep its value internally (such as a normal HTML input would do) 
+            - The input only reflects the value of the state
+            - If any part of the app wants to read or change the value of the input, it needs to interact with the state,
+             even if it is not directly
+
+             Even if multiple parts may use or update the value, they all are dealing with the same centralized place, the
+             state. This is why it is still the "only souce of truth"
+        
+        □ Example outside of react: 
+
+          We can think of a system where multiple people          
+
+    ○ Where a function should be declared? 
+
+      ■ The rule about where to declare functions in React (and in modular JS) is crucial for performanceand correct data
+      manipulation. With this said, where should we declare it?
+
+      ■ The decision of where to declare a function should be based in "Who needs to access this function?" and if it
+      depends on the state or component properties
+
+        □ 1. Inside the component (Recommended most of the times)
+
+          . Local: Inside the body of the function component (before the return)
+
+          ```ts
+          export default function MyComponent() {
+          const [counter, setCounter] = useState(0);
+
+          // 🛑 This function is created from scratch on each render
+          function calcularNovoValor(valor) {
+            return value * 2 + counter; // 👈 Depends on the counter state
+          }
+
+          // ...
+          }
+          ```
+
+          . When to use it? 
+            - When the function needs to access the state (counter) or setters (setCounter)
+            - When the function needs to access the props the component receives
+            - When the function is a simple event handler (ex. handleClick)
+
+          . Cost/Risk: The function is re-created (new reference) on each render. This is normal and accetable for most
+          cases. However, if the function is passed as prop for a child component that is optimized with React.memo, the
+          recreation nullifies the optimization, with the need of useCallback use
+        
+        □ 2. Outside of the component (Module level)
+
+          . Local: On the top of the file, outside of any component function
+
+          ```ts
+            // 🟢 This function is created just once when the module is loaded
+            function formatCurrency(value) {
+              return `$ ${value.toFixed(2)}`; // 👈 Does not depend on state or component prop
+            }
+
+            export default function MyComponent() {
+              // ...
+            }
+          ```
+
+          . When to use it? 
+
+            - When the function is a pure function that do not need access to the state, prop or component setters
+            - Example: utility functions (such as formatCurrency), generic validations, or constant data transformation
+
+          . Benefits: The function is created just once and has the same memory reference in every render. This is the
+          optimal practice for utility functions, since it saves CP time.
+        
+        □ 3. Using useCallback (for optimization)
+
+          Local: Wrapping a function declared inside the component
+
+          ```ts
+            export default function MyComponent() {
+              const [data, setData] = useState({});
+
+              // 🟠 Ensure the reference do not change between renders.
+              const fetchData = useCallback(() => {
+                // ... fetch logic ...
+                setData(newData);
+              }, [setData]); // 👈 Dependencies ensure that the function only change if the setter change
+
+              // ...
+              return <OptimizedButton onClick={fetchData} />;
+            }
+          ```
+
+          . When to use it? 
+
+            - When we have a function declared inside the component (which uses state/props) and need to pass it as prop
+             for an optimized child
+
+            - When the function is costly and complex, and we need to avoid its unnecessary re-render
 
 
 
