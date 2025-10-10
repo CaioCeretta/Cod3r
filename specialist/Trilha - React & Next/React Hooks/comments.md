@@ -1066,6 +1066,64 @@
           dependencies.
 
           6. Now, when we update n3, the longer function won't trigger and it will happen with no delay
+
+      ■ Memo function
+
+         □ React.memo(Component) wraps a functional component and prevents it to re-render when the received props stays
+         the same (shallow comparing, uses === for each prop).
+            In other words, if the parent component re-renders, the memoized child only re-renders if a prop change its
+         reference/value
+
+         □ Our code
+
+          . Before useCallback, when the parent component re-rendered, for ex, when setQuantidade(0) was executed, React
+          recreatred the whole function finalizar
+
+          . Each time time the parent component is executed, the function finalizar was created
+
+          . This means that finalizar has a new memory reference at each render. Even if the function ode is the same,
+          for React, is a different function
+
+          . And even if we used React.memo on the button, it receives the onClick, and when react compares the old and
+          new props, it notices that
+            - `onClick (before) != onClick (now)`
+            - And the result is that it renders again even with React.memo
+
+          . When we changed the finalizar function to utilize useCallback, React memoizes the reference of this function.
+          So while the dependency array don't change, finalizar continues being the same object in memory between renders.
+
+          . So by the time React compares the props of the memoized button
+
+            - onClick (before) === onClick (now)
+
+          . As a result React.memo notices that no prop changed and skips the button re-rendering
+
+        □ The role of each one
+
+          . React.memo -> prevents re-render if props don't change
+          . useCallback -> Keeps the reference between rendering
+
+          . This means that useCallback by itself doesn't prevent rerenders, he just ensures that the reference do not change.
+          Who really prevents the render is the React.memo in the child
+
+        □ Important observation!
+
+          . In our case, the dependency array is empty, which means that
+            - finalizar never changes reference
+            - but also freezes the state `quantidade` value inside the function because it is not recreated.
+            - 
+          □ If we want to utilize the update value of quantidade inside the function and still keep the button stable, the
+          trick is using a useRef.
+
+        □ Final summary
+
+          React.memo without useCallback -> Button still rerenders, since the props and reference change
+          useCallback with no React.memo -> Function is stable, but button re-renders
+          React.memo + useCallback -> Button does not re render since the props and reference are identical.
+
+
+
+          
            
       ■ useCallback hook
 
@@ -1145,6 +1203,18 @@
                   frequency than the ones that cause the function to rerender, it will reinforce the idea of using
                   useCallback to improve performance
 
+      ■ useImperativeHandle
+
+        □ This hook allow us to change our reference on a child component.
+
+          . For this example, we are going to use a custom input component that do not specify it receives the property ref
+
+          . We defined a ref and for us to pass it for this input, since we are not able to do so by the ref property, and
+          React has its own ways of passing a reference for a custom component. 
+
+          . We are going to duplicate the InputFormatado component, rename it to InputComReferencia and inform it needs to
+          receive a new ref property
+          
 
 
 
@@ -1451,6 +1521,88 @@
              for an optimized child
 
             - When the function is expensive and complex, and we need to avoid its unnecessary re-render
+
+    ○ Breaking down Next.js until version 12 structure
+
+      ■ 1. pages/index.tsx
+
+        □ This is the initial page.
+        On the old routes system, the name of the file inside the folder /pages defines the route. Which means that
+        `pages/index.tsx` -> /
+        `pages/about.tsx` -> /about
+        `pages/products/[id].tsx` -> products/:id
+
+        □ This file by default exports a component React, that Next renders automatically when the user accesses that
+        route
+
+          ```ts
+            export default function Home() {
+              return (
+                <Pagina>
+                  <Logo grande col subtitulo="Todo o poder do React em componentes funcionais" />
+                </Pagina>
+              )
+            }
+          ```
+        
+      ■ 2: _app.tsx
+
+        □ App's global entry point, everything rendered here involves all the pages
+
+        □ In old react, it is used for initializing the context, providers and global styling.
+
+          ```ts
+            export default function App({Component, pageProps}: AppProps) {
+              return (
+                <TemaProvider>
+                  <MenuProvider>
+                    <Component {...pageProps}>{/* content of every page (index, about, etc.) */}=
+                  </MenuProvider>
+                </TemaProvider>
+              )
+              
+            }
+          ```
+        □ Component is the current page, such as index.tsx and pageProps is the props next injects, such as SSR, etc.
+
+      ■ 3. _document.tsx
+
+        □ This is the base HTML of the app, it is equivalent to the index.html file in pure projects. It defines the dynamic
+        structure of the document.
+
+        ```ts
+          export default function Document() {
+            return (
+              <Html lang="pt-br">
+                <Head />           {/* Metadados and global links */}
+                <body>
+                  <Main />         {/* Here next inects the react content */}
+                  <NextScript />   {/* Necessary scripts for Next */}
+                </body>
+              </Html>
+            )
+          }
+        ```
+
+        □ This file is usually used for
+          . adding google fonts
+          . global meta tags
+          . analytics script etc.
+
+          . This means that the legacy app have the _document.tsx equivalent to index.html of a traditional React project
+          (Like the ones created by create react app) 
+
+      ■ Comparing the old pages router to the new app router
+
+        □ A quick summary would be
+
+          Concept           | Pages Router                          | App Router
+
+          Route             | Structure pages/ based on files       | app/ with folder architecture
+          Global Layout     | _app.tsx                              | app/layout.tsx
+          Base HTML         | _document.tsx                         | implicit inside layout
+          Context providers | inside app_tsx                        | inside layout.tsx
+          Data fetching     | getStaticProps or getServerSideProps  | fetch, async, server components
 
 
 
