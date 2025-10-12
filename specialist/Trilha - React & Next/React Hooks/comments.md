@@ -1277,6 +1277,69 @@
 
           . Now, that we can pass a reference as a parameter to this component, which will "forward" it to the input.
 
+          . As soon as we type something on the new page input, we are going to see that it is blocked, this happens
+          because of the "valor" prop the input is receiving, because as soon as we pass a value to an input, we also
+          need to pass an onChange function for this value.
+
+          (Explanation further down)
+
+          . We are going to remove the value and the onInput since we are not using them.
+
+
+            
+  ● Controlled Inputs and Uncontrolled
+
+    ○ In React an <input>  can work in two modes:
+
+     ■ Uncontrolled: The browser itself, and the input will manage its own state
+     ■ Controlled: React (via useState or props), React decides what value of the input is shown
+
+    ■ When we pass down a new value, like `<input value={someValue}>
+      - We are telling React: "This input's value is fully controlled by me (React)  — the browser cannot change
+      on its own
+    
+    ■ This means: the only way the input value can change is if we update {someValue} and it comes from the parent
+      - Did the parent update the value?
+      - If not -> React keeps rendering the same old value
+
+      □ As a result, the input looks frozen (if we type, nothing happens)  
+
+      □ This is why we need an onChange. to make it editable again, we must tell React what to do when the user types, and updates the state that controls the value
+
+      ```ts 
+        function Parent() {
+          const [text, setText] = useState("");
+
+          return (
+            <input
+              value={text}                // controlled value
+              onChange={(e) => setText(e.target.value)} // updates the value
+            />
+          );
+        }
+      ```
+      - Now when the user types, onChange fires and we update the text using the setText
+     
+  ○ When the user pass the values to a child component, if we write
+
+    ```ts
+      <ChildInput value={text} />
+
+      function ChildInput({value}: { value: string }) {
+        return <input value={value} />
+      }
+    ```
+
+    ■ We are still in a controlled scenario — the child's input depends on a value controlled by the parent
+
+      □ If the child doesn't have an onChange that calls back to update the parent, the input becomes read-only. The DOM
+      tries to change it, but React keeps forcing it back to the old value.
+        . That's why React will even warn you:
+
+          "You provided a value prop to a form field without an onChange handler"
+
+
+
 
   ● Possible hydration errors
 
