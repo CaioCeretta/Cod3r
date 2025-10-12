@@ -913,26 +913,6 @@
               it does it immutably (creating a novasSecoes array).
               3. Dumb Components: Menu Sections don't use anymore the useToggle. They simply receive the property aberta
               as a prop from the parent and use it to render (turning out to be just a presentation component).
-            
-          
-
-
-        
-       
-
-
-
-
-
-           
-
-
-
-
-          
-
-
-
 
     ○ What is the difference between legacy next _app.tsx and the layout.tsx? 
 
@@ -1203,7 +1183,71 @@
                   frequency than the ones that cause the function to rerender, it will reinforce the idea of using
                   useCallback to improve performance
 
-      ■ useImperativeHandle
+      ■ Differences legacy forwardRef to modern typed approach
+
+        □ Legacy: When using forwardRef, the ref is not passed as a common prop, it comes separate via second parameter
+        of forwardRef
+          . The ref type should be something like React.Ref<HTMLInputElement>
+          . We could extend the native attributes of <input>, which would allow us to add `<input {...rest}>
+            This ensures that the component would accept any valid input prop (such as placeholder, onBlur, disabled, etc.)\
+        
+        □ Modern and correctly typed:
+
+          ```ts
+            import { forwardRef, useId } from "react";
+            import React from "react";
+
+            interface InputFormatadoProps extends React.InputHTMLAttributes<HTMLInputElement> {
+              label?: string;
+              tipo: string;
+              valor: string | number;
+            }
+
+            const InputComReferencia = forwardRef<HTMLInputElement, InputFormatadoProps>(
+              ({ label, tipo, valor, className, ...rest }, ref) => {
+                const id = useId();
+
+                return (
+                  <>
+                      {label && <label htmlFor={id} className="m-1">{label}</label>}
+                      <input
+                        id={id}
+                        ref={ref}
+                        type={tipo}
+                        value={valor}
+                        className={`
+                          text-gray-600 px-2 
+                          w-40 h-11 rounded-md
+                          ${className ?? ""}
+                        `}
+                        {...rest} // ← permite passar qualquer outra prop de input
+                      />
+                    </>
+                  );
+                }
+              );
+
+              export default InputComReferencia;
+          ```
+
+          
+          
+
+            2. forwardRef is a React function that transforms our component so it accept refs passed from outside and 
+            passes it down to an internal DOM element (or other component that accept refs)
+
+            
+            
+          .  In this example, forwardRef<HTMLInputElement, InputFormatadoProps>
+          Defines the ref type (to point to the real <input>) and the prop types
+          .  extends React.InputHTMLAttributes<HTMLInputElement>
+            Makes the interface inherit every native prop of an <input>
+          . ...rest
+            spread all the additional properties a user may pass
+          . We do not need to declare ref inside the interface
+
+
+      ■ useImperativeHandle 
 
         □ This hook allow us to change our reference on a child component.
 
@@ -1213,12 +1257,25 @@
           React has its own ways of passing a reference for a custom component. 
 
           . We are going to duplicate the InputFormatado component, rename it to InputComReferencia and inform it needs to
-          receive a new ref property
-          
+          receive a new property ref
 
+          . And for us to receive this reference accordilingy, we are going to need to wrap this function inside another
+          function. And instead of exporting the component, we export a `forwardRef(InputComReferencia)`
 
+          ** Linter was complaining that the label do not have an input linked to it, the approach i took was to define
+          an id constant being equal to React's useId(), used it in the label's htmlFor and in the input id **
 
+          .First of all to avoid utilizing any and having linter errors warning because of it, we type legacy forwardRefs
+          with ref: React.Forwarded<HTMLInputElement>. While new forwardRef components have the
+          InputHTMLAttributes<HTMLInputElement>
+           
+          . Now that we exported the component with the forwardRef, we can now make this custom input, to be able to
+          receive a reference as a parameter, since this reference is going to be "forwarded" to the input
 
+          . Back to our formularioImperativeHandler page component, after adding thhe reference to the input component, we
+          defined a reference with useRef<HTMLInputElement> and passed it down to the `InputComReferencia`
+
+          . Now, that we can pass a reference as a parameter to this component, which will "forward" it to the input.
 
 
   ● Possible hydration errors
@@ -1603,6 +1660,79 @@
           Base HTML         | _document.tsx                         | implicit inside layout
           Context providers | inside app_tsx                        | inside layout.tsx
           Data fetching     | getStaticProps or getServerSideProps  | fetch, async, server components
+
+  ● Difference from a normal functional component and using a function that accepts refs passed from the outside to internal
+  components
+
+    ○ In the example of forwardRef, when i asked the modern and typed way to do so, another approach was introduced
+    
+       ■ Why is that approach different from a normal component?
+
+        ```ts
+          const inputRef = useRef<HTMLInputElement>(null);
+
+          const MyInput(props: MyInputProps) => {
+            return <input type="text" value={props.valor}>
+          } 
+
+          <MyInput ref={inoutRef} />
+        ```
+        ?
+
+        □ This won't work, since React does not allow us to directly pass a ref for a common functional component, because
+        it doesn't know which internal element must receive the reference, and ref is not a common prop
+
+      ■ What forwardRef does?
+
+        □ forwardRef is a function from React  that transforms our component so it accept passed down from the outside and
+       to pass them down internally for any DOM element or any component that accepts refs. The syntax would be
+
+        □
+
+          ```ts
+
+            const myInput = forwardRef<HTMLInputElement, MyInputProps>(
+              (props, ref) => {
+                return <input ref={ref} type="text" value={props.valor} />
+              }
+
+              // and when using
+
+              const inputRef = useRef<HTMLInputElement>(null);
+              <MyInput ref={inputRef}>
+            )
+
+          ```
+
+          The ref is passed down to the component and is passed to the internal <input>, this way input.current is what
+          points to the HTML element.
+
+      ■ And why does the format seems different? 
+
+        □ When using forwardRef, React does not pass the ref inside props, he pass it as the second parameter of the function
+        and that's why the signature changes from
+
+          `const MyInput = (props: MeuInputProps) => {...}`
+
+          to
+
+          `const MyInput = (props: MeuInputProps, ref: React.ref<HTMLInputElement>) => {...}`
+
+          however, React needs to "encapsulate" this — and this where the forwardRef enters
+
+            `const MyInput = forwardRef<HTMLInputElement, MeuInputProps>(
+              props, ref) => {...}`
+
+            . Without forwardRef, React would´nt call the component with (props, ref) — it would only call props
+
+            . In this case we might think, why is the ref as the second parameter and not the first one?
+              - The answer is be because react defines the structure of the forwardRef as (render: (props, ref) => ReactNode)
+              - Therefore, it always call our component with (props, ref)
+
+
+
+        □ So in summary the common component does not accept ref while the component with forwardRef yes
+            
 
 
 
