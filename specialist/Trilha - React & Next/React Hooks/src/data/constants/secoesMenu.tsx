@@ -3,6 +3,7 @@ import {
   IconArrowsLeftRight,
   IconBrain,
   IconDimensions,
+  IconForms,
   IconLetterCase,
   IconLock,
   IconMathGreater,
@@ -120,6 +121,12 @@ const secoes = [
         url: "/outros/memoizandoFuncoes ",
         tag: "useCallback",
         icone: <IconPin />
+      },
+      {
+        titulo: "Formulário 1",
+        url: "/outros/formularioImperativeHandle",
+        tag: "useImperativeHandler",
+        icone: <IconForms />
       },
     ]
   },

@@ -22,6 +22,6 @@ export default function Pagina(props: PaginaProps) {
 				<Cabecalho titulo={props.titulo} subtitulo={props.subtitulo} />
 				<Conteudo>{props.children}</Conteudo>
 			</Flex>
-		</div>
+		</div >
 	);
 }
