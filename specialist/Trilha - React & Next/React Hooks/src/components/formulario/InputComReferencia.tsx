@@ -6,7 +6,6 @@ interface InputFormatadoProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     tipo: string;
-    valor: string | number;
     className?: string;
 }
 
@@ -22,8 +21,6 @@ function InputComReferencia(props: InputFormatadoProps, ref: React.ForwardedRef<
                 id={id}
                 ref={ref}
                 type={props.tipo}
-                value={props.valor}
-                onInput={props.onInput}
                 className={`
                     text-gray-600 px-2 
                     w-40 h-11 rounded-md
