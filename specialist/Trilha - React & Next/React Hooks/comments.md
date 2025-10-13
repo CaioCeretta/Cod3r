@@ -1285,6 +1285,74 @@
 
           . We are going to remove the value and the onInput since we are not using them.
 
+          . Now, in our example, until now we hhave a parent component that   
+
+      □ Now that we have our a component where the parent pass a reference to a child component and we are using that reference
+      Inside the input. But what is idea of the useImperativeHandle? how can we use it?
+
+        . The idea of this hook is that when we have a parent component, passing information to a child component. We can,
+        inside the child, customize some behaviors in the reference. 
+          - This is a hook that will only be used on very specific cases, and most of the times, it won't be the best solution
+          for the problem we're willing to fix (that is said even on the documentation itself).
+        
+        . For us to change the reference we're receiving as parameter, inside the component we will need to create an
+        interval reference. This reference will be a function that will contain the updates we wan't to do on our reference.
+        Which means that we wan't to add functionalities in our reference, and these changes must be defined within a
+        function.
+
+          - The function to be created will be called novasFuncionalidades and this function will return an object where
+          we specify which actions we want to add to our reference. and on our functions, we need to use the internalReference
+          we have just created and not the one received from the parent.
+
+          - The function `novasFuncionalidades` will simply return an object with two functions, `apagar`, that erase the
+          content of this internal reference, and other one called `textoPadrao`, that simply changes the internalReference
+          current value
+        
+        . Now we are going to make this reference received to also have these funcionalities, and for this, we will make use
+        of the `useImperativeHandle`.
+          - This hook receive three arguments: reference we received as param, the functionalities we want to apply to this
+          reference. We also have as a third parameter, a list of dependencies.
+        
+        . With this being made, we are able to alter our reference and make these functionalities we've defined inside the
+        child component, is accessible through the parent component
+          - The last touch is to replace the ref we pass inside the input for the `referenciaInterna` instead of the one
+          we have received as parameter
+
+        . So in summary, what we've done was:
+          - We received a reference as prop
+          - Created a second reference to be internal inside the component
+          - Created some functionalities we would like to expose to the parent component
+          - Used the hook `useImperativeHandle` to apply in the reference we received as parameter the functionalities we
+          would like to expose
+
+        . This is a good strategy in case we have to implement different behaviors in some components. We could have multiple
+        different inputs and through this hook, using this strategy, implement multiple inputs and each input could have
+        an apagar function and a textoPadrao function that would do different things.
+          - So, multiple inputs with different internal behaviors, but that we had to use these behaviors in the parent
+          component.
+      
+      □ Using these new information inside the parent component
+
+        . Back to the formularioImperativeHandle component, inside the InputComReferencia, create two buttons, on named
+        apagar and the other padrao.   
+        . Now, we must define the functions to trigger when these buttons are clicked. First, insde the apagar function,
+        we are going to execute what we have defined in the input component's `novasFuncionalidades`.
+          - To do this, we will use the referencia we are passing as prop to the child, e. g.
+              `function apagar() {inputRef.current.apagar() }`
+          - The same will be done to the padrao
+        . This mean that the behavior we defined in the child component can now be accessed through the parent
+
+        . Summary
+
+          - We are creating the referenciaInterna, inside the input, to access the input's DOM
+          - ref - is passed via forwardRef to the parent component
+          - We always have to change input's ref to use the internal reference to correctly point to the HTMLInputElement
+          
+
+
+        
+
+        
 
             
   ● Controlled Inputs and Uncontrolled
@@ -1796,7 +1864,22 @@
 
         □ So in summary the common component does not accept ref while the component with forwardRef yes
             
+● useImperativeHandle hook
+  
+  ○ What is it for?
 
+    ■ React hook that allow customizing what will be exposed by a ref when using forwardRef
+    ■ This means that instead of the parent directly accessing the DOM (inputRef.current.value), we can give to the parent
+    a controlled set of methods or properties, such as inputRef.current.apagar() or inputRef.current.textoPadrao()
+
+  ○ Why does it seem discouraging?
+
+    ■ Because it breaks a little the core idea of React, that is
+      □ "Data flow from up to down by props", and the DOM updates itself in this state, not the other way around.
+
+    ■ useImperativeHandle goes against that
+      □ It exposes internal behaviors for the parent component, what increases the coupling between them.
+      □ It normally is imperative, which means, "do it know", different from the declarative style that React encourages.
 
 
 
