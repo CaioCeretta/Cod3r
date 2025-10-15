@@ -401,7 +401,7 @@
         ■ On the MenuPrincipalSecao component, that is rendered on each iteration of the renderizarSecoes component, we are
         going to use the property aberta to manage this useToggle
       
-    ○ useTamanhoJanela use
+    ○ useTamanhoJanela
 
       ■ Inside MenuPrincipal, we define a variable `tamanho`
 
@@ -1287,67 +1287,126 @@
 
           . Now, in our example, until now we hhave a parent component that   
 
-      □ Now that we have our a component where the parent pass a reference to a child component and we are using that reference
-      Inside the input. But what is idea of the useImperativeHandle? how can we use it?
+        □ Now that we have our a component where the parent pass a reference to a child component and we are using that reference
+        Inside the input. But what is idea of the useImperativeHandle? how can we use it?
 
-        . The idea of this hook is that when we have a parent component, passing information to a child component. We can,
-        inside the child, customize some behaviors in the reference. 
-          - This is a hook that will only be used on very specific cases, and most of the times, it won't be the best solution
-          for the problem we're willing to fix (that is said even on the documentation itself).
-        
-        . For us to change the reference we're receiving as parameter, inside the component we will need to create an
-        interval reference. This reference will be a function that will contain the updates we wan't to do on our reference.
-        Which means that we wan't to add functionalities in our reference, and these changes must be defined within a
-        function.
-
-          - The function to be created will be called novasFuncionalidades and this function will return an object where
-          we specify which actions we want to add to our reference. and on our functions, we need to use the internalReference
-          we have just created and not the one received from the parent.
-
-          - The function `novasFuncionalidades` will simply return an object with two functions, `apagar`, that erase the
-          content of this internal reference, and other one called `textoPadrao`, that simply changes the internalReference
-          current value
-        
-        . Now we are going to make this reference received to also have these funcionalities, and for this, we will make use
-        of the `useImperativeHandle`.
-          - This hook receive three arguments: reference we received as param, the functionalities we want to apply to this
-          reference. We also have as a third parameter, a list of dependencies.
-        
-        . With this being made, we are able to alter our reference and make these functionalities we've defined inside the
-        child component, is accessible through the parent component
-          - The last touch is to replace the ref we pass inside the input for the `referenciaInterna` instead of the one
-          we have received as parameter
-
-        . So in summary, what we've done was:
-          - We received a reference as prop
-          - Created a second reference to be internal inside the component
-          - Created some functionalities we would like to expose to the parent component
-          - Used the hook `useImperativeHandle` to apply in the reference we received as parameter the functionalities we
-          would like to expose
-
-        . This is a good strategy in case we have to implement different behaviors in some components. We could have multiple
-        different inputs and through this hook, using this strategy, implement multiple inputs and each input could have
-        an apagar function and a textoPadrao function that would do different things.
-          - So, multiple inputs with different internal behaviors, but that we had to use these behaviors in the parent
-          component.
-      
-      □ Using these new information inside the parent component
-
-        . Back to the formularioImperativeHandle component, inside the InputComReferencia, create two buttons, on named
-        apagar and the other padrao.   
-        . Now, we must define the functions to trigger when these buttons are clicked. First, insde the apagar function,
-        we are going to execute what we have defined in the input component's `novasFuncionalidades`.
-          - To do this, we will use the referencia we are passing as prop to the child, e. g.
-              `function apagar() {inputRef.current.apagar() }`
-          - The same will be done to the padrao
-        . This mean that the behavior we defined in the child component can now be accessed through the parent
-
-        . Summary
-
-          - We are creating the referenciaInterna, inside the input, to access the input's DOM
-          - ref - is passed via forwardRef to the parent component
-          - We always have to change input's ref to use the internal reference to correctly point to the HTMLInputElement
+          . The idea of this hook is that when we have a parent component, passing information to a child component. We can,
+          inside the child, customize some behaviors in the reference. 
+            - This is a hook that will only be used on very specific cases, and most of the times, it won't be the best solution
+            for the problem we're willing to fix (that is said even on the documentation itself).
           
+          . For us to change the reference we're receiving as parameter, inside the component we will need to create an
+          interval reference. This reference will be a function that will contain the updates we wan't to do on our reference.
+          Which means that we wan't to add functionalities in our reference, and these changes must be defined within a
+          function.
+
+            - The function to be created will be called novasFuncionalidades and this function will return an object where
+            we specify which actions we want to add to our reference. and on our functions, we need to use the internalReference
+            we have just created and not the one received from the parent.
+
+            - The function `novasFuncionalidades` will simply return an object with two functions, `apagar`, that erase the
+            content of this internal reference, and other one called `textoPadrao`, that simply changes the internalReference
+            current value
+          
+          . Now we are going to make this reference received to also have these funcionalities, and for this, we will make use
+          of the `useImperativeHandle`.
+            - This hook receive three arguments: reference we received as param, the functionalities we want to apply to this
+            reference. We also have as a third parameter, a list of dependencies.
+          
+          . With this being made, we are able to alter our reference and make these functionalities we've defined inside the
+          child component, is accessible through the parent component
+            - The last touch is to replace the ref we pass inside the input for the `referenciaInterna` instead of the one
+            we have received as parameter
+
+          . So in summary, what we've done was:
+            - We received a reference as prop
+            - Created a second reference to be internal inside the component
+            - Created some functionalities we would like to expose to the parent component
+            - Used the hook `useImperativeHandle` to apply in the reference we received as parameter the functionalities we
+            would like to expose
+
+          . This is a good strategy in case we have to implement different behaviors in some components. We could have multiple
+          different inputs and through this hook, using this strategy, implement multiple inputs and each input could have
+          an apagar function and a textoPadrao function that would do different things.
+            - So, multiple inputs with different internal behaviors, but that we had to use these behaviors in the parent
+            component.
+        
+        □ Using these new information inside the parent component
+
+          . Back to the formularioImperativeHandle component, inside the InputComReferencia, create two buttons, on named
+          apagar and the other padrao.   
+          . Now, we must define the functions to trigger when these buttons are clicked. First, insde the apagar function,
+          we are going to execute what we have defined in the input component's `novasFuncionalidades`.
+            - To do this, we will use the referencia we are passing as prop to the child, e. g.
+                `function apagar() {inputRef.current.apagar() }`
+            - The same will be done to the padrao
+          . This mean that the behavior we defined in the child component can now be accessed through the parent
+
+          . Summary
+
+            - We are creating the referenciaInterna, inside the input, to access the input's DOM
+            - ref - is passed via forwardRef to the parent component
+            - We always have to change input's ref to use the internal reference to correctly point to the HTMLInputElement
+
+      ■ useLayoutEffect
+
+        □ First, let's use useEffect as an example
+          . Let's say we have a `texto` state, it has the value of "Texto Secreto", but in the same component it has a useEffect
+          that modifies this state when the component is mounted
+            - However, if we type f5 we are going to see the "Texto Secreto"  blinking on the screen, and then it gets replaced
+            by 'Ciao' from the useEffect setter. There's not much we can do about this, and this Texto Secreto will also show
+            when we enter the page.
+            - The reason for the page to blink with the initial value has to do with the way useEffect works, the actions
+            made inside the component will happen as soon as the component is placed on the screen. Therefore, it first inserts
+            the paragraph with the {text} content, but soon after, in miliseconds, the useEffect fires and change its content
+            . If we think that our interface is a kind of "painting canvas¨, first we have to make the "sketch" of this
+            drawing and afterwards, paint over it in places where it is necessary.
+
+        □ useLayoutEffect
+
+          . This hook basically works the same way, it also receives a cb function as well as a dependency array, but what
+          is the main difference between them?
+          
+          . On the example of a painting canvas, where we would have to first draw the sketch and then make the "patches".
+             - While useEffect first make the sketch, paint the screen, and then it sees that what it has done has to change
+            - useLayoutEffect makes the sketch, corrects what needs to be corrected in the sketch, and then paint the final
+             version of it
+          
+          . Therefore, if in our example, we change to useLayoutEffect hook, we will be able to see that the screen does
+          not blink anymore with the old content. 
+
+          . However, if we refresh the page with f5, we still see the old content, why?
+
+        
+        □ Why do we, with F5, still see the old content?
+
+          . First, let's make one thing clear:
+            - 1. In useEffect, after the rendering and the paint, the screen was already shown to the user, so it sees the
+              result withoput changes by a millisecond
+            - 2. In useLayout, after rendering, but before the painting (before the browser show something on the screen).
+              the user does not see the intermediate result, he already sees the updated layput
+
+          . So why does with a refresh (F5), we still see the old content?
+
+            - This happens because the first render (SSR or Initial React) is not controlled by effects — neither useEffect
+              nor useLayoutEffect
+
+          . Here's what actually happens:
+
+            1. React renders the component with the initial state (e.g. const [text, setText] = useState("Loading..."))
+            2. The browser paints the HTML on that screen
+            3. Only after React's JS is loaded and the page is hydrated, the useLayoutEffect and all effects run
+
+            - So what we are seeing during F5 is the pre-hydration HTML, not a delay from the hook itself
+
+        
+
+          
+
+      
+        
+
+        
 
 
         
@@ -1885,28 +1944,101 @@
 
   ○ 1. {functionName} - passing the function reference
 
-    ■ We use this when we want to give React (or another component) the function itself, not the result of calling it
+    ■ This is thye most performant way to call a function when it takes no arguiments (or only takes the (event object))
 
     ■ Common Example:
 
       ```ts
         <button onClick={handleClick}>Click me</button>
       ```
-
-      □ Here we are passing a reference to `handleClick`
-      □ React will call it later in case the user clicks the buttn
     
-      □ If we did {handleClick()} here...
+    ■ When to use: When your function does not need any arguments besides the event object that React automatically passes
+    to it. React's event systerm handles calling the function when the event happens. Therefore, only use it for simple
+    event handlers without arguments.
 
-        . It would run immediately during render, not when the button is clicked.
 
-        So:
+
+  ○ 2. Direct call (Immediate execution)
+
+    ■ `functionName(argument1, ...)`
+
+      This is how you call a function immediately when the component renders
+
+    ■ Syntax: 
+
+      `<div>{functionName()}</div>
+
+      □ When to use: When you want the function to run once during the render cycle, and you want to display the value it
+      returns
+
+      □ Example:
+
+        ```ts
+          const getGreeting = (name) => `Hello ${name}`
+
+          function MyComponent() {
+            // the function runs immediately and the returned string is displayed
+            return <h1>{getGreeting("Caio")}</h1>
+          }
+        ```
+
+      □ Danger: Never use this syntax directly inside an event handler like (onClick) unless we want it to return immediately
+      upon rendering, as it will cause an infinite loop or unexpected behavior
+  
+  ○ 3. Event Handler Call (Delayed execution)
+
+    ■ {() => functionName(argument1, ...)}
+
+      This is the standard and safest way to call a funciton later, usually in responde to user action (like a click)
+
+      □ Syntax:
+
+        `<button onClick={() => functionName()}> Click Me </button>`
+
+        or if the function takes an event as argument
+
+        `<button onClick={(e) => functionName(e, otherArg)}> Click Me </button>`
+
+    ■ When to use: When you want the function to be called only wen the specific event (e.g onClick, onMouseOver, onChange)
+    occurs. This passes a reference to an anonymous function that, when executed by React's event system, will then call
+    your actual function.
+
+    ■ Your options:
+
+      □ ✅ { () => functionName() }: Use this when your function needs to take arguments or when you are unsure if it will.
+      This is the most flexible approach.
+
+      □ ❌ { () => functionName }: This is syntactically incorrect/redundant. You're defining a new function that just
+      returns a reference to another function, which isn't what you want for an event.
+  
       
-        . {functionName} we pass the function itself and it is used in event handers, callbacks, and props like onClick,
-        onSubmit, useEffect, etc...
-      
-    
+● Deadlock (Infinite Loop) when updating a state
 
+  ○ Let's think of trhis scenario
 
+    ```ts
+      const [texto, setTexto] = useState('')
+
+      useEffect(() => {
+        setTexto('Secret text not available')
+      }, [texto]) // Dependency that causes the error
+
+    ```
+
+    ■ The sequence of events that cause the error are
+
+      1. Initial rendering, component is rendered for the first time with the defined state
+      2. useEffect is executed, since the dependency array [texto] is evaluated, and this is the first render, useEffect
+      simply executes the function
+      3. State update, the function inside the useEffect calls setTexto with a new value
+      4. Re-render, calling setTexto informs react that the state change, causing a re-render, texto is now the new value
+      5. useEffect executes again 
+      6. Re-renders again, but with the texto continuing to be the one chosen
+      7. New Re-render
+      8. forever...
+
+    ■ This create an uninterrupted cycle, consuming resources and eventually, making React to xstop the processing and show
+    in the console, something as "Maximum update depth exceeded. This can happen when a component repeatedly calls setState
+    inside useEffect or useLayoutEffect"
 
 
