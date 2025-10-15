@@ -1881,6 +1881,32 @@
       □ It exposes internal behaviors for the parent component, what increases the coupling between them.
       □ It normally is imperative, which means, "do it know", different from the declarative style that React encourages.
 
+● How should i call a function?
+
+  ○ 1. {functionName} - passing the function reference
+
+    ■ We use this when we want to give React (or another component) the function itself, not the result of calling it
+
+    ■ Common Example:
+
+      ```ts
+        <button onClick={handleClick}>Click me</button>
+      ```
+
+      □ Here we are passing a reference to `handleClick`
+      □ React will call it later in case the user clicks the buttn
+    
+      □ If we did {handleClick()} here...
+
+        . It would run immediately during render, not when the button is clicked.
+
+        So:
+      
+        . {functionName} we pass the function itself and it is used in event handers, callbacks, and props like onClick,
+        onSubmit, useEffect, etc...
+      
+    
+
 
 
 
