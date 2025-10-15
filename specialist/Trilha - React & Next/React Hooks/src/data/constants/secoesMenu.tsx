@@ -4,6 +4,7 @@ import {
   IconBrain,
   IconDimensions,
   IconForms,
+  IconLayout,
   IconLetterCase,
   IconLock,
   IconMathGreater,
@@ -128,6 +129,13 @@ const secoes = [
         tag: "useImperativeHandler",
         icone: <IconForms />
       },
+      {
+        titulo: "Texto secreto",
+        url: "/outros/texto",
+        tag: "useLayoutEffect",
+        icone: <IconLayout />
+
+      }
     ]
   },
 ];
