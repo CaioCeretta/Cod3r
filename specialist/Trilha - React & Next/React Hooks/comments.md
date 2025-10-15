@@ -1399,6 +1399,10 @@
 
             - So what we are seeing during F5 is the pre-hydration HTML, not a delay from the hook itself
 
+
+        □ In summary, this hook is interesting when dealing with slower connections. So it's important to consider
+        using this hook when we need to do updates on the layout of our page.
+
         
 
           
