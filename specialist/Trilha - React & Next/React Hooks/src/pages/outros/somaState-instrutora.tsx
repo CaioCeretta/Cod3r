@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import InputFormatadoSemLabel from "@/components/formulario/InputFormatadoSemLabel";
 import Botao from "@/components/template/Botao";
 import Display from "@/components/template/Display";
@@ -6,22 +6,27 @@ import Flex from "@/components/template/Flex";
 import Pagina from "@/components/template/Pagina";
 
 export default function () {
-  const [n1, setN1] = useState<string>("");
-  const [n2, setN2] = useState<string>("");
-  const [sum, setSum] = useState<number>(0)
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [validadeN1, setValidadeN1] = useState(false)
+  const [validadeN2, setValidadeN2] = useState(false)
+  const [soma, setSoma] = useState<number>(0)
 
-  function somaEstados() {
-    const num1 = parseFloat(n1)
-    const num2 = parseFloat(n2)
+  useEffect(() => {
+    setValidadeN1(n1 > 0)
+  }, [n1])
 
-    if (!Number.isNaN(num1) && !Number.isNaN(num2) && num1 > 0 && num2 > 0) {
-      setSum(num1 + num2)
+  useEffect(() => {
+    setValidadeN2(n2 > 0)
+  }, [n2])
+
+  function fazSoma() {
+    if (validadeN1 && validadeN2) {
+      setSoma(n1 + n2)
     } else {
-      setSum(-999999)
+      setSoma(-99999)
     }
-
   }
-
 
 
   return (
@@ -31,25 +36,25 @@ export default function () {
         <Flex center>
           <InputFormatadoSemLabel
             semLabel={true}
-            tipo="text"
+            tipo="number"
             valor={n1}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setN1(e.target.value)
+            onInput={(e) =>
+              setN1(+e.target.value)
             }
           ></InputFormatadoSemLabel>
           <span className="text-4xl">+</span>
           <InputFormatadoSemLabel
             semLabel={true}
-            tipo="text"
+            tipo="number"
             valor={n2}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setN2(e.target.value)
+            onInput={(e) =>
+              setN2(+e.target.value)
             }
           ></InputFormatadoSemLabel>
 
-          <Botao cor="bg-orange-400" onClick={somaEstados} texto="=" />
+          <Botao cor="bg-orange-400" onClick={fazSoma} texto="=" />
         </Flex>
-        <Display texto={sum} />
+        <Display texto={soma} />
       </Flex>
     </Pagina>
   );

@@ -4,6 +4,7 @@ import {
   IconBrain,
   IconColorSwatch,
   IconDatabase,
+  IconDatabaseImport,
   IconDimensions,
   IconForms,
   IconLayout,
@@ -149,6 +150,12 @@ const secoes = [
         url: "/outros/somaState",
         tag: "useState",
         icone: <IconDatabase />
+      },
+      {
+        titulo: "Soma com useReducer",
+        url: "/outros/somaReducer",
+        tag: "useReducer",
+        icone: <IconDatabaseImport />
       }
     ]
   },
