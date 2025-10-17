@@ -582,7 +582,50 @@
 
     ○ TypeScript Note
       ■ We should always type your reducer, which has the following syntax: `useReducer<State, Action>()`.  
-      ■ Group all state types in one object and use it as the first generic parameter.  
+      ■ Group all state types in one object and use it as the first generic parameter.
+
+      ■ For the actions, it is also a good practice to type them, and here how it should be
+
+        □ Actions
+
+          . Typing the actions is the crucial point: each action can (ot not) have a payload. We can use discriminated
+          unions, that typescript understands perfectly
+
+            type Acao = 
+              | { type: "ALTERA_N1"; payload: number} 
+              | { type: "ALTERA_N2"; payload: number} 
+              | { type: "SOMA";} 
+
+          . This way, ts knows:
+            - That the payload only exists on the first two cases
+            - That SOMA does not need a payload
+            - That dispatch can only accept these typexs
+
+        □ State  
+
+          . As a first step, we need to type the state, exactly how it is on the second parameter of useReducer, which is
+          the initial state.
+        
+          □ Now we can explicitly type the reducer with these two types.
+            . on the mudaDados, which is the function that holds the actions, we can use `(estadoAtual: Estado, acao: Acao): Estado`
+            . Since mudaDados function is typed, on the useReducer itself we can remove the generic <>, because ts automatically
+            infers everything after the mudaDados function 
+
+          □ We can also optionally create an auxiliar action objects (optional, but practical)
+
+            . if we would like the calls to be cleaner and easier to maintain, we can create an actions "factory" function
+
+            ```ts
+            . const actions = { 
+              alteraN1: (valor: number): Acao => ({type: "ALTERA_N1", payload: valor}),
+              alteraN2: (valor: number): Acao => ({type: "ALTERA_N2", payload: valor}),
+              soma: (): Acao => ({type: "SOMA"})
+            }
+            ```
+
+            . And then call it like this: `dispatch(actions.alteraN1(+e.currentTarget.value))`
+
+          
 
 
     ○ Key difference from useState
@@ -599,32 +642,69 @@
       ■ State object
         □ Contains all state variables previously managed with `useState`.  
 
-    ● Example
+      ○ Example
 
-    ```ts
-    function mudaDados(estadoAtual, acao) {
-      switch (acao.type) {
-        case "ALTERA_N1":
-          window.alert("N1");
-          return {
-            ...estadoAtual,
-            n1: acao.payload,
-            validadeN1: acao.payload > 0
-          };
-        default:
-          return estadoAtual;
+      ```ts
+      function mudaDados(estadoAtual, acao) {
+        switch (acao.type) {
+          case "ALTERA_N1":
+            window.alert("N1");
+            return {
+              ...estadoAtual,
+              n1: acao.payload,
+              validadeN1: acao.payload > 0 // payload is the attribute we sent on the action call.
+            };
+          default:
+            return estadoAtual;
+        }
       }
-    }
 
-    // usage in JSX
-    <InputFormatadoSemLabel
-      semLabel={true}
-      tipo="number"
-      valor={dados.n1}
-      onChange={(e) =>
-        dispatch({ type: "ALTERA_N1", payload: +e.currentTarget.value })
-      }
-    />
+
+      // usage in JSX
+      <InputFormatadoSemLabel
+        semLabel={true}
+        tipo="number"
+        valor={dados.n1}
+        onChange={(e) =>
+          dispatch({ type: "ALTERA_N1", payload: +e.currentTarget.value })
+        }
+      />
+      ```
+
+      ○ sum action
+
+        ■ inside the mudaDados function we are also going to define one for the sum
+        ■ This action will first check the `validadeN1` and `validadeN2` states and then it will return an object with
+        everything on the currentState, and the soma state will be overwritten with estadoAtual.n1 + estadoAtual.n2.
+          □ In case of failure in the validity check, simply return the current state
+    
+      ○ Summary
+
+      ○ If we look now, from the moment we switch from useState to useReducer, all the state variables are now grouped
+      in one object, and the logic of how these updates in our data happen is everything inside the mudaDados function,
+      which take care of all the actions. While on the previous example it weas "spreaded" all over the file.
+        ■ Which ends up being interesting if we have a set of data where we have multiple rules to be followed, and grouping          these possible updates we are able to easily maintain the code and identify what is happening across      all actions.
+          □ Example: We know that when we click on the sum button, we know, with the dispatch type, that a sum will happen
+          and with the action types we are able to add some sort of coherence, and make the code cleaner.
+        
+        ■ Implementing the useReducer may be a little complicated at first glance, mainly because this whole dispatch
+        function is not directly utilized to alter the data, and yet, to call one of these actions.
+
+        ■ Many times useReducer is used along useContext, since useContext is used to store our information and these
+        updates is done using useReducer. 
+          □ Instead of having multiple states as we were working on the contexts until now, we would have only one useReducer
+          and we use useReducer to handle the interface between acrtions and the state updates.  
+
+  ● useId
+
+    
+
+
+      
+
+
+
+
 
   
 
