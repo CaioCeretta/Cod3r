@@ -1470,7 +1470,139 @@
           "You provided a value prop to a form field without an onChange handler"
 
 
+  ● Challenges
 
+    ○ Challenge 1 - Gerador de Cor
+
+      ■ This test will be done using the useLayoutEffect
+      ■ The function has two buttons, a display with some text and a div. Inside this component it will also have a function
+      with a constant named cor which will be equal to Math.Random x 0xffffff — this value is the numerical representation
+      of the color white in hexadecimal, it is the samue as if we write #FFFFFF in CSS. The 0x prefix indicates that the
+      number is in hexadecimal base 16, and each pair represent a color channel (red, green, blue)
+        □ In JS we can represent colors as numbers, e.g. red would be 0xFF0000.
+        □ Which will then be converted to string with the base 10 as arg
+      
+      ■ The challenge will consist of
+        □ 1 - Showing the div conditionally, and we want the div to show when we click on the button 'Sortear cor' and vanish
+        when the button 'Apagar cor' is clicked
+        □ 2 - Display a text in the Display tag, saying any of these two options
+          - Click on the button sortear
+          - Show a random color
+        □ 3 - Alter the div color according to the random color defined by the function
+
+      ■ My Approach
+
+        □ Created a state of the randomColor, on the function to generate a random color, i followed the same approach as
+        before, but i created a `corHex` constant that was equal to `#${randomNumber.toString(16).padStart(6, "0")}
+          . the padStart has the following signature: padStart(targetLenght, padString)
+          . It is a string method that adds characters to the beginning of a string until it react the specified length
+          . In our example, targetLength will be 6, that is the value of a hexCode, and in case this number have less then
+          6 cases, we are filling it with 0s
+
+        □ Then, by transforming into toString(16), we get the corresponding hexadecimal, and by adding # before this number
+        we are going to get a valid CSS color
+
+        □ Then, since tailwind does not recognize dynamic colors, because it only runs in runtime, we attach the style prop
+        backgroundColor equal to this color
+
+        □ For the dynamic color name, i chose an effect for when the color changed to also change the text
+
+      ■ Problems with my approach
+
+        □ The color generating was correct. However, the text display wasn't.
+
+        □ I was using useLayoutEffect to define the initial text, and the problem with this is that useLayoutEffect is
+        executed synchronously after React's DOM layout calculation, but before the browser "paint" the screen.
+          . It is ideal for DOM layout measurements. To define a initial state that do not depend on layout measurings,
+          useEffect or simply the useState initialization would be more appropriare.
+          . Furthermore, the way i was calling setText inside useLayoutEffect was incorrect
+          . For defining the dynamic text 
+
+      ■ Instructor´s approach
+
+        □ She used the useBoolean hook, that receive a `valor` as parameter, if not, it declares valor as false, and assign
+        to a ativo state the value of valor
+          □ A toggleAtivo that toggles the value of the state, a ativoTrue, that turns ativo as true, ativoFalse that do the
+          opposite.
+          □ We return an array with the value of ativo, the toggleAtivo, and the setters to true or false
+          □ the useBoolean hook will be `const [mostrar, toggleMostrar, mostrarTrue, mostrarFalse] = useBoolean();`
+        □ When clicking on the sortearCor it will execute mostrarTrue, and when we click on the apagarCor button
+          we will execute the mostrarFalse
+        □ Where i used the randomColor state to check if it exists, and used it as a ternary for showing the div with the
+        randomColor state, or with the default color, the instructor preferred to simple use it as simpler ternary:
+          . {mostrar ? <div className={`h-32 w-32 bg-red-300`} /> : "" />}
+
+        □ As the second challenge, she created another state with the desired text and altered the Display text
+        □ She used the useLayoutEffect to render display the dynamic text on the Display.
+          . This function will verify is true and setTexto to the gerarCorAleatoria function, and if it is false, the text
+          will be clique in sortear.
+        
+        □ Defined a useLayoutEffect that verify if the mostrar is true, if yes, setTheText equal to the result of
+        geraCorAleatoria, if no, set the text as "Clique em sortear"
+
+        □ Created a ref and associated it with the div and used the useLayoutEffect to change the style.current value of the
+        according to the function return
+
+    ○ Challenge 2 - soma com useState
+
+      ■ Challenges:
+
+        □ 1 - Create two states that will store number 1 and number 2
+        □ 2 - Link these two states with our inputs
+        □ 3 - Sum both numbers with the criteria of the number being that the number is valid if it is > 0
+        □ 4 - Sum clicking on the buttom if the numbers are valid, in case they're not we return a result such as -999
+
+      ■ My Approach
+
+        1 - Created 3 states, one for n1, other for n2, other for the sum, i chose to type these states as a string and
+        parse them as float afterwards, just to remove the 0 from the input value
+        2 - Created a somaEstados function, that created two new constants of num1 and num2 equal to their respective values
+        parsed as float.
+        3 - I didn't create a areNumberValids state to check if the numbers are greater than 0. Since that when React
+        calls the setAreNumbersValid(true), this do not immediately updates its value. So when verifying if that state
+        is true, its value may still be the old one, not the updated one. And this will make the conditional block to
+        always work the wrong way
+        
+
+  ● When should i wrap the ` sign around {} ? 
+
+    ○ 1. In plain JS (outside JSX)
+
+      ■ You DON´T NEED {}.
+        □ We are in the JS mode, so we can simply use the template string with backtick: setText(`#${generateRandomColor()}`)
+
+    ○ Inside JSX (React's HTML)
+      ■ Now we need to wrap it in {}, since JSX is not JS — It is a language similar to HTML
+
+      ■ The {} are used to "enter" the JS mode inside JSX
+
+          ``` return (
+            <h1>{`#${generateRandomColor()}}</h1>
+          )
+
+           {} around indicate that the content is JS
+           ${} inside the template string is used to interpolate js variables inside the string
+
+    ○ Dynamic classes example
+
+      ■ `<label className={`${props.semLabel ? 'hidden' : 'inline'}  m-1`}>{props.label}</label>`
+
+        □ What is happening here is:
+
+          . We enter the JS mode with {} allowing us to use JS code between the braces
+          . We then interpolate strings and variables with template strings `${}`
+            - In this case we are inside a className (but this woul work in any property that expect a string), and we
+            wanted to mix variables/expressions with text. In this case, we need to use template strings
+              - `fixed-text ${variableOrExpression}  more-text`
+          . In our case, m-1 was the fixed text and we wanted to insert a expression to check if props.semLabel was true.
+            - Then, we added the ternary inside the template string 
+
+    ○ In summary {...} enter the JS mode inside JSX and  `${}` inserts dynamic values inside a JS string. ${} creates a
+    template string, used for variables/expressions inside {``}
+      ■ In JSX template strings are always inside the javascript mode: className={`${}`} not className=`${}`.
+        □ This is valid JS, but not valid JSX.
+      ■ Everytime we want to use javascript inside JSX (such as in classNames, styles, onClick, etc)  we must use {}
+        □ And if inside of it we want to create a string with variables, then we uise template strings.
 
   ● Possible hydration errors
 
@@ -1706,7 +1838,7 @@
           export default function MyComponent() {
           const [counter, setCounter] = useState(0);
 
-          // 🛑 This function is created from scratch on each render
+          //  This function is created from scratch on each render
           function calcularNovoValor(valor) {
             return value * 2 + counter; // 👈 Depends on the counter state
           }
@@ -1729,7 +1861,7 @@
           . Local: On the top of the file, outside of any component function
 
           ```ts
-            // 🟢 This function is created just once when the module is loaded
+            // This function is created just once when the module is loaded
             function formatCurrency(value) {
               return `$ ${value.toFixed(2)}`; // 👈 Does not depend on state or component prop
             }
@@ -1755,7 +1887,7 @@
             export default function MyComponent() {
               const [data, setData] = useState({});
 
-              // 🟠 Ensure the reference do not change between renders.
+              //  Ensure the reference do not change between renders.
               const fetchData = useCallback(() => {
                 // ... fetch logic ...
                 setData(newData);
@@ -1869,7 +2001,7 @@
             return <input type="text" value={props.valor}>
           } 
 
-          <MyInput ref={inoutRef} />
+          <MyInput ref={inputRef} />
         ```
         ?
 
@@ -1927,122 +2059,278 @@
 
         □ So in summary the common component does not accept ref while the component with forwardRef yes
             
-● useImperativeHandle hook
-  
-  ○ What is it for?
-
-    ■ React hook that allow customizing what will be exposed by a ref when using forwardRef
-    ■ This means that instead of the parent directly accessing the DOM (inputRef.current.value), we can give to the parent
-    a controlled set of methods or properties, such as inputRef.current.apagar() or inputRef.current.textoPadrao()
-
-  ○ Why does it seem discouraging?
-
-    ■ Because it breaks a little the core idea of React, that is
-      □ "Data flow from up to down by props", and the DOM updates itself in this state, not the other way around.
-
-    ■ useImperativeHandle goes against that
-      □ It exposes internal behaviors for the parent component, what increases the coupling between them.
-      □ It normally is imperative, which means, "do it know", different from the declarative style that React encourages.
-
-● How should i call a function?
-
-  ○ 1. {functionName} - passing the function reference
-
-    ■ This is thye most performant way to call a function when it takes no arguiments (or only takes the (event object))
-
-    ■ Common Example:
-
-      ```ts
-        <button onClick={handleClick}>Click me</button>
-      ```
+  ● useImperativeHandle hook
     
-    ■ When to use: When your function does not need any arguments besides the event object that React automatically passes
-    to it. React's event systerm handles calling the function when the event happens. Therefore, only use it for simple
-    event handlers without arguments.
+    ○ What is it for?
 
+      ■ React hook that allow customizing what will be exposed by a ref when using forwardRef
+      ■ This means that instead of the parent directly accessing the DOM (inputRef.current.value), we can give to the parent
+      a controlled set of methods or properties, such as inputRef.current.apagar() or inputRef.current.textoPadrao()
 
+    ○ Why does it seem discouraging?
 
-  ○ 2. Direct call (Immediate execution)
+      ■ Because it breaks a little the core idea of React, that is
+        □ "Data flow from up to down by props", and the DOM updates itself in this state, not the other way around.
 
-    ■ `functionName(argument1, ...)`
+      ■ useImperativeHandle goes against that
+        □ It exposes internal behaviors for the parent component, what increases the coupling between them.
+        □ It normally is imperative, which means, "do it know", different from the declarative style that React encourages.
 
-      This is how you call a function immediately when the component renders
+  ● How should i call a function?
 
-    ■ Syntax: 
+    ○ 1. {functionName} - passing the function reference
 
-      `<div>{functionName()}</div>
+      ■ This is thye most performant way to call a function when it takes no arguiments (or only takes the (event object))
 
-      □ When to use: When you want the function to run once during the render cycle, and you want to display the value it
-      returns
-
-      □ Example:
+      ■ Common Example:
 
         ```ts
-          const getGreeting = (name) => `Hello ${name}`
+          <button onClick={handleClick}>Click me</button>
+        ```
+      
+      ■ When to use: When your function does not need any arguments besides the event object that React automatically passes
+      to it. React's event systerm handles calling the function when the event happens. Therefore, only use it for simple
+      event handlers without arguments.
 
-          function MyComponent() {
-            // the function runs immediately and the returned string is displayed
-            return <h1>{getGreeting("Caio")}</h1>
-          }
+
+
+    ○ 2. Direct call (Immediate execution)
+
+      ■ `functionName(argument1, ...)`
+
+        This is how you call a function immediately when the component renders
+
+      ■ Syntax: 
+
+        `<div>{functionName()}</div>
+
+        □ When to use: When you want the function to run once during the render cycle, and you want to display the value it
+        returns
+
+        □ Example:
+
+          ```ts
+            const getGreeting = (name) => `Hello ${name}`
+
+            function MyComponent() {
+              // the function runs immediately and the returned string is displayed
+              return <h1>{getGreeting("Caio")}</h1>
+            }
+          ```
+
+        □ Danger: Never use this syntax directly inside an event handler like (onClick) unless we want it to return immediately
+        upon rendering, as it will cause an infinite loop or unexpected behavior
+    
+    ○ 3. Event Handler Call (Delayed execution)
+
+      ■ {() => functionName(argument1, ...)}
+
+        This is the standard and safest way to call a funciton later, usually in responde to user action (like a click)
+
+        □ Syntax:
+
+          `<button onClick={() => functionName()}> Click Me </button>`
+
+          or if the function takes an event as argument
+
+          `<button onClick={(e) => functionName(e, otherArg)}> Click Me </button>`
+
+      ■ When to use: When you want the function to be called only wen the specific event (e.g onClick, onMouseOver, onChange)
+      occurs. This passes a reference to an anonymous function that, when executed by React's event system, will then call
+      your actual function.
+
+      ■ Your options:
+
+        □ ✅ { () => functionName() }: Use this when your function needs to take arguments or when you are unsure if it will.
+        This is the most flexible approach.
+
+        □ ❌ { () => functionName }: This is syntactically incorrect/redundant. You're defining a new function that just
+        returns a reference to another function, which isn't what you want for an event.
+    
+      
+  ● Deadlock (Infinite Loop) when updating a state
+
+    ○ Let's think of trhis scenario
+
+      ```ts
+        const [texto, setTexto] = useState('')
+
+        useEffect(() => {
+          setTexto('Secret text not available')
+        }, [texto]) // Dependency that causes the error
+
+      ```
+
+      ■ The sequence of events that cause the error are
+
+        1. Initial rendering, component is rendered for the first time with the defined state
+        2. useEffect is executed, since the dependency array [texto] is evaluated, and this is the first render, useEffect
+        simply executes the function
+        3. State update, the function inside the useEffect calls setTexto with a new value
+        4. Re-render, calling setTexto informs react that the state change, causing a re-render, texto is now the new value
+        5. useEffect executes again 
+        6. Re-renders again, but with the texto continuing to be the one chosen
+        7. New Re-render
+        8. forever...
+
+      ■ This create an uninterrupted cycle, consuming resources and eventually, making React to xstop the processing and show
+      in the console, something as "Maximum update depth exceeded. This can happen when a component repeatedly calls setState
+      inside useEffect or useLayoutEffect"
+
+  ● Tailwind does not have access to dynamic colors on build time only on runtime
+
+    ○ What does build time and run time mean?
+
+      ■ Build Time:
+        □ It mean that the code is analyzed and converted into something that the browser may understand (ex: Vite packagiing
+        , Webpack, etc).
+        □ It executes before the app runs in the browser
+
+      ■ Runtime
+
+        □ It's when the code is already being executed on the browser (React is mounting the component, useState change values
+        , etc.).
+        □ It executes while the app is running on the browser
+    
+    ○ Where does tailwind enters? 
+
+      ■ During the build, it reads our source code and searches for all the classes that appear as static texs, such as bg-red-500
+      , text-lg, etc
+      ■ It generates the corresponding CSS only for these classes
+
+      ■ Example:
+        ```ts
+          <div className="bg-blue-500 text-white">Ciao</div>
         ```
 
-      □ Danger: Never use this syntax directly inside an event handler like (onClick) unless we want it to return immediately
-      upon rendering, as it will cause an infinite loop or unexpected behavior
-  
-  ○ 3. Event Handler Call (Delayed execution)
+        . Tailwind sees the strings bg-blue-500 and text-white
+        . Generates their CSS on the final file
+        . When the app runs, the browser applies this css
 
-    ■ {() => functionName(argument1, ...)}
+    ○ But what goes wrong with dynamic values such as bg-${randomColor}-500
 
-      This is the standard and safest way to call a funciton later, usually in responde to user action (like a click)
+      ■ Look at the code: 
 
-      □ Syntax:
+        <div className={`bg-${randomColor}-200`}/>
 
-        `<button onClick={() => functionName()}> Click Me </button>`
+      □ During the build tailwind only sees "bg-" + variable + "-200"
 
-        or if the function takes an event as argument
+      □ He does not have how to know if this color is "red", "blue", "123456" or any other value — because this will only be
+      known in runtime, this is, when the app is already running in the browser
 
-        `<button onClick={(e) => functionName(e, otherArg)}> Click Me </button>`
+        . As a result
 
-    ■ When to use: When you want the function to be called only wen the specific event (e.g onClick, onMouseOver, onChange)
-    occurs. This passes a reference to an anonymous function that, when executed by React's event system, will then call
-    your actual function.
+          - Tailwind does not generate any tailwind class called bg-????-200
+          - When the component tries applying bg-123456-200, this class does not exist
+          - so, no style is applyed
+    
+    ○ Possible Solutions
 
-    ■ Your options:
+      ■ 1. Using inline style (the simplest and most correct way for dynamic colors) 
 
-      □ ✅ { () => functionName() }: Use this when your function needs to take arguments or when you are unsure if it will.
-      This is the most flexible approach.
-
-      □ ❌ { () => functionName }: This is syntactically incorrect/redundant. You're defining a new function that just
-      returns a reference to another function, which isn't what you want for an event.
-  
+        □ <div style={{ backgroundColor: randomColor}}></div>
       
-● Deadlock (Infinite Loop) when updating a state
+      ■ 2. Using known conditional classes
 
-  ○ Let's think of trhis scenario
+        <div className={`
+          ${color === "red" ? "bg-red-500" : ""}
+          ${color === "blue" ? "bg-blue-500" : ""}
+        `}></div>
 
-    ```ts
-      const [texto, setTexto] = useState('')
+        □ That way, tailwind does see bg-red-500 and bg-blue-500 at build time, and generates CSS for them.
 
-      useEffect(() => {
-        setTexto('Secret text not available')
-      }, [texto]) // Dependency that causes the error
+    ○ Quick final summary:
 
-    ```
+      Stage	       Tailwind can process it?	   Example
+      Build time 	 Yes, static known classes	"bg-red-500"
+      Runtime      No, dynamic expressions	  `bg-${randomColor}-200`    
 
-    ■ The sequence of events that cause the error are
+  ● How do the toString method work
 
-      1. Initial rendering, component is rendered for the first time with the defined state
-      2. useEffect is executed, since the dependency array [texto] is evaluated, and this is the first render, useEffect
-      simply executes the function
-      3. State update, the function inside the useEffect calls setTexto with a new value
-      4. Re-render, calling setTexto informs react that the state change, causing a re-render, texto is now the new value
-      5. useEffect executes again 
-      6. Re-renders again, but with the texto continuing to be the one chosen
-      7. New Re-render
-      8. forever...
+    ○ In programming, numbers can be represented in different numerical base (or radix).
+      The base determines how many unique digits are used to express numbers
 
-    ■ This create an uninterrupted cycle, consuming resources and eventually, making React to xstop the processing and show
-    in the console, something as "Maximum update depth exceeded. This can happen when a component repeatedly calls setState
-    inside useEffect or useLayoutEffect"
+      ■ Common bases:
+
+        Base: 10 | Name: Decimal     | Digites used: 0 - 0           | Example: 255
+        Base: 2  | Name: Binary      | Digites used: 0 - 1           | Example: 11111111
+        Base: 8  | Name: Octal       | Digites used: 0 - 7           | Example: 377
+        Base: 16 | Name: Hexadecimal | Digites used: 0 - 9 and A - F | Example: FF
+
+    ○ So, in JS
+
+      ■ const num = 255; would be
+
+        num.toString(10); //  "255" -> decimal
+        num.toString(2); //   "11111111" -> binary
+        num.toString(10); //  "377" -> octal
+        num.toString(10); //  "ff" -> hexadecimal
+
+        Each of these is the same number 255, just written in different bases.
+    
+    ○ Why we use base 16 for colors?
+
+      ■ CSS colors use hexadecimal (base 16) because it maps nicely to the 8-bit RGB color system:
+
+        □ Each pair (RR, GG, BB) is a two digit hexadecimal value between 00 (0 in decimal) and ff (255 in decimal).
+
+        □ So for example:
+          . 0 in decimal, equals to 00 in hex meaning no color
+          . 255 in decimal, equals to FF full intensity
+        
+    ○ Example
+
+      const num = 2938122;
+      console.log(num.toString(16)); // "2cd5ca"
+
+      That's the hexadecimal representation of 2938122, by adding # in front — #2cd5ca — it becomes a valid CSS color.
+
+  ● Classic behavior for when the initial state is 0 and the input is controlled by that state
+
+    ○ What happen
+
+      ■ We have a controlled input, such as
+        ` const [n1, setN1] = useState<number>(0)
+          <input type="number" value={n1} onChange={(e) => setN1(+e.target.value)}>
+
+      ■ This means that
+
+        □ The value shown in the input comes from the state (n1)
+        □ Every time the user types something, React calls setN1
+        □ The new value renders the input again
+      
+    ○ The problem
+
+      ■ If we try erasing the value, such as the number 0, e.target.value becomes an empty string `""` and our code does
+        ` setN1(+e.target.value) `
+      ■ but +"" is equal to 0
+
+      ■ As a result, React updates the state to 0 again
+    
+    ○ Possible solutions: 
+
+      ■ Option 1 - allowing empty field (better UX)
+
+        const [n1, setN1] = useState<string>("")
+        <input value={n1} type="number" onChange={(e) => setN1(e.target.value)}>
+
+        and on the sum
+
+        function somaEstados() {
+          const num1 = parseFloat(n1) || 0
+          const num2 = parseFloat(n2) || 0
+          return num1 + num2
+        }
+      
+      ■ Option 2 - Continue with the number type, but treating thee number 0
+
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const value = e.target.value
+          setN1(value === "" ? 0 : +value)
+        }}
+
+
+
+
 
 
