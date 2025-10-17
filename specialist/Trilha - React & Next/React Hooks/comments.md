@@ -570,6 +570,71 @@
         ```
         . With all the internal components "aware" of the context state, they can all share the same state
 
+  ● useReducer
+
+    ○ What it is
+      ■ `useReducer` is a more advanced version of `useState`. It’s useful when managing multiple related state variables
+      or complex update logic.  
+
+    ○ Why use it?
+      ■ Helps organize state updates that are spread across multiple `useState` hooks.  
+      ■ Combines all state and update logic into a single reducer function.  
+
+    ○ TypeScript Note
+      ■ We should always type your reducer, which has the following syntax: `useReducer<State, Action>()`.  
+      ■ Group all state types in one object and use it as the first generic parameter.  
+
+
+    ○ Key difference from useState
+      ■ `useState` can store any type of data.  
+      ■ `useReducer` typically works with objects and handles multiple state updates in one place.  
+
+    ○ Parameters
+
+      ■ Reducer function (`mudaDados`)  
+        □ Receives current state and an `action` object.  
+        □ Uses `action.type` to decide what to do.  
+        □ Can use `action.payload` to update state values.  
+
+      ■ State object
+        □ Contains all state variables previously managed with `useState`.  
+
+    ● Example
+
+    ```ts
+    function mudaDados(estadoAtual, acao) {
+      switch (acao.type) {
+        case "ALTERA_N1":
+          window.alert("N1");
+          return {
+            ...estadoAtual,
+            n1: acao.payload,
+            validadeN1: acao.payload > 0
+          };
+        default:
+          return estadoAtual;
+      }
+    }
+
+    // usage in JSX
+    <InputFormatadoSemLabel
+      semLabel={true}
+      tipo="number"
+      valor={dados.n1}
+      onChange={(e) =>
+        dispatch({ type: "ALTERA_N1", payload: +e.currentTarget.value })
+      }
+    />
+
+  
+
+
+    
+
+
+
+
+ 
   ● Applying Contexts
 
     ○ SeletorDeCor component
@@ -810,32 +875,32 @@
 
           □ Line to line detialing
 
-            1. Mapping The Sections
+            3. Mapping The Sections
 
               . Creates a new variable `novasSecoes`
               . Utilizes the method .map in the secoes array
               . map iterates over each array section and returns a NEW array (novasSecoes)  with the transformed sections.
               This ensures that the original structure secoes is not modified (imutability)
             
-            2. Mapping the data inside each secao
+            4. Mapping the data inside each secao
 
               . const novosItens = secao.itens.map((item: any)) => {...}
               . inside each `secao`, is created  a new array called new itens
               . the map iterates over each item inside the current secao, creating a transformed version of the itens
               array
 
-            3. Selection Logic
+            5. Selection Logic
               . return {...item, ...}  this is the main part. it spreads the item to copy all properties inside of it to
               a new object
               . selecionado: item.url === url is added or overriten in the new object
                 . true if the url is equal to the url property
             
-            4. Returning the updated section
+            6. Returning the updated section
               . return { ...secao, itens: novosItens}
               . original section is copied, and the itens array inside of it, is replaced with the newItens recently
               created, which contain the applied logic.
             
-            5. Outside all the mappings, return the newArray
+            7. Outside all the mappings, return the newArray
              
         □ Basically, the functionality is as follows: 
 
@@ -1556,13 +1621,32 @@
 
         1 - Created 3 states, one for n1, other for n2, other for the sum, i chose to type these states as a string and
         parse them as float afterwards, just to remove the 0 from the input value
+        2 - Linked both numbers to the inputs, and created a new method on the input of onChange for them, since onInput
+        fires on every key stroke, and onChange is only after the input blurs
         2 - Created a somaEstados function, that created two new constants of num1 and num2 equal to their respective values
         parsed as float.
         3 - I didn't create a areNumberValids state to check if the numbers are greater than 0. Since that when React
         calls the setAreNumbersValid(true), this do not immediately updates its value. So when verifying if that state
         is true, its value may still be the old one, not the updated one. And this will make the conditional block to
         always work the wrong way
+
+      ■ Instructor's Approach
+
+        1 - Created 2 states, one for n1 an one for n2, both states initialized with 0, and linked them to the inputs
+        2 - Used the onInput to set the + e.target.value of the input
+        3 - Create 2 more states, one `validadeN1` and `validadeN2`
+        4 - Defined two useEffects, one to check the validity of n1 when it changes and other when the n2 changes
+          □ My Comment: I thought defining separate useEffects for each number state didn't have a reason, and defining
+          only one effect to check the numbers validity would have the same result since if any value on the dependency
+          array change, it will trigger a new render. However the approach she took deals with the `Single Responsibility
+          Principle`, whiich in turn make the code cleaner and easier to understand in isolation. Because if in the future,
+          we have to change the validation logic of one of them, without altering the logic of the other number, we would
+          know exactly where to change. And when we render in one effect, we would even have a small loss of performance,
+          since that it only needs to check one state at a time
+        5 - Created a function `fazSoma()` to sum both numbers in case they are valid and associate it to the button
+        that will execute this function onClick
         
+
 
   ● When should i wrap the ` sign around {} ? 
 
