@@ -2,6 +2,8 @@ import {
   IconAppWindow,
   IconArrowsLeftRight,
   IconBrain,
+  IconColorSwatch,
+  IconDatabase,
   IconDimensions,
   IconForms,
   IconLayout,
@@ -13,6 +15,7 @@ import {
   IconRefreshAlert,
   IconSettings,
   IconShoppingCart,
+  IconTextColor,
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -133,8 +136,19 @@ const secoes = [
         titulo: "Texto secreto",
         url: "/outros/texto",
         tag: "useLayoutEffect",
-        icone: <IconLayout />
-
+        icone: <IconTextColor />
+      },
+      {
+        titulo: "Gerador de cor",
+        url: "/outros/geradorDeCor",
+        tag: "useLayoutEffect",
+        icone: <IconColorSwatch />
+      },
+      {
+        titulo: "Soma com useState",
+        url: "/outros/somaState",
+        tag: "useState",
+        icone: <IconDatabase />
       }
     ]
   },
