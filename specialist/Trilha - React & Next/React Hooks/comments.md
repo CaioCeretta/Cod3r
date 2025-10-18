@@ -742,8 +742,45 @@
            - Typescript uses these literal values to discriminate which specific object is being used at the moment.
 
             When using the switch in the reducer. we are "asking" ts: What is the type discriminator? 
-            
-            
+
+  ■ useId
+
+    1. Use No1
+
+      □ useId is one of the easiest hooks, we can simply use it to generate unique ids for our components. We can assign the
+      useId() call to a constant 
+      
+      □ One common use case is to assign this generated id to some input and link this input with the label through the id
+      property
+
+      □ We can also use the same id to add unique ids to our component.
+        . We can on the htmlFor, define the id with: e.g. htmlFor={`nome-${id}`} and on the other input htmlFor={`sobrenome-${id}`}
+        . And if we save and go into the dev tools, we will see now that their id will be something like: `nome-:Rm:`
+      
+      □  useId will always generate a string and will have the `:` character, because the colon is a character that is not
+      recognized as a CSS selector nor as a JS selector. Adding the colons to the id we can be sure that this id won't be
+      used to something it is not intended for.
+
+      □ Even though this is the most basic use of this hook, since it doesn't add any different complexity to deal with
+      data, it ends up being interesting for the fact that it helps the accessibility of the apps and allow the grouping
+      of these elements that belong to the same component
+
+    2. use No2
+
+      □ For this useCase we will create a custom component for each input.
+        . Within this component, we are going to define an id constant with the value of "8"
+
+      □ Then inside the page component, we define one of this recently created component with the label as "nome" and other
+      one with the label of "sobrenome"
+        . Even though the input ids are the same, when we click on the second input, it will focus on the first one, because
+        HTML always focus on the first place this id appear
+        . To solve this we can utilize the useId hook instead of hardcoding an id
+        . Now, we don't have to do the same thing as before of using `nome-${id}`, because the id generated on each component
+        will be different,  so we can just use {id} on the htmlFor and on the input id
+      □ One alternative would be to pass the id on the props, but since we have these hooks on React, we can also use make
+      use of them.
+      
+
 
 
          
