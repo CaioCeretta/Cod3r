@@ -625,6 +625,136 @@
 
             . And then call it like this: `dispatch(actions.alteraN1(+e.currentTarget.value))`
 
+        □ Questions
+
+          1. Discriminated Union vs Common Union
+
+            □ The common union is when we say that a variable can be of any of the listed types, such as:
+              type Resultado = { erro: string } | {dado | any }  
+
+              . function processa(res: Resultado) {
+                // Typescript knows that res is whether { erro: string}  or { data: any }
+                // Problem is he doesn't know which of the properties exist.
+                // If we try to access res.erro or res.dado directly we would have to verify the existence of the properties.
+
+                if('erro' in res) {
+                  console.log(res.erro) // Now he knows that res is equal to {erro: string}
+                } else if ('dado' in res) {
+                  console.log(res.dado) // He knows that res is equal to {dado: any}
+                }
+              }
+
+              . Normal union is useful, but the type narrowing can be less intuitive, requiring checks like if ('prop' in obj)
+         
+          2. Discriminated Union
+
+            □ A discriminated union is a special type of union where every members of the union share a property in common,
+            and the value of this property (the discriminator) is different and literal on each member
+
+              ```ts
+                type Acao =
+                  // Discriminator: ALTERA_N1
+                  {type: "ALTERA_N1", payload: number} |
+                  // Discriminator: ALTERA_N2
+                  {type: "ALTERA_N2", payload: number} |
+                  // Discriminator: SOMA
+                  {type: "SOMA"} // no payload
+              ```
+                
+            □ Benefits:
+
+              1. Automatic and safe type narrowing
+                . By verifying the value of the discriminatory propertry (ex: in `switch` or `if/else`), TypeScript automatically
+                knows which is the exact format of the object
+
+                  . In our `reducer`
+
+                  ```ts
+                    switch(acao.type)  {
+                      case: "ALTERA_N1"
+                      // Here typescript KNOWS that the action is { type: "ALTERA_N1", payload: number }
+                      // because of this, 'acao.payload' has the type number guaranteed
+                      return { /* ... */ n1: acao.payload  }
+
+                      case: "SOMA"
+                      // Here typescript KNOWS that 'action' is {type: "SOMA"} 
+                      // If we try to access acao.payload, he will throw a compiling error
+                      // This is safety
+                      return { /* ... */  }
+                    }
+                  ```
+
+                2. It ensures each action type has the correct information. We don't  run the risk of passing a payload to
+                a function that shouldn´t have, or try to accesss a payload that doesn´t exist.
+
+              
+
+          3. Action creator return
+
+            ● alterarN1: (valor: number): Acao => ({type: "ALTERA_N1, payload: valor}): Does this mean that the action type
+            will be equal to one of the acao object?
+
+              ○ Yes, exactly. If we we break down the function declaration on Action Creator:
+
+                ```ts
+                  alteraN1: (valor: number): Acao => ({
+                    type: "ALTERA_N1",
+                    payload: alor
+                  })
+                ```
+                ■ valor is the function param, and the :Acao is the promised return type. We are telling ts "This function
+                will always return an object that fits my `Acao` type.
+
+                ■ And => ({...}) is the returned object
+
+                ■ Therefore: 
+
+                ```ts
+                  alteraN1: (valor: number): Acao => ({
+                    type: "ALTERA_N1",
+                    payload: alor
+                  })
+                ```
+
+                  □ When typescript checks this objkect being returned, he compares to the object returned with the type
+                  Acao
+
+                    . Is { type: "ALTERA_N1, payload: 5 } a member of an object containing { type: "ALTERA_N1"; payload: number}?
+                      or
+                    . Is { type: "SOMA" } is a member of the object { type: "SOMA"; }? 
+
+                  □ If we, by mistake, sent an object with type "ALTERA_N1", but omitted the payload, typescript would throw
+                  an error, because no member of the Acao union, have this type with no payload.
+
+                  □ So as a conclusion, the `:Acao` declaration ensures, that in the time of compiling, the object we are
+                  dispatching is correctly formatted for its reducer.
+
+        . So as a quick summary, the term "discriminator" refers to that common property used to differentiate members.
+          In our code, the type property is the discriminator
+
+          - What makes the union "discriminated":
+
+            1. Shared property, every tipes in the Union have a type property, so they shoud all have the property
+            type 
+            2. Unique literal values: Value of the discriminated type must be a literal union and different of each
+            type of the union 
+
+           - Typescript uses these literal values to discriminate which specific object is being used at the moment.
+
+            When using the switch in the reducer. we are "asking" ts: What is the type discriminator? 
+            
+            
+
+
+         
+            
+
+
+            
+            
+
+
+
           
 
 
