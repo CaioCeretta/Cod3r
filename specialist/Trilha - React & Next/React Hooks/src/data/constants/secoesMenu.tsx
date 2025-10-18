@@ -156,7 +156,19 @@ const secoes = [
         url: "/outros/somaReducer",
         tag: "useReducer",
         icone: <IconDatabaseImport />
-      }
+      },
+      {
+        titulo: "Formulario 1",
+        url: "/outros/formularioid1",
+        tag: 'useId',
+        icone: <IconForms />
+      },
+      {
+        titulo: "Formulario 2",
+        url: "/outros/formularioid2",
+        tag: 'useId',
+        icone: <IconForms />
+      },
     ]
   },
 ];
