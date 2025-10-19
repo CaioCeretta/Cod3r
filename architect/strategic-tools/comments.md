@@ -231,9 +231,9 @@
         business
 
       ■ If we start analyzing the EAD problem, but not seeing it as an unique object, but after the perspective of
-      sub domains, the first sub domain that will emerge that is extremely important, is the educational part. The
-      educational part is where we have the courses, lessons, and so on. 
-        ▢ Another important sub domain inside an online school, is the sales part, we will have the lead, the sales funnel
+      sub domains, the first sub domain that will emerge that is extremely important, is the educational area. The
+      educational subdomain is where we have the courses, lessons, and so on. 
+        ▢ Another important sub domain inside an online school, is the sales subdomain, we will have the lead, the sales funnel
         and a specific process for the sales inside an online world.
         □ Then the forum sub domain... And we will start noticing that the business can be separated into subdomains. It
         is still a unique domain, an EAD domain, but we can think of different subdomains even before entering the scope
@@ -248,19 +248,206 @@
           - Therefore, after these specialist explanations, we can bring a solution that indeed meet the way the specialist
           explained us.
 
-        □ One important thing to know is that all these specialists, will use a set of "slangs" that concerns their
+        □ One important thing to know is that all these specialists, will use a set of "terms" that concerns their
         business. They will use names that are extremely important to know. For example, inside an EAD platform, we
         organize the courses, and the courses have SECTIONS (which is an important name). As for another company, we will
         notice that there are courses, and they are separated in chapters and the chapters have lessons (chapters is an
         important name that have to do with the business language). If in other case, instead of chapter or section, the
         name modules are used, or the courses may be organized with a higher level than the courses that are trails, or
         one even higher that are areas, so the areas have trails, that have courses, that have lessons, and so on. 
-          - All of these "slangs" we will end up getting through conversations with the specialists, and the names used
+          - All of these "terms" we will end up getting through conversations with the specialists, and the names used
            by then is fundamental,
 
         □ And if we take a look on the sub domains, let's take the sales subdomain as example, it have: client, sale, card,
         installments, bill. And all of this concerns the sales domain
+  
+  ● Lesson 6 - Classifying the sub domains
+
+    ○ We are now going to separate the subdomains into basic, support and generic, regarding the Sales, Forum and Educational.
+
+      ■ At the end of the day, the last and definitive word, will be from the client. The developer needs to keep listening
+      to the client and he will say exactly how the business work, and after it, we will be able to get into the conclusion
+      of who is the main one, who is support and who is generic,
+
+        □ For a EAD focused on education, the sub domains were separated in: Educational (basic), Forum (support), and
+        sales (generic). This means that the money and investments are going to be spent primarily on the functionalities
+        related to the educational subdomain. Forum still is an important functionality, and specific of this business
+        that need to be defined inside the company but was defined as a support because it will help the basic sub
+        domain.
+          - Inside each course we will have a forum to provide support to the students.
+          - And finally the sales was defined as a generic sub domain, because may utilize other companies to take care
+           of our sales and don't want to worry with these parts, and will delegate them to other company. Commonly
+           because there are nothing special with our sales and therefore, won't be anything different than these companies
+           provide.
+            - Even if it is a generic subdomain, it does not mean that it is not important. It will still need some level
+             of integration, and we wil have to implement something, not even if it is something simple, to integrate
+             with these other companies. Especially if we have multiple providers and companies we have to interact with
+             to make this sale. Many times we will want to create some layer to help accessing these providers without
+             this "contaminating" our application
+
+      ■ Looking at a more specific way into the education sub domain
+
+        □ We have data and flows, which are different for each sub domain. By specifically looking at the data, we will
+        see that we have:
+
+        one course, may have multiple sections, which can have multiple lessons and a lesson can be a video lesson or an
+        article lesson. 
+
+        □ Other important figure is the student, the student may have courses progress which can have many lessons progress.
+
+        □ Within the flows, we will see that there may exist flows of: Saving a course, publishing a course, unpublish,
+        include lesson, delete lesson, move lesson, toggle visibility, and so on.
+
+  ● Lesson 7 - Ubiquitous Language
+
+    ○ Congress example
+      
+      ■ Imagine we are in a congress, and if we take a look at a group of specialists talking, we will see a set of "terms¨
+      that we have never seen before, and a weird conversation with multiple technical terms. This is the ubiquitous language.
+        □ If it is a cardiology congress, we will hear terms that are specific to that area.
+        □ If it is a congress about react development, there will be terms related to that technology
+        □ And the same thing will happen to any business that exist all across the world.
+      ■ The "problem space", or inside the business, every specialist of each domain, are going to utilize a set of domain
+      terms that will be derived from the data and the flows, that are very important for us to know.
+        □ And these terms that come from the business, they must be used inside our code, that link we can make, using
+        the same universal language spoken by the specialists, inside our code, inside whatsapp conversations, any type
+        of communication inside the project.
+          . By doing this, we generate value to the business, it brings an integrity to the way we communicate thing
+          withing a project. 
+          . Because by not doing this, there may be cases where two clients referred to the same term with different names
+          and in the code there will be a third term and the development team will use a fourth one.
+      ■ The most important thing, is to understand that this ubiquitous language belong to a sub domain, and to a determined
+      context, and won't be used for the whole application.
         
+
+  ● Lesson 8 - Classifying the subdomains #2
+
+    ○ To finish the "space of the problem" part, we need to understand that a domain of a company, its area of acting, refers
+    to these three kind of subdomains, basic, support and generic. 
+
+      ■ We have three sub domains, and inside each one of them, we may have different objects that may seem the same thing
+      to us.
+        □ Many applications may create one single user object and inside user we have all the educational progress, all
+        the forum posts, all the purchases he did. And we end up mixing client things, with author things with student
+        things, everything a single user, which is not cool
+      
+        □ In this case, what we will do is "to continue letting each object with its own characteristics and create one
+        other subdomain that is part of the problem, which will require a certain user to be authorized, and have access
+        to the courses he has bought and for this we will need the authentication and authorization".
+
+        □ And this will cause another subdomain to emerge, that concerns the authentication area. And within it we have
+        the user, but this user may have the accesses but doesn't need to have the courses progresses, the forum posts,
+        and so on. And why is it? Because each object can relate through an ID, through an e-mail, have a unique e-mail
+        for each one and each one will have its characteristics.
+          . We can use the same user name defined in the authentication to the other sections, the same user name can be
+          used in the education, in the forum, in the sales, however when thinking on business terms, there are going to
+          exist some characteristics in the student that may not exist on an author, that don't exist on the client, and
+          so on. So each context will define its own behaviors, attributes, and each object has its own specialist.
+          . When we think about SRP (Single Responsibility Principle), have a lot to do with the fact that the object
+          should have only one reason to change, and this only reason to change, has to do with the fact that he has
+          only one specialist that points changes to that object. If we center everything in one object, we end up
+          overloading that user with multiple things inside of him, and we might ending up getting in trouble mixing
+          everything together.
+
+  ● Lesson 9 - Bounded Contexts
+
+    ○ Leaving the problem space and going into the solution space
+
+      ■ If we visualize a "from/to" scenario, we have:
+
+        □ Company Domain -> Domain Model: 
+          .  
+
+        □ Subdomain -> Bounded Context
+          . When making each subdomain to a bounded context, we have the main strategic tool we are going to use. Bounded
+          contexts is a simple name and easy to concept, however, it is many times neglected by many developers and it
+          makes a huge difference in everyday life.
+          . Thinking of an app on strategic terms by first doing this analysis of mapping all the subdomains a business
+          have and after it, being able to establish which are the bounded contexts we will use inside of it.
+          . Inside these bounded contexts, we will have both our use cases and the data inside of it.
+          . The ideal way of using this strategic tool is to make a one to one mapping. We have a sub domain on the problem
+          space and we map it to one single bounded context specific to meet that subdomain on our problem.
+          . Therefore: 
+
+            Subdomains  | Bounded Contexts
+
+            Educational   Educational
+            Forum         Forum
+            Sales         Sales
+
+      ■ This will one to one relation we have, essentially works when dealing with basic or support sub domains, The generic
+      subdomains can simply integrate with the API and we might not need to have a whole context that is prepared to meet
+      it.
+        □ However, when planning everything from scratch, the ideal is to make this one to one mapping.
+        □ What can end up happening on practice, is that we have multiple subdomains on the problem part (This won't change,
+        they are based on the business), and on the solution side, we decided to map it in a big subdomain, with everything
+        mixed inside of it, making it a ball of mud. This usually happen when we, during the planning, decided to treat
+        everything as it was the same thing.
+      
+      ■ One important thing to notice is: The bounded context is a logic separation but can also be a physical separation.
+        □ Each bounded context can be a different folder inside our project, we may have one folder for the auth, other for
+        the educational, forum, and so on. These can be different specific projects, inside of these bounded contexts we
+        can have the frontend, backend, database projects. The way we choose how to organize this, in the solution space,
+        is extremely flexible.
+          . The instructor will further show a way for us that will helps us have multiple reuses of our business rules,
+          be it on the frontend, backend or mobile. And there may exist a large flexibility on how we are going to make
+          this mapping from subdomains to bounded contexts.
+
+
+  ● Lesson 10 - Project Organizing
+
+    ○ In this lesson we will see a practical example, but not entering on application details yet. However, we will see
+    how bounded contexts can influence our project organization.
+
+      ■ Let's use the `turbo repo` as an example. Turbo repo is a building mechanism based in js to enable us to create
+      a single project and within this project, sub-projects, and it will manage the build of the whole application.
+
+      ■ In the example, the instructor is using a project he created with turbo-repo, and inside the apps folder, there
+      are 3 different projects: backend, frontend and mobile. Everything inside a single project
+        □ Within those 3 apps we have the presentation interfaces that will make use of the rules. The educational, forum
+        and auth are defined within the packages folder, and once the apps are able to depend on these projects, we will
+        use them, as a presentation interface, to utilize these rules. 
+
+        □ Within the educational folder, as an example, we will have models for every specific part of a course, such as
+        Student, Classes, Courses, and others.
+          . We also have all the flows and useCases that a specific part may handle.
+          . Meaning that we are clearly separating and defining every flow and data related to this part and making of this
+           subdomain as a separate whole.
+
+      ■ And since frontend, backend, and mobile are not part of the subdomains, they are supporting systems, or interfaces
+      that consume and interact with the subdomains, but they are not subdomains itself. Therefore, based on the DDD:
+        □ Subdomain are Educational, Auth and Forum
+        □ Applications: frontend, mobile, and backend. They are not subdomains, because they don't represent parts of the
+        business, but rather "presentation interfaces"
+        □ In practical terms, inside a turbo repo, they stay on the folders apps/ while the subdomains (bounded contexts)
+        stay on the folder packages.
+
+
+      ■ However, we are able to see, that the rules are inside these packages and they don't belong to the backend, or to
+      the frontend. Inside the backend we will use the rules once we have the possibility of saying, on the package.json,
+      that we depend on the other packages such as educational, forum, authentication, etc.    
+        ▢ These projects that can be deployed, and installed on our servers, they will utilize the business rules of our
+        app that were separated in different packages.
+
+      ■ The fact is that bounded contexts can be organized in different projects or everything inside the same project
+      but in different folders, or creating many projects and each bounded context be a library such as the turbo repo.
+        □ There is only ONE front web, ONE front mobile, ONE backend, and this backend accesses the multiple bounded
+        contexts after the libraries.
+
+  ● Lesson 11 - Context Mapping
+
+
+          
+
+
+
+
+
+        
+
+
+
+    
 
 
 
