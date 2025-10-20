@@ -436,6 +436,72 @@
 
   ● Lesson 11 - Context Mapping
 
+    ○ The third tool to be used on the solution, has to do with the functioning between the contexts. Since every context
+    will relate, such as the auth, may need to relate to other context. Forum may need to relate to the auth. Educational
+    with forum. Everything depends on the way we organize our app, and these relations will generate the context map.
+
+      ■ If in our app, we look in the educational package, we will notice that this package depends on the auth, and common
+      packages. Common is simply a package that will help us on developing the other projects, since the bounded contexts
+      are only the educational, auth and the forum.
+      ■ Looking into this, we will notice that there is a dependency of the educational related to the auth in any way, and
+      this will be reflected through a context map, which has as requirement to show how the dependencies between the parts
+      of the app are, as well as the bounded contexts.
+      ■ Let's suppose we are in an existing app, got three subdomains, but put them inside a single bounded context. And
+      this is common to happen, since the programmers usually organize projects in the way they would like and as unorganized
+      as they want, and if we take a closer look, there will be subdomains that can be broken into other 10 subdomains,
+      which breaks the SRP.
+
+    ○ This being said, when we think on bounded contexts, we need to clearly map how the applications has been built. If
+    we are creating the context mapping of an existing app, we must not map what we WOULD LIKE that it became, but make
+    a context mapping that reflects exactly how the application is
+
+      ■ So when we relate two different bounded contexts, we will see that there will be a "connection line", defining
+      the upstream and the downstream (for example, let's say context 1 is downstream and relates to the context 2 that
+      is the upstream). This means that if this bounded context is the one responsible for the upstream, the data will
+      primarily flow from the context 2 to the context 1. In other words, this mean that the context 1 DEPENDS ON THE 
+      DATA of the context 2
+        □ Lets use a livestream as this example. Suppose we are watching a live, which in one side we have youtube and
+        on the other our computer. The upload is done by youtube and who downloads is us. The same principle will exist
+        on this scenario. Who depends on who? We depend on youtube or youtube depends on the computer? 
+        □ Therefore, the downstream depend on the upstream because he is the one providing the data.
+      
+    ○ Real problem example
+
+      ■ Let's go back to our EAD problem, now, we can start notice that maybe authentication is the upstream for the sales
+      subdomain, that will receive data that can be necessary for a sale. And then, educational subdomain, also depends
+      on the auth domain, since authentication PROVIDES something to the educational.
+        □ If we look into our turbo repo, we can see that the example the instructor gave, of the educational subdomain,
+        we will see that on its dependencies, there is the auth package, meaning that:
+          - When a package has a dependency of something, it means it depends on this package. And at the same time, this
+          doesn't necessarily mean that the auth must have the educational on its dependencies. Only the downstream must
+          depend on the upstream. 
+        □ Who will define this mapping between the bounded contexts, are the specialists and the developers, meaning that
+        in some applications, the upstream and the downstream may be different.
+          
+
+  ● Lesson 12 - Communication Framework
+
+    ○ Final comments of the instructor
+
+      ■ When talking about the ubiquitous language, the business specialist, i.e. someone who is not a developer, should
+      be able, with our help, read and understand the basic structure of how our project is organized, maybe even read
+      a bit of the code if we use the expression/terms/verbs and correct substantives inside our code. In other words, if
+      the code reflects the business, the specialist should look on the code and think, "Oh, nice, you've organized the 
+      code with the folder names representing the company's areas. "Oh, i can see the flows we have in here, i can basically
+      see the business reflected in here¨.
+
+      ■ And the language we choose to use on our app, should also reflect on the language spoken by our clients and specialists.
+      Which otherwise, would bring an unnecessary and accidental complexity to our project.
+        □ There are the inherent complexities that we can't avoid, but we can through our choices as a developer, avoid
+        bringing accidental complexities
+        □ There are even some accidental complexities that we assume because there are benefits associated to them. It
+        is something called "trade-off". We weigh the benefit and the cost, so we can make the best choice.
+        □ Therefore, we must be careful when taking decisions on the project, because the better the communication is,
+        the easier the code becomes for the business specialist to understand
+       
+
+
+
 
           
 
