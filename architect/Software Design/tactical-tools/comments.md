@@ -134,14 +134,41 @@
           because we planned our model completely oriented to the database. This is not advised because in the end, it will
           not reflect how the business work.
 
-  ■ But what is an anemic domain? 
+    ■ But what is an anemic domain? 
 
-    □ The basic symptom of an anemic model, is that, at first glance, it resembles the real model. There are objects, many
-    of them named after the nouns from the domain space — We can think of this like some developer thinking "Ok, in the domain
-    we have a customer, therefore, I must create a Customer class, or in the domain, we have a sale, and then I must create
-    a Sale class" and this continues for every noun — there will be a Class for each making the code closely resemble the
-    business itself,
+      □ The basic symptom of an anemic model, is that, at first glance, it resembles the real model. There are objects, many
+      of them named after the nouns from the domain space — We can think of this like some developer thinking "Ok, in the domain
+      we have a customer, therefore, I must create a Customer class, or in the domain, we have a sale, and then I must create
+      a Sale class" and this continues for every noun — there will be a Class for each making the code closely resemble the
+      business itself. However, these objects are linked to the relationships and rich structures, this means that multiple
+      times a client is related to Sales in the same way that in a business a client also has relationship with Sales, that
+      are related to the suppliers. Therefore, we will end up having the same relationships and rich structures that the
+      real domain models have.
 
+      □ However, the problem will emerge when looking on the behaviors, where we will notice that there are no behaviors 
+      inside these objects, turning them into sacs of getters and setters.
+
+    ■ With this being said, what we don't want to have is exactly this anemic model, we want models that indeed reflect
+    how the business functions. If the business work, by applying certain calculus to a given data inside that concept
+    of the business. That calculus should be placed inside that class.  
+
+    ■ Many applications work as follows:
+
+      □ We simply have `somethingService` like `CourseService`, which is exactly the layer where we place our rules on.
+      And inside of it, we have data like: `Courses`, `Sections`, `Lessons` and multiple other data that are anemic
+      objects. Objects with no behaviors, only attributes.
+      □ Since these objects don't have behaviors, we need to, inside of the `CursoService`, to ensure that the Course is
+      valid, that the section is valid, that the lessons are consistent, and more. Therefore, we have to ensure the
+      consistency of all the objects because they simply are a "sac of data".
+
+● Lesson 5 - Architecture, Design and Code
+
+  ○ Tactical Tools
+
+    ■ When we think of three things: Architectural Definitions, Code Design Definitions, and Solutions that are going to
+    directly influence the source code
+
+  
 
       
         
