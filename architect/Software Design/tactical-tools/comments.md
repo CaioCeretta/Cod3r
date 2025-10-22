@@ -166,7 +166,82 @@
   ○ Tactical Tools
 
     ■ When we think of three things: Architectural Definitions, Code Design Definitions, and Solutions that are going to
-    directly influence the source code
+    directly influence the source code.
+
+      □ And these decisions can be both a code decision, design decision as well as architectural. Thinking that the
+      architecture is a higher level of decision, we have, basically: Architecture - Higher level of decision, Design - 
+      Intermediate and in the code we have the most common decisions.
+
+      □ Then we may think on these two questions:
+        1. Does the code decisions directly influence the architecture?
+        2. Does the architectural decisions directly influence the code?
+
+      □ The answer is: The code must not influence, alter, or significantly, or at least in 99.9% of the cases, the
+      code shouldn't impact the architecture. Unless we indeed have an architectural decision that was motivated by some
+      aspect of the code, it led to the conclusion that a code wasn't working properly when faced with a certain problem
+      that eventually will cause a significant impact, we may have understood that a change was necessary after a coding
+      problem. However, what we need to understand is that the flow is always the bigger flow (architecture , impacts
+      the design, which impacts the code), because the code is the lowest level of our app.
+        . If we end up replacing a while loop with a for loop, or replace an if with an else if or switch, this should'nt
+        cause any architectural impact in our application.
+      
+      □ When we think of tactical tools, we think of tools chosen to work with on practical moments and to directly
+      impact our final code.
+
+    ■ One other question that may emerge is: What is the difference between architecture and design? We understand that
+    the code difference is very clear, Essentially when we start to code, create our functions, we start to think: "Ok,
+    i want to create two functions" and then "Oh wait, is better if i create three", or "It is better if i break this
+    three functions in seven, it will be easier if we need to reuse", or "this function will be private and i want to make
+    this other one public", "oh, instead of creating multiple different functions i want to put them inside its own class".
+
+      □ All of these questions are code decisions that we take all the time, things like changing the conditional check
+      in our code, or our loop structure, or a variable name, and so on.
+
+      □ When we think of the difference between architecture and design, we will notice these aspects:
+
+        . Architecture Decisions: They are high level decisions, higher impact than the design ones.
+        . Design Decisions: They are a lower level then architecture, lower impact comparing to architectural decisions
+        but still more important the code decisions.
+
+      □ One quotation of the clean architecture book says the following: 
+        . "Design vs Architecture, in general, the word architecture is used in the context of something on a higher level
+        independent of the details of lower levels, while "design", often seems to decide on lower levels decisions"
+          - This means that when we have a decision that has a bigger impact, is more costly, and cover a bigger area
+          of activity. Normally this kind of decision is an architectural decision. 
+          - When we think of bounded contexts, we normally think of design and coding. Normally, the architectural questions,
+          will not influence only one bounded context, but our application as a whole.
+
+      □ There is very dubious question involving what is a design issue and what is an architectural issue. Exactly because
+      of the cost. The architectural one is more expensive than a design one (Code is even smaller, since transforming
+      one function in seven or seven in one, has a cost way smaller than taking a decision that will impact the whole
+      app).
+
+      □ Either way, we can think of some decisions that will impact the architecture as a whole, such as the choice of
+      a relational DB and a non-relation DB. It will generate an impact, this impact can be mitigated by separating our
+      code in layers, without contaminating our model with the DB — Which can reduce significantly the database change.
+      But an example that we could mention of an important architectural decision, is for example, if we are going to
+      work with anemic models (only data) or rich models (model where the object has behaviors). 
+
+        - Everything that we are going to do inside our apps, these decisions have ups and downs. We are not saying that
+        anemic models can't ever be used in any circumstances. Many times we have a business that is complex, and a model
+        that justify the embedding of the behaviors inside the object, but many people are "conditioned" to write certain
+        types of code — focusing only on attributes and forgetting behaviors.
+        - What the instructor wants us to understand as programmers, is that we need to have the possibility of taking this
+        architectural decision between one and the other, according to the necessities of the project. Who will which
+        decision we will take, is the project itself. If we are working on a project that justify the use of the rich modeling
+        strategy, we have to take the decisions based on it. If the project doesn't have many business rules, and it is
+        justified to use the anemic model? We can also use it. But they are tools/decisions that we should take
+        according to the necessities of the project.
+        - Even if we are using rich models in parts of our app, multiple times, by dividing the app in layers, on the
+        "border" of one layer to the other, we end up using anemic objects, such as `DTOs`. `DTO` is a pattern exactly
+        like an anemic model, and it is often used to enable communication between layers through an object that does
+        not have business rules. And it is very important for us as programmers, to understand when and how to use these
+        two strategies.
+
+ 
+
+    
+
 
   
 
