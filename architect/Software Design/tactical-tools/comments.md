@@ -238,7 +238,463 @@
         not have business rules. And it is very important for us as programmers, to understand when and how to use these
         two strategies.
 
+● Lesson 6 - Where to implement the rules? 
+
+  ○ When we deciding whether to use the anemic model or rich model, we are directly talking about the domain modeling
+  inside a bounded context. And when we think of domain modelings, we think on the objects that represent the model within
+  that bounded context.
+
+    ■ Examples of these objects are: Course, VideoClass, ArticleLesson, Attachment, User. They belong to the educational
+    bounded context, only the user is belongs to the auth.
+    
+  ○ Now that we already "zoomed out" and saw the domain as a whole, explained the subdomains of a domain, its types, and
+  so on. We are going to zoom in on the Course bounded context, and understand ow it works.
+
+    ■ First question could be: "Does the model represents our application data?"
+      □ Yes, the data will be reflected inside a model, but not only the data, but also its behaviors. 
+      □ And the instructor will be focused on bringing this rich approach to the app and incorporate data and behaviors
+      inside the model.
+      □ Since the reference of most programmers is the anemic model, having this alternative is extremely important for
+      a more mature programmer and this strategy can fit very well in many projects. This happens, because the basis of
+      the OOP is combining both. But many times we violate OOP rules when we "rip off" the behaviors of objects.
+
+    ■ Now, zooming in inside a course we will see that its attributes are: name, description, dataPub, classes, professors,
+    duration, level, themes, and tests.
+      □ If we get a very simple example to understand how do we start bringing this idea of richness to our model. We
+      could simply get the `name`, and get a `Course` that is a very typical and clear object of an EAD platform, and
+      we specifically want to get its name to understand how we can bring a rich behavior or ensure that a course name
+      is consistent.
+        - We want a course name to have three implemented rules
+          1. At least 3 characters
+          2. Up to 120 characters 
+          3. Special characters are forbidden
+        - We may think that these 3 rules are too simple, and to make the validation we just have to add ifs and it is
+        done, something as, if(nome.length > 3 && nome.length <= 120) and some simple regex to verify the special chars.
+        - This problem is silly and the programmer can be very excited thinking that this is a "piece of cake" and he can
+        do it in a very simple way, and then we ask the programmer: "Ok, where do i place this validations?¨
+        - At first sight, we may think: "Oh, in the class of course, since all the attributes are inside of it and i learned
+        that behaviors must be close to the data they belong to.
+          - This is an alternative but there are some things to discuss
+        - Back to the question, he then answers to whomever asked: "I will place it inside the Course class, since it is
+        the owner of its name, it makes sense if i check if it meets all the requirements". Then he implements it in
+        the constructor, ensures that everything is correct and the validation will work
+        - However, we also have the same validation for an ArticleLesson name, and to a VideoClass name, and the programmer
+        will think: "Should i replicate the code? Should i create an utility class to make this validation?"
+        - When we think of replicating a rule, we violate the DRY (Don't Repeat Yourself) principle, that says to never
+        replicate or express something more than once, a business rule of our app.
+        - The BEST solution is going to be introduced in the next lesson
+
+● Lesson 7 - Object of Value
+
+  ○ We will talk about the exact location for placing the business rules.
+
+    ■ This tool is the primary location where we will try to place a business rules in. If we don't succeed, we will try
+    putting it inside an entity, and if it also don't work, on the third tactical tool that is the domain service.
+
+      □ Inside these 3 tools: #1 Object of Value, #2 Entity, #3 Domain service, we have the basis of rich modeling.
+
+    ■ Back to the Course object, when we have primitive types, such as numbers, string, boolean. Multiple developers
+    utilize the basic/primitive types of the languages to type attributes.
+      □ Let's say we want to change these primitive types to something else. such as an object. But what object would it
+      be? An object of value
+      □ When changing to an object of value, such as changing a name: string to a name: SimpleName, at first glance, it
+      will look that nothing changed, however, this changes a lot our modeling. But why?
+      -  When we replaces a string for a SimpleName, inside a course, this SimpleName may have a set of validations embedded
+      in it. It can ensure the minimum length, the maximum, that certain characters won´t be present inside this SimpleName.
+      When we have a SimpleText, which would be description, we also may have a set of rules. The duration attribute that
+      was simply a number, we can change it to a `Duracao` object, we can convert this Duration to hours:minutes or just
+      to milliseconds, hours, minutes, subtract durations, sum durations, and more. This mean that we can define a set
+      of operations and apply rich behaviors from the exchange of primitive types to objects.
+      - Even if string is a primitive type, it has behaviors and indeed is an object. The fact is that it is a basic type
+      of the language. We are replacing it with a specific type of our business like typing a name as an object SimpleName
+        - SimpleName will have attributes and behaviors, meaning that we can put inside of it, a set of behaviors that
+        addresses the business needs.
+        - We can also ensure that a variable typed as SimpleName can only be created if it is on a consistent state. If
+        all the business rules satisfied. This is very important because it ends up bringing a consistency to our whole
+        object. Since that it will verify if the SimpleName, SimpleText, Duration satisfies the conditions of each one
+        of them. It will make the whole Course object more precise.
+        - Using a real example, the published attribute is a boolean, and classes are an array of Class[]. However, we
+        can create a logic inside this rich object, so a course must have lessons to be published. Therefore, there will
+        be a rule to check if those two attributes match.
+      
+      □ Therefore, the object will always be valid, and we can have the architectural choice of allowing the SimpleName
+      to be inconsistent for a while or we can choose that it will always be valid.
+
+        . "But what if the SimpleName is invalid for a while?". We can simply throw an exception, stop the flow, and make
+        our application to treat that error in some place. Or we could also make this kind of validation to be "lazy" and
+        create some strategies to execute these flows even if there are invalid data.
+        . Everything depends on the strategy put on these behaviors in practice   
+
+
+      □ If, for example, we define a date attribute with a `PastDate` object of value type, it could have a check for this
+      Date to be at least before the date being inserted, which would cause an exception in case the user tries to insert
+      a date after the current date
+
+    ■ The primary point is that an object ceases to be a mere data holder (data storage) and becomes to express a domain
+      rule. "A course can only be published if it has classes". This mean that the validation logic is inside the object
+      itself, and not spread in other places. It represents an abstract concept that does not have a unique identity, which
+      means that it does not have an ID, and it is defined only after it properties. He is normally immutable and can be
+      compared with other objects and values based on its attributes.
+        . An object of value can have one or more attributes, such as an Address, it has a street, a number, and more.
+        And we can compare one with other after this set of attributes. 
+
+      □ The most important to understand is if, let's say we are going to create an Address and it has an ID, meaning that
+      if if we compare the identity of two objects after their unique ID, means that it they aren't a object of value.
+      
+    ■ Therefore,  an object of value is an object that encapsulates one or more values, and in addition to store one single
+    value, or multiple values. It will have all the rich behaviors to use the data that is inside the object of value.
+      We bring a high level of expressivity to our application.
+
+  
+
+    ■ More expressive examples:
+
+      □ 1.
+
+      ```ts
+        const course = new Course(...) 
+
+        /* Since in an object of value we can insert multiple rich behaviors in it, every single one of this behaviors
+        are made inside the object of value itself, so for example, the duration attribute, since it is of the Duration
+        custom type, this type will include a method, to process and transform and return this duration formatted in
+        hours:minutes:seconds. This behaviors of formatting and returning back on the desire way, they don't exist by
+        default in the language. But we can implement them on that new property type */
+
+        console.log(course.name.fullName); // Which would be a function defined in the SimpleName of getting the fullName
+        console.log(course.description.partial(20)) // Retrieve the first 20 words/letters of the description    
+        console.log(course.duration.inHMS) // Processes and format into hour, minutes and seconds
+
+      ```
+
+    □ Other examples of an value object would be:
+      - Cpf
+      - Phone
+      - HashPassword
+      - PastDate
+      - Id
+      - Email
+      - StrongPassword
+      - PersonName
+      - Price
+
+      ```ts
+        // Other examples
+
+        console.log(student.phone.ddd)
+        console.log(student.cpf.region) // The last four digits of our 'CPFs' are the region where it was issued
+        console.log(user.email.domain) 
+        console.log(course.description.short) // Define a pattern of what is short and what is long. And we wouldn't have
+        // to worry about calculating it on every single place
+        console.log(student.name.initials) // Let's use a avatar as an example, we could use it to replace the image in
+        // case there is none
+      ```
+    
+    □ 2. Real world example: Comments about the instructor code
+
+      . The class auth/Usuario.ts/senha has an attribute `senha` typed as `SenhaHash | null`, SenhaHash is can be null
+      because it is an object of value that will only be available during the login, when a user is retrieved, we don't
+      want SenhaHash to be "traveling across the app", so most of the time, the user senha will be null, which is important
+      since the password won't be exposed (Even if it is encrypted, is not good that this password leaks to other places
+      and this would be a security failure)
+        - Inside a User object, the instructor won't worry with validating the person's name, their email, of if it is
+        indeed a hashed password. Because if we pass a "normal" password that is not a hashed password, the property
+        itself won´t allow an user to be created, it is REQUIRED to store only hashed password because our mechanism
+        of persistence won't allow.
+
+        - If we get, for example, the use case of registering an user, we also use objects of value in this case, we create
+        the name constant after a method, the email, and a new strong password. By creating a strong password, we are
+        ensuring the business rules of how a strong password should be.
+          - This way, inside use cases, we do not need to implement new rules. Simply call rules that are already set
+          inside the objects of value.  
+
+      - Having this knowledge will start changing the way we think of our applications because we start placing the rules
+      in only one place, e.g. we are creating the name constant after the NamePessoa method, and this method is being used
+      before creating the user. We are using the rule inside the use case and we also could call this rule directly
+      within the User.
+        - Inside our User we only store hash passwords, and in the use case we create a strong password to ensure that
+        the user login was indeed a password that meet all the requirements to be a strong password. 
+
+● Lesson 8 - Entities
+
+  ○ Entities are the second most important tactical tool. And those entities are usually anemic.
+
+    ■ However, we would like them to be rich. In addition to add the rules inside the objects of value — what already
+    "frees" us from having to implement the rules inside the entities.
+
+    ■  Eventually there are rules that are going to work with more than one attribute at once, e.g. A Course can't be
+    published if its duration is 0, or  can't be published if don´t have any rule, if it hasn't at least 45 minutes
+    available, etc.
+      □ Sometimes we can't put these rules inside an object of value. Which would take us back to the explanation that
+      objects of value are number of one place, but if we can't "fit" these rules inside one, it is probably because this
+      is an entity rule. The same rule applies to the domain services.
+
+  ○ An entity is an object that we care about its uniqueness, and we want to identify these objects through their id.
+
+    ■ For example:
+
+    ```ts
+      class Entity {
+        id: Id
+      }
+
+      class Course extends Entity {}
+      class Lesson extends Entity {}
+      class Progress extends Entity {}
+    ```
+
+      □ We can create a base class, that has an Id, and after it, we create an heritage ensuring that this id will be
+      passed down as inheritance for the children classes.
+
+    ■ To exemplify this, the instructor's project, where he has a common package to hold the code that is common to all
+    packages, an Entity class, which is an abstract class, with two attributes, id and props, and these class have methods
+    to compare the equity between entities after their id.
+      □ Two objects will be the same if they have the same id.
+      □ Ensuring the uniqueness of an entity, can be made through the id comparison
+
+      □ In case we have two objects with the same id, but with different values, it would need the developer to determine
+      which one is the more recent. And one thing we can do to certify if this comparison is on the id and on its values
+      is by creating a deep comparison.
+
+      □ Therefore, the id is the criteria of comparison every time that we value the uniqueness of an object and we
+      can't replace an object with another if it has the same values, the ID must be unique
+
+  ○ Examples of entity would be
+
+    ■ Course, Lesson, User, Attachment, Discussion, Progress, Tutor, Post, Certificate
+  
+    ■ By looking, we can see that each one of these are entities, we value its uniqueness, each one will have an ID to
+    differentiate them, and more. However, when we think on a set of objects, like 'a course has a set of lessons', and
+    if a course has a set of lessons we want to persist them inside one transaction, it would be part of the aggregate
+    concept. 
+      □ In aggregate functions, most of the times we have the root of the aggregate that in this case is the Course, meaning
+      that in an aggregate of a Course with Lessons, Course would be the root of the aggregate, because after the course
+      is where we persist all the other data related to it
+
+  ○ So in Summary, what is an entity? 
+
+    ■ An entity is a singular thing and can be continuously modified for a long period of time. These updates can be so
+    extensive that the object may look way different from what it was before. But is the same object by identity.
+
+● Lesson 9 - Domain Services
+
+  ○ We should´nt confuse domain service with application service. Application service is our use case, it is intended
+  to orchestrate the application flow, and the domain service has the purpose of implementing a business rule.
+
+    ■ Domain service does not work with database transactions, nor I/Os, or asynchronous processes. They can be a simple
+    rule, a simple calculus, an implementation of a basic rule inside an structure/class.
+
+      □ Then we have to go back to the tiers of importance, if we tried to implement this rule inside an object of value
+      but wasn't able, we try to implement it on an entity, if it also does not work, we create service domain to implement
+      this rule.
+    
+    ■ The fact that it has service in its name, doesn't mean we should confound it something "heavy", or something that
+    involves an interaction with I/Os or database. It is basically a business rule that didn't fit an object of value
+    nor an entity.
+
+    ■ And this is the rule that the developer on the first example would make, he would ask himself
+      "Ok, i faced a rule that is not an object of value, nor an entity, so what should i do with it?"
+
+    ■ The creation of a domain service usually happens when:
+      - Or we have a rule that use non related objects
+      - We have a rule that will deal with a list of objects
+
+    ■ Example 1:
+
+      ```ts
+        export default class FilterCategories { 
+
+          constructor(private cats: Category[]) {
+            return this.cats.reduce((filtered, cat) => {
+              //...
+            }, [])
+          }
+        } 
+      ``` 
+
+      □ Let's use an example of a financial manager, and it has many categories, such as a category food that has subcategories
+      like: Sandwiches, Bakery, Restaurant, and so on. 
+        . When we write anything on the search box, such as en, it will show energy, presents, supplements...
+      
+      □ This would be a domain service, we have a FilterCategories class, that receives a list of categories, and a search
+      we want to do on top of these categories
+        . And inside its reduce, we will make sure that we return only the categories that have part of their name as
+        the typed text.
+      
+      □ The question is that "energy" is a subcategory of "house¨, but we can't remove house from the result list.
+
+      □ Basically what is being done is ensuring that the "filtrar" method is inside a domain service. This is a domain
+      service, because if we stop to think, we can't fit it inside the category, since the category is only one object
+      and not a list of objects.
+
+    ■ Example 2:
+
+      ```ts
+        export default class CreateCourseProgress {
+          constructor(readonly course: Course) {}
+
+          new(): CourseProgress {
+            return this.create
+          }
+
+          synchronizedWith(currentProgress: CourseProgress): CourseProgress {
+            return this.create(currentProgress)
+          }
+
+          private create() {
+            ...
+          }
+
+        }
+      ```
+
+      □ We basically receive a course as parameter of the constructor of this domain service, and it can both create a new
+      progress after this course as well as synchronize an existing progress so it can update this progress based on the
+      modifications that happened inside this course.
+
+        . For example, some classes may be added to a course 
+        . classes was deleted
+
+        . Therefore, we need to ensure that the progress of the course is in sync with the latest version of the published
+        course
+    
+    ■ Example 3:
+
+      □ Sometimes we want to extract a given rule, because the object was getting too big, and we can also create domain
+      services for this
+
+● Lesson 10 - From the inside out
+
+  ○ This lesson will be focused on the quote "To attack the complexity from inside out is the best path".
+
+    ■ This takes us back to the DDD cover subtitle: "Tackling the complexity in the Heart of the Software".
+      □ Therefore, if we can implement something within a business rule of our app, we should´nt leave the opportunity
+      of implementing in the core to spread these rules at our most external layers, this will end up violating multiple
+      principles and it would make harder for us to maintain the app.
+
+      □ So if we have an object, and this object has attributes, and we place the behavior close to the attributes, it
+      will make the correct code in the right place which will lead to easier maintenances.
+
+      □ The frameworks are on the outer layer, and because of this, we must remember to protect our projects from the
+      framework. The innermost layer, the domain layer, should be our priority when implementing business rules.
+
+  ○ In OOP, everything is in center of our application
+
+    ■ Thinking on a diagram, let's say that we have a large circle representing the use cases, and inside that circle
+    we have a smaller one representing the model. It is inside the model where we will implement our objects of value,
+    entities and services domain. By leaving the heart of the app and go "up" to the next layer, we will reach the
+    "use cases" layer, which is the application layer.
+
+      □ It is within the use cases, that we'll apply most of the principles of OOP. When we dive into this layer, we'see
+      see that application services are mainly responsible for integrating these flows with the app's infrastructure — such
+      as databases, e-mail services, whatsapp, or any other external tool that need to be connect.
+
+      □ This is different from the domain services, which are focused on implementing the business rules and logic of the
+      app.
+
+    ■ Traditional Layer Pattern
+
+      Presentation -> Business Rules (Use cases and model) -> infrastructure
+
+      □ By thinking of business rules in this layers pattern, we have the model, that is our classes, objects of value,
+      entities, domain services and the use cases that are the flows  that are going to interact with the infrastructure.
+        . In this traditional layer model, the way we interact between our rules (mainly the use cases), with the infra,
+        is direct. The rules depend of the infra to work. This pattern is a more traditional pattern used in legacy
+        applications, but we can change it to use an approach more modern, inverting this layers logic, and make that
+        our business rules no longer depend of the graphical interfaces, neither of the infrastructure, that is the
+        hexagonal architecture.
+      
+      □ Hexagonal architectures / Dependency Inversion
+
+        . Hexagonal architectures use a concept named "dependency inversion", in this principle, it's no longer our
+        business rules that depend on the infrastructure — it's the infrastructure that depends on our rules. And when
+        we think of business rules of our app, we continue talking about our models and flows. 
+
+        . If we notice in the diagrams, there isn't anymore arrows saying that the rules depend on the use cases, or the
+        rules depend on the infrastructure, now we have arrows leaving the presentation and going to the rules, meaning
+        that there is a dependency of the presentation to call the rules, as well as the infra need to call the rules to
+        provide the access to it. This all concerns the dependency injection principle
+
+        . Inside `DI`, we can add an additional layer, in between the existing two, to protect the communication between
+        the business layer and the presentation/infra by creating an adapters layer.    
+
+        . This way of organizing the layers is exactly the same as the one presented in the Clean Architecture book, with
+        the difference that in the book it is represented as concentric circles — four circles going from the business
+        rules (the inner two), to the interface/adaptation layer and then the infrastructure/frameworks layer.
+
+        . In the business rules layer, we have all our objects of value, entities, domain services, and they have its
+        complexity to implement them, but when desire to show these objects on the GUI, most of the times we want a
+        simpler object, and for this, we convert something more complex to a DTO (Data Transfer Object).
+          - And the same happens on the other way around, when we receive simpler data, such as in forms, we convert this
+          data to call the inner model objects. And when calling the models objects, we will convert back.
+          - This layer helps to create a decoupling/independence between the rules and the presentation.
+
+      □ This circle diagram, even though it may seem simple, it explicitly defines the main role of a programmer
+        - This is because the main role is to protect the business rules we are developing. Be it on a personal application,
+        or on the company we work. When separate or protect the business rules, from external influences — frameworks and
+        infrastructure. We are able to evolve the rules according to the business, and not "forced" by infrastructure
+        changes.
+        - This is so important for the clean architecture, that a layer was created just to protect and avoid contamination
+        from the other external layers.
+        . Therefore, if someone asks what is the main objective, and primarily of an architect, is to protect the app from
+        undesired changes. 
+
+● Lesson 11: Use Cases
+
+  ○ Use cases describe the events flow of how a system should behave. They are used too describe the interactions between
+  users and the system. As well as providing a general overview of the system and its functionalities.
+
+    ■ For example, an admin user will have a set of specific use cases for an admin, and whichever role there may be.
+      □ Not only fixed users of our application, like a human being that is using the app, but another system can interact
+      with it through use cases.
+    ■ And the use cases can also show us the available functionalities of an app
+
+  ○ Example of flows:
+
+    ■ Example No 1 - Frontend triggers a backend call: it interacts with the back that interacts with a use case that
+    interacts with the domain model
+
+      □ In this example, let's say an user clicked on a button and it triggers the data sending to the server, which then
+      calls the use case, which calls the domain model
+
+      □ If we use typescript across all the four steps of this flow, we can easily imagine that both the use cases and the
+      domain model that have to do with our rules, does not belong to the backend.
+
+    ■ Example No 2 - Timer calls the backend:  The timer from time to time calls a given URL in the backend API, which then
+    calls the use case, which calls the domain model
+
+    ■ Example No 3 - Front end calls the use case directly: Directly from the frontend we call an use case, which is possible
+    because a use case does not belong to our app's backend, but to the business rules. So if we organize it well, using
+    the same programming language in the front/back/use-cases ,  it will be easy to use them inside our app
+
+  ○ Rules do not belong the backend
+
+    ■ By looking into a running app, we will notice that the rules are located at the bounded contexts, and we will see
+    that the `educational`, `authentication`, `forum` rules are separate from the back/front/mobile of the app 
+
+      □ These belong to the outermost layer, including the adapters tool, is also inside a bounded context
+      □ Therefore, when using the same language it will become easier to reuse it and could simply after our presentation
+      apps, such as the front or the mobile, to directly call an use case, without, for example, having to interact with
+      the database, or any infrastructure service.
+
+  ○ So who do the services application belong to? 
+
+    ■ The application services are the direct client of our domain model, when calling a use case, the use case calls
+    the domain model, we can see it by the registerUser use case
+      □ Inside this use case we are using objects of our domain value — the objects of value, our entities and eventually
+      the domain services.
+    
+    ■ This also mean that by implementing rules of domain inside its own place, this does not make sense to also implement
+    them inside the use cases
+      □ A use case is not the correct place, it is the place that we will orchestrate and define how the flow will work
+      and essentially integrate these flows with the infra services
  
+ 
+
+
+      
+
+
+
 
     
 
