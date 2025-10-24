@@ -688,7 +688,97 @@
       □ A use case is not the correct place, it is the place that we will orchestrate and define how the flow will work
       and essentially integrate these flows with the infra services
  
- 
+● Organization Examples
+
+  ○ Market pattern
+
+    ■ There is a pattern in the market, that alongside with a model, such as `Curso`, to have a `CursoService`, where these
+    services access objects that are anemic, and we may implement inside those files a set of business rule or implementing
+    a set of use cases.
+      □ The fact is that by looking at the structure in which we organized our code, someone can ask: "Which are the use
+      cases that are available inside this file related to Curso?" 
+        - We may look and do not have any visibility of what is happening since probably this class makes much more than
+        it should do.
+    ■ When we structure an application around use cases, we end up having a structure like
+
+      curso
+        model/
+        usecases/
+          AddLesson.ts
+          HideLesson.ts
+          DeleteLesson.ts
+          PublishLesson.ts
+          MoveLessonDown.ts
+          MoveLessonUp.ts
+          SaveCourse.ts
+
+      
+      □ When we structure like this, we have a model folder and a separate folder for all usecases. Within this structure
+      we can easily identify each use case, it will make the code easier to find and be able to answer that question w/o
+      looking inside. 
+
+    ■ The logic stays inside the entity/object of value/domain service, and not inside the use cases.
+
+      □ The use case makes use of these objects, where the rules are already applied. And the use case won't need to
+      reimplement them. For example:
+
+        ```ts
+          export default class MoveLesson extends UseCaseAdmin<Input, Course>{
+            executeAsAdmin(input: Input): Promise<Course> {
+              return input.course.moveLesson(input.idLesson, input.delta)
+            }
+          }
+        ```
+
+      - In this example, we have a MoveLesson use case, which extends an UseCaseAdmin class, which has the generics of
+      Input and a Course.
+      - It then has a function executeAsAdmin, which receives an input as parameter and will return a Promise of a Course
+      - Then, with this input it receive, it contains a course, that in turn is a rich model with a moveLesson method
+      - This method needs to receive the id of the lesson and the delta.
+  
+    □ This basically says that the use case doesn't need to worry with implementing nothing to complicated, since that
+    moveLesson method already was defined inside the entity
+
+  ■ If we look to a program screen, that has a window written with New Course, the inputs with information concerning
+  that course, such as the lessons, its name, its level, its instructors and a save button. We may ask: "Which are
+  the use cases that will be triggered by this UI?"
+
+    □ Even though we may think: "Oh, i think its the use case of saving a course". However, if we stop to look, we will
+      have: AddLesson, HideLesson, PublishLesson, MoveLessonUp, MoveLessonDown, SaveCourse, in other words, every use
+      case informed above.
+    □ Most of these flows can be called directly from the front-end, MoveUp, MoveDown, Delete, and others, they don't
+    need to interact with the backend, because the use cases do not have to do with any language, but the business, and
+    the way we are going to do this is up to us.
+    □ If we keep thinking as a "CRUD", only with Saving, Delete, Update, Get, and only imagine that the use cases are from
+    that type, we will lose the opportunity of implementing a set of important rules that do not belong to the UI, but
+    to the rules of our app and we can test them, putting them inside a rich model, and use it in a simple and a direct
+    way trough our UIs.
+
+    □ Each button can fire a different use case, we can have different buttons pointing to different use cases, such as
+    an upload image use case, as well as saving the course as a whole — which will interact with the database, and with
+    the database
+
+    □ But in short, we see how we can structure a simple screen into multiple different use cases. Use cases that interact
+    with the backend/database and use cases that will directly interact with the front end. This means that we should stop
+    thinking only of single flows as CRUDs, and think in other possibilities where we can structure a simple screen as the
+    course registration UI calling different use case
+
+    □ And this approach will make it easier to test the use cases, have a large test coverage independent of GUI, or DB
+    and we can have a more explicit structure with which functionalities are available.
+    
+  ■ If the use cases do not belong to the front-end, nor the back-end, where should they go? 
+
+    □ The answer is "none of these two places". Although we could place them inside the backend, which is done by multiple
+    developers. In the instructor's opinion the business rules don´t belong to the back-end, but can be used through the
+    backend. 
+    □ At the end of the day, both the frontend is able to access the rules, as the back end. This is because the use cases
+    and the model belong to our application rules and not to the technologies that are located on the outermost layers
+    of the app. 
+    □ This centralization, makes the front, back, and mobile to communicate with the same rules with no changes. And one
+    app can call their concerning use case.
+
+
+
 
 
       
