@@ -1,4 +1,4 @@
-● Overall Comments
+● Lesson 1 - Architecture Overview
 
   ○ What is an architecture? 
 
@@ -36,6 +36,8 @@
         . Therefore, we can make code decisions, without necessarily violating the design, and consequently, without
         violating the architecture  
   
+● Lesson 2 - What is architecture? #01
+
   ○ Architectural, Design and Code problems
 
     ■ In general, the word "architecture" is used in the context of something on a higher level it is independent of the
@@ -46,5 +48,58 @@
     
     ■ The primary architecture objective is to minimize necessary human resources to build and maintain a given system.
       □ It has the objective of serving to a determined purpose
+
+  ○ Architecture Overview and Objectives
+
+    ■ There is a formula we can use to think the objectives of an architecture that is Productivity = Performance/Effort
+
+      □ Think about how much we can produce, or perform in our solutions and code in general, on top of the effort we
+      will need to have, or the effort we put on. How much we can deliver with certain effort.
+
+      □ If this effort start growing, but the deliver performance start to fall down and starts falling apart. This means
+      that our architecture is a well chosen architecture to fix the issue — probably one with high level of coupling.
+        - Coupling is in the interdependency between the elements of our app, and coupling is never a good choice on our
+        apps since that one part of this coupling may slow down the rest . If we stop to think on an architecture that
+        has 20 elements, and each item depends on the other. This would cause one change to impact other 10 elements and
+        so on.
+
+      □ Most of the times, a bad choice of architecture, will require a more effort of the team, a larger to team, to
+      maintain the same performance decreases over time.
+
+    ■ Architectures represent the design significant decisions that shape a system, where the significance is measured
+    through the cost of the change. 
+      □ And by cost, we don't necessarily mean financial cost, but also, cost of time, is the architecture we are defining
+      an architecture that values the writing of tests? or is it simply an architecture that for it to be tested everything
+      must be working — legacy system must be up, database must be up, external API must be up. and so on. Meaning that
+      we can only test on an ideal scenario, if the database is down, the tests can't be done.
+      □ This is a cost question, it doesn't necessarily has to do with the professionals or the resources, but the delivery
+      time and complexity will be higher 
+
+    ■ "Architecture is the set of decisions you wish you could get right early in a project, but, like everyone else, you
+    didn't have the imagination at the time" and "Architecture is about the important stuff. Whatever that
+
+      □ This quote gives us the sensation that the architecture is something where we have a clear direction of where to
+      go, but it is a "human being", different from the building analogy, a building is modular and we are able to make
+      replacements until it is done. But in a programming architecture, the fact that we haven't made a decision at the
+      beginning of the project, because we could'nt glimpse this necessity in the beginning does not prevent us from
+      apply certain architectural changes, like:
+
+        . Twitter started with a MySQL database, up to the point that the database wasn't working anymore and they had
+        to change their solutions
+        . Netflix started with a java monolithic app, up to the point that it grew, until reaching the point they had
+        to break the app in multiple services and so.
+      
+      □ Therefore, we need to implement a "fault-tolerant" architecture, a resilient architecture that recovers itself
+      easily, because if we had an app with multiple services running simultaneously, and these services were published 
+      during the day. At some point one of them may go offline and the process must continue.
+
+      □ The architecture is about the important stuff. Whatever that is". 
+
+● Lesson 3 - What is architecture? Who depends on whom? 
+
+      
+         
+
+                            
   
 
