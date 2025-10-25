@@ -1,8 +1,8 @@
-● Lesson 1 - Architecture Overview
+● Lesson 1 - ArchitecturOverview
 
   ○ What is an architecture? 
 
-    ■ The architecture is the "skeleton" of the app, just like a building skeleton, with its columns and the floors.
+    ■ Th`architecture is the "skeleton" of the app, just like a building skeleton, with its columns and the floors.
     Therefore, this skeleton is the same as our architecture, our architectural decisions that will build the foundation
     so we can start solving the problems and making design/code choices.
 
@@ -96,6 +96,123 @@
       □ The architecture is about the important stuff. Whatever that is". 
 
 ● Lesson 3 - What is architecture? Who depends on whom? 
+
+  ○ Architecture -> Design -> Code. However, this doesn't mean that the code isn't important
+
+    ■ Code is the less critic level, but it isn't less important, since that without code nothing works.
+
+      □ We may have a perfect architecture, with no flaws, that thinks about multiple design patterns to apply to the
+      application, but we obviously need to "raise the walls" so a building can be functional.
+
+      □ However, its decisions can be exchanged in a way more simple manner than architectural/design decisions.
+
+  ○ Of what consists an architecture?
+
+    ■ An architecture consist of 3 primary aspects: Components, Responsibilities and Relationship between them.
+
+      □ For example, let's suppose that our app has the front-end, two different APIs, relational and no relational
+      databases, a load balancer to distribute the load within the app, a queue of messages, and so on.
+        . And we are not talking about the components related to the code, but to the components thinking on a broader
+        manner, a broader architecture.
+
+      □ And we need to think of: "What is the responsibility of API x? or of the API y? Which languages are going to be
+      used in these APIs? 
+        . The language decision is a decision that impact the project and it is basically an architectural decision
+        . And we may think, "Oh, in the  API x we will use python, because python will be more simple to solve this
+        problem. And in the API y we will use ts, because it will be more helpful. And the API x will have its own
+        database" . These are all architectural decisions, we must not confuse these decisions with decisions about
+        the code, which loop or conditional will be used, etc.
+        . "Inside the API x we won't use the hexagonal architecture, since it is too complicated"...
+
+      □ We have the issue of these elements/components of our architecture that will build our architecture as a whole,
+      eventually even create a diagram of how the architecture is being organized. Responsibilities of each element, and
+      by defining the responsibilities, it is important to define the borders of each component.
+        . A component that doesn't know what is his responsibility may end up assuming other component responsibility and
+        generating a large coupling between them
+          - We can think of a cyclic dependency, where the API z depends on a certain function of API x, but x depends on
+          z to fix this function and this will lock the code. Everything because the responsibilities of each one of them
+          was not well defined.
+        . And the fact that only having the components isn't enough but to also define their responsibilities between
+        them.
+      
+      □  And by the end, we will finally define the relationship between these elements. And this relationships of
+      who speaks to whom, who depends on whom, and so on. They are also with a critic level of importance, they are
+      architectural decisions.
+        . By asking "Which database we will choose? Oracle? Postgre? Mysql?". These decisions may sound simple but they
+        are decisions that have a major impact.
+        . "Will I initialize this project with a monolithic architecture or will I use a distributed architecture? Or will
+        i separate the application in 3 different services, and so on". 
+
+● Lesson 4 - Clean architecture: Concepts and Contexts
+
+  ○ Entities
+
+    ■ What does the "Fundamentals of Database Systems"? define as an entity? 
+
+      □ A type entity defines a collection or a set of entities
+      □ Therefore, for the database, a type entity is a table, a set of data that share the same set of attributes. Which
+      means that we have a type product, for a table product. type Client for a client table, and so on
+      □ Since this entity type is also a set of entities which means that the entity is a register, a tuple of the
+      database.
+
+    ■ And the "Domain Driven Design" book?
+
+      □ An entity is an object defined primarily by its identity, it its called an entity. Therefore, an ID is what defines
+      it as being one.
+        . Therefore, when we have something whose uniqueness is defined, and that we can detect that it is the object
+        being handled. this is an entity.
+        . Imagine we have two user object representing the same user, and they have the same id. This means that they
+        are the same object, they may have different versions, the one being used is one or another, which means that
+        we will come across two entities in the memory that point to the same object because the ID is the same.
+
+      □ This is the concept entity
+
+    ■ And in the "Clean Architecture" book definition, which is the book we are focusing on? 
+
+      □ An entity is an object, inside a computer system, that embodies a small critical set of business rules.
+        . This means that we embody this rule inside a software element, be it a function, a class, an object, and so on.
+
+      □ Does the other books also consider functions, classes, to be entities?
+
+        . For the "Database Systems" book the entity is basically a table, a set of data that share the same attribute, so by its definition
+        it can't also be a function.
+
+        . For the "DDD" book an entity must have an id, therefore:
+
+          - Let's say we have a function to express a business rule, a statement summary, a monthly statement, for example. 
+            . Is this an entity? Yes, it is an element that expresses a business rule of our app. And to express this after
+            a function is also not an entity, since for that book, an entity must have an ID, and there are other elements
+            to express a function that express a business rule.
+
+  ○ So should i completely base myself on a specific one? 
+
+    ■ Is important for us to have the care of getting these concepts and be able to understand the context where this
+    concept was defined and understand the whole
+
+    ■ What is a controller, what is an entity, what is a use case, they are all concepts that are these blocks of construction
+    of their idea of clean architecture and it is extremely important that we understand the concept and know how to
+    interpret the architecture as a whole.
+
+    ■ Therefore, we understand that the concept must be understood inside a context because the same context can talk
+    about different thing and this bad understanding can compromise the understanding of the whole.
+
+● Lesson 5 - Clean Architecture #01
+
+
+    
+     
+      
+  
+
+      
+
+
+
+
+    
+
+
+    
 
       
          
