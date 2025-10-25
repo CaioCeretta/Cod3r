@@ -1,8 +1,8 @@
-● Lesson 1 - ArchitecturOverview
+## Lesson 1 - ArchitecturOverview
 
-  ○ What is an architecture? 
+  ### What is an architecture? 
 
-    ■ Th`architecture is the "skeleton" of the app, just like a building skeleton, with its columns and the floors.
+    ■ The architecture is the "skeleton" of the app, just like a building skeleton, with its columns and the floors.
     Therefore, this skeleton is the same as our architecture, our architectural decisions that will build the foundation
     so we can start solving the problems and making design/code choices.
 
@@ -36,9 +36,9 @@
         . Therefore, we can make code decisions, without necessarily violating the design, and consequently, without
         violating the architecture  
   
-● Lesson 2 - What is architecture? #01
+## Lesson 2 - What is architecture? #01
 
-  ○ Architectural, Design and Code problems
+  ### Architectural, Design and Code problems
 
     ■ In general, the word "architecture" is used in the context of something on a higher level it is independent of the
     lower level details, while "design" often seems to suggest structures and decisions to lower levels 
@@ -49,7 +49,7 @@
     ■ The primary architecture objective is to minimize necessary human resources to build and maintain a given system.
       □ It has the objective of serving to a determined purpose
 
-  ○ Architecture Overview and Objectives
+  ### Architecture Overview and Objectives
 
     ■ There is a formula we can use to think the objectives of an architecture that is Productivity = Performance/Effort
 
@@ -95,9 +95,9 @@
 
       □ The architecture is about the important stuff. Whatever that is". 
 
-● Lesson 3 - What is architecture? Who depends on whom? 
+## Lesson 3 - What is architecture? Who depends on whom? 
 
-  ○ Architecture -> Design -> Code. However, this doesn't mean that the code isn't important
+  ### Architecture -> Design -> Code. However, this doesn't mean that the code isn't important
 
     ■ Code is the less critic level, but it isn't less important, since that without code nothing works.
 
@@ -106,7 +106,7 @@
 
       □ However, its decisions can be exchanged in a way more simple manner than architectural/design decisions.
 
-  ○ Of what consists an architecture?
+  ### Of what consists an architecture?
 
     ■ An architecture consist of 3 primary aspects: Components, Responsibilities and Relationship between them.
 
@@ -143,9 +143,9 @@
         . "Will I initialize this project with a monolithic architecture or will I use a distributed architecture? Or will
         i separate the application in 3 different services, and so on". 
 
-● Lesson 4 - Clean architecture: Concepts and Contexts
+## Lesson 4 - Clean architecture: Concepts and Contexts
 
-  ○ Entities
+  ### Entities
 
     ■ What does the "Fundamentals of Database Systems"? define as an entity? 
 
@@ -184,7 +184,7 @@
             a function is also not an entity, since for that book, an entity must have an ID, and there are other elements
             to express a function that express a business rule.
 
-  ○ So should i completely base myself on a specific one? 
+  ### So should i completely base myself on a specific one? 
 
     ■ Is important for us to have the care of getting these concepts and be able to understand the context where this
     concept was defined and understand the whole
@@ -196,27 +196,64 @@
     ■ Therefore, we understand that the concept must be understood inside a context because the same context can talk
     about different thing and this bad understanding can compromise the understanding of the whole.
 
-● Lesson 5 - Clean Architecture #01
+## Lesson 5 - Clean Architecture #01 
 
+  ### Clean Architecture and Domain Modeling
 
-    
-     
+    This analysis synthesizes the core concepts of Clean Architecture. its relationships with DDD, and its key structural
+    difference from traditional layer architecture
+
+    #### Clean Architecture Structure
+
+    Clean architecture is defined by a dependency rule that organizes an application into four primary layers, moving
+    from the most stable, innermost layer, to the most volatile, the outermost layer:
       
-  
+    1. Entities (Core business Rules): The innermost layer, containing the objects that embody a small set of critical
+    business rules and data. These rules are independent of any specific flow of execution
+    2. Use Cases (Application Business Rules/Flows): This layer contains the application-specific business rules. Use
+    Cases are the orchestrator or "flows" that deliver a specific application functionality (e.g., RegisterUser, OrderRegistration).
+    They consume and manipulate the entities
+    3. Interface adapters (Controllers, Presenters, Gateways): This layers acts as the bridge, converting data formats
+    4. Frameworks and Drivers (External influences/UI/Web/DB/Devices): The outermost layer, composed of external technologies
+    databases, UIs, and specific frameworks/drivers (e.g., the library used to connect to a specific database or API used
+    for an external service like SendGrid)
 
-      
+    #### Clean Architecture vs Domain-Driven Design (DDD) 
 
+      A key difference is the level of opinionation concerning domain modeling:
 
+    . Clean architecture is less opinionated on how to implement the core domain. it broadly defines an Entity as an
+      object embodying critical business data and rules. If the entities are modeled poorly, the Use Cases will be forced
+      to implement an excessive number of rules, which is an inappropriate responsibility for the layer.
 
+    . DDD dives much deeper, providing a comprehensive set of strategic and tactical patterns for modeling complex
+    application and business domains (e.g., Aggregate, Value Objects, Repositories). DDD offers the tools necessary to
+    ensure entities accurately and appropriately express the business, making use case implementation simpler and more
+    reusable.
 
-    
+    Therefore, for an effective "Clean Architecture" implementation, strong domain modeling principles (often derived
+    from DDD) are necessary to ensure the core business rules are inside the Entities, keeping the use cases focused
+    purely on orchestration
 
+    #### Clean Architecture / Hexagonal Architecture / Traditional Layered Models
 
-    
+      ● Traditional layered models (often drawn as horizontal rectangles like View, Business, Infrastructure) separate
+      functionality but have a critical flaw: the dependency structure typically points downward.
 
-      
-         
+        • In this traditional model, the Business layer might directly depend on the infrastructure (e.g. a specific method
+        to connect to OracleDB).
 
-                            
-  
+        •  The problem is the dependency arrow. If the database changes or the specific connection fails, the core business
+        logic is also broken and becomes difficult to test in isolation
 
+      ● Hexagonal architecture (also known as Ports and Adapters, and the model that Clean Architecture adopts for its
+      external layers) solves this by inverting the dependency
+
+        • The core (entities and use cases) remains protected and has no knowledge of external world (DB, UI, Email service).
+        • The View/UI (The driving side/api) depends on the business core
+        • Crucially, the infrastructure/infra (the driven side/DB) is made to depend on the business core by implementing
+        interfaces (Ports) defined inside the core
+
+        This structure means that if we want to test the business logic, we can easily mock (simulate) the infrastructure
+        components without changing the core business code, isolating the business from technological volatility. In this
+        model, every external layer ultimately depends on, and serves  the protected business core.
