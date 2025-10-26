@@ -257,3 +257,4 @@
         This structure means that if we want to test the business logic, we can easily mock (simulate) the infrastructure
         components without changing the core business code, isolating the business from technological volatility. In this
         model, every external layer ultimately depends on, and serves  the protected business core.
+ 
