@@ -258,7 +258,7 @@
         components without changing the core business code, isolating the business from technological volatility. In this
         model, every external layer ultimately depends on, and serves  the protected business core.
 
- ### Lesson 6 - Clean Architecture #02
+ ## Lesson 6 - Clean Architecture #02
 
     ### Recap
 
@@ -352,7 +352,7 @@
       This dual-adapter approach ensures that the use case, which holds the core business logic, remains completely
       technology-agnostic and only communicates via simple, standardized DTOs and clearly defined interfaces.
 
-      #### Reflecting the figure
+      ### Reflecting the figure
 
         1. The Input Flow (Controller and input port)
 
@@ -375,7 +375,112 @@
           by the Presenter (or output adapter). The presenter implements the output port interface, making it the receiver
           of the use case's result. The presenter then takes that internal data and converts it back into the format
           required by the external client. (e.g. generating the final json response, rendering html, or updating a component)
-      
+
+ ## Lesson 7 - Ports and Adapters #01
+
+  ### 1. Core Principles?
+
+  #### Name and Purpose
+
+  The official name of this pattern is "Ports and Adapters". The term "Hexagonal Architecture" is primarily a 
+  **marketing convention**. The number of sides has no architectural significance.
+
+  Its core idea is to create a division between the **Application** and the **External World**, this basically consist
+  of "us against the rest". The only thing that matters is the application logic
+
+#### Agnostic Core
+
+This pattern is not **opinionated** about the structure inside the core. It does not enforce us on how to implement
+Entities, use cases, objects of value or domain services. It will simply define the boundary between the core logic and
+the external dependencies
+
+  ### 2. Defining Ports and Adapters
+
+  ##### Ports (The contract/plug)
+
+  A port is an interface defined inside the Application Core. It represents a requirement or a specific contact area between
+  with the external world
+
+    • Role: The port specifies what functionality the core needs (e.g., methods for data access or token provision)
+
+    • Example: A `UserCollection` interface defined by the application core with methods like `FetchUsers()` and
+    `ComparePasswordByEmail()`
+
+  #### Adapters (The implementation/Glue)
+
+  An adapter is a concrete implementation that lives outside the Application Core and implements a specific Port interface.
+
+  ● Ports: Let's assume that our hexagon have 6 plugs on each side, it is a contact area with the external world, and the
+  external world will "contact" our application through these plugs. Therefore, it is something defined inside the app,
+  so that "anyone" can adapt to this given port.  And when we think about ports we are normally thinking on defining
+  an interface so "someone" outside of our app, can implement this interface.
+
+    • Therefore, they are interfaces with available methods to be implemented. For example, suppose we have an interface
+    that access a set of data, like a **UserCollection** interface that contains methods such as **FetchUsers()**, **FetchUserByEmail()**,
+    or **ComparePasswordByEmail()**
+      . These methods may be used to access a set of data, and this definition should be an interface so we can implement
+      it inside a **OracleDB**, Memory Access so we don't depend on a database, a non relational database, and so on.
+    • So we can have the a single port, being implemented by multiple adapters 
+
+  ● Adapters: Continuing our hexagon example, we know that the hexagon consist of our app that contains the use cases and
+  the entities, and the adapters that "glue" and implement our interfaces (the way of fitting in). Each port have a different
+  communication interface and implemented by their adapters.
+    • Each of these elements, external to our app, are adapters and at any moment we can inject that dependency by instantiating
+    a concrete adapter — A code that manipulates the oracle access or a code that will send e-mail via SendGrid through
+    its API. And we inject through the dependency injection, that implementation inside the app.
+
+### How do Use Cases communicate with the ports? 
+
+  Inside a use case, we will say on its constructor that we depend on the port, like **EmailProvider** or **CollectionUser**,
+  and these interfaces may have the required methods and inside the use case, we receive this interface/port and "someone"
+  will have to give us an instance to use it.
+
+### Examples of adapters use
+
+  1. We may have a **TokenJWTAdapter** and this means that for "someone" to use it, we will
+  need a **TokenProvider** or a concrete implementation that offers us an auth token.
+
+  2. Suppose we have the necessity of having a data repository and we create one called `UserRepo` and inside of it we
+  create an **UserOracleDBAdapter** that implements this interface and have all the functions for a `OracleDB` that are
+  related to this interface. And we then create an interface and send it to the server. 
+    . The application doesn't depend on this. It will access the data through the defined port/interface and we will
+    reference these concrete instances after an interface defined by the App
+    . Therefore, who said how the interface needs to be, was the app — It said that it has the necessity of accessing
+    a collection of user and this interface needs to have all the necessary methods to handle the Users. And some interface
+    will then implement the **Oracle DB Adapter** that will retrieve these information, read from the OracleDB and save
+    inside of it.
+    . Following the same example, we can have a **MongoDBAdapter** for non relational databases that implement the same
+    interface, and other for an in memory database, and so on.
+  
+  • Therefore, we have now this possibility of creating interfaces, with the functions we desire from a given system, and
+  access them through this adapter.
+
+  . We can even create a mocked version and fake the, for example, legacy app, and we won't have the necessity of having
+  a legacy app up and running for us to use it.
+
+### Dependency Inversion
+
+  Continuing the legacy app example, we can notice the benefits of the dependency inversion when we need a need a legacy
+  app to work, and instead of depending directly on it, we invert the logic, create an interface and "someone" passes us
+  an implementation of the given interface that meets this interface. 
+
+  Or in the ports and adapters definition: "Someone passes us an adapter that implements a port defined in our application"
+
+  This is the centre of the clean architecture, the letter D in Solid, and many times, considered one of the most relevant.
+  Because it is the essence of the "cleaning" of these architectures, since we separate what is business in a way it is
+  independent of what is outside of it. Including facilitating the tests
+
+
+
+
+     
+
+    
+
+
+
+   
+
 
       
       
