@@ -4,5 +4,5 @@ This folder is dedicated to the study of **Software Design**, **Architectures**,
 
 **Main focus:**
 * **Business Rules and Logic implementation**
-* Clean Code and Architecture principles (e.g., DDD, Clean Architecture)
+* Clean Code and Architecture principles (e.g., DDD, Clean Architecture, Hexagonal (Ports and Adapters) Architecture)
 * Architectural Patterns and Trade-offs
