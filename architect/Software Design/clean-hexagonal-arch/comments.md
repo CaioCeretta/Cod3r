@@ -257,4 +257,147 @@
         This structure means that if we want to test the business logic, we can easily mock (simulate) the infrastructure
         components without changing the core business code, isolating the business from technological volatility. In this
         model, every external layer ultimately depends on, and serves  the protected business core.
- 
+
+ ### Lesson 6 - Clean Architecture #02
+
+    ### Recap
+
+    Clean architecture is defined by the **Dependency Rule**, organizing an application into four primary concentric
+    layers. Dependencies must only point inward, meaning inner circles are completely independent of outer circles.
+
+    ● Entities (Core Business Rules): application's critical data or rules that are independent of any specific flow of e
+      execution. These are often implemented as highly testable, self-contained code artifacts
+    ● Use Cases: Flows that are an orchestration of a functionality that use the entities to work, and these entities are
+      not particular to a single use case
+    ● External Layer: They are the databases, the external APIs, and more.
+
+    ### Dependency Inversion
+
+    ● Use cases need to have access to the external layers such as a database, like the login use case that needs to go
+    into the database, and after the sent e-mail and password, to check whether the user exists or not.
+
+      • The linking between both is done by the "dependency inversion" and to understand this, we will use a oracle db
+      as example.
+
+        . Does the oracle db depend on our app? the answer is no, because that is not the dependency direction.
+        . The dependency is that our app, that by architectural decision, that chose to use the oracle database, will
+        depend on the database to work properly.
+        . And this line of dependency is the natural line, which is the reason why the layers architecture define that
+        our business depend on the infra to work. It depends on external services to work properly.
+      
+      • And to solve this issue, we are going to use the dependency inversion, defined in the SOLID pattern, and is the
+      centre of the clean architecture / hexagonal architecture.
+
+        . It basically works by injecting inside our app a dependency, and we are going to implement an access to the
+        database using a class.
+        . Meaning that we will have a code artifact that will implement the whole access to the oracle database and this
+        class is going to be injected inside our app.
+        . To inject something inside the app, we need to have something inside our app that allow us to do this, and this
+        consists of the "Ports and Adapters" concept.
+        . Because we can't be tied up to external resources
+        
+      • "Gluing" the external with the internal
+
+        . The use cases have some necessities that don't necessarily reflect on the technology being used. Our interfaces
+        and use cases, must not be tied up in a way they only work along with oracle/mysql, it don't make sense.
+        . The adapters layers, will make these necessary adaptations 
+
+    
+    ### The interface adaptersAdapters layer
+
+      The interface Adapter layers serves as the crucial conversion zone between the external, volatile world and the
+      internal, stable core. It functions like an electrical adapter, translating an incompatible external format ( a plug)
+      into the format required by the application (the outlet).
+
+      #### Roles and responsibilities
+
+        The adapters layers has the purpose of minimizing coupling and ensure the application core is resistant to impacts
+        from external framework drivers and technology changes.
+        
+        • Protection: By defining clear interfaces (Ports), the Use Cases establish their exact input and output requirements.
+        The Adapters handle all necessary data conversions and implementations. For example, if a database driver changes
+        a method from closeConnection() to releaseConnection(), only the specific database Adapter needs modification,
+        leaving the Use Case untouched
+
+        • Decoupling: The Use Case is entirely independent of the data's origin or format. It doesn't care if the input
+        arrives as JSON, XML, or YAML. Translating the data is the adapter's responsibility
+
+
+    ### Clean Architecture in other perspective (Figure 2) / Data flow components
+
+      1. Controller / Input Adapter 
+      
+      The Controller or Input Adapter mediates the flow of external data into the Use Case by implementing the Input Port.
+
+      • Its work is basically
+
+        1. It translates the raw user input (from an http request body or URL parameters), into a simple, standardized
+        DTO
+        2. The controller receives the request (e.g., sending a request to `/api/clients/register`), extracts and validates
+        the necessary fields, converts them into a `RegisterUserInputDTO`, and passes that DTO to the use case
+        3. The use case accepts the dto as parameter, and inside of its logic, it then instantiates the core entity (like
+        a `User` entity) from the DTO data.
+
+      2. Presenter / Output adapter
+
+        The presenter or output adapter mediates the flow of processed data out of the Use Case to the external world by
+        implementing the Output Port .
+
+        1. Implements the use case's output interfaces to receive the processed result (which could be a successful Entity,
+        a simple object or an error status).
+        2. The use case sends its result to the output port. The presenter, which implements this port, transforms the
+        internal result into the final presentation format required by the client (e.g. converting back to a serialized
+        JSON or XML response, or formatting data for a UI view).
+
+      This dual-adapter approach ensures that the use case, which holds the core business logic, remains completely
+      technology-agnostic and only communicates via simple, standardized DTOs and clearly defined interfaces.
+
+      #### Reflecting the figure
+
+        1. The Input Flow (Controller and input port)
+
+        The flow begins when an external interface, l;ike the ui, is used by a user
+
+        • Arrow 1: Controller to use case input port: The controller (or input adapter) receives the raw external request,
+        and its responsibility is to translate the data (e.g. an HTTP request body or URL parameters) into a simple,
+        standardized DTO and then call the input port interface on the use case.
+        • Arrow 2: Use case to input port (Symbolic dependency): This arrow is symbolic and not an actual flow of data.
+        It simply shows that the Use Case is the entity that defines the input port interface. This definition shows us
+        the structure and requirements the controller must fulfill.
+
+        2. Output flow (Use case and presenter)
+         
+          • Arrow 3: Use case to output port (result emission): The use case, after executing the business rules, sends
+          its final result (a success status, an error, or processed data) to the Output Port interface. This indicates
+          the moment the business logic completes its execution and retrieves the outcome.
+
+          • Arrow 4: Presenter to Output Port (Implementation Dependency): This arrow showcase the dependency created
+          by the Presenter (or output adapter). The presenter implements the output port interface, making it the receiver
+          of the use case's result. The presenter then takes that internal data and converts it back into the format
+          required by the external client. (e.g. generating the final json response, rendering html, or updating a component)
+      
+
+      
+      
+         
+
+    
+
+
+        
+
+        
+
+
+
+
+
+
+
+
+        
+
+
+
+
+     
