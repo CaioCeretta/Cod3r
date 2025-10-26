@@ -406,69 +406,34 @@ the external dependencies
     • Example: A `UserCollection` interface defined by the application core with methods like `FetchUsers()` and
     `ComparePasswordByEmail()`
 
-  #### Adapters (The implementation/Glue)
+### 3. Communication and Dependency Inversion
 
-  An adapter is a concrete implementation that lives outside the Application Core and implements a specific Port interface.
+  #### Use Case Communication
 
-  ● Ports: Let's assume that our hexagon have 6 plugs on each side, it is a contact area with the external world, and the
-  external world will "contact" our application through these plugs. Therefore, it is something defined inside the app,
-  so that "anyone" can adapt to this given port.  And when we think about ports we are normally thinking on defining
-  an interface so "someone" outside of our app, can implement this interface.
+  Inside the core, a use case depends solely on the Port (interface), typically received via its constructor
 
-    • Therefore, they are interfaces with available methods to be implemented. For example, suppose we have an interface
-    that access a set of data, like a **UserCollection** interface that contains methods such as **FetchUsers()**, **FetchUserByEmail()**,
-    or **ComparePasswordByEmail()**
-      . These methods may be used to access a set of data, and this definition should be an interface so we can implement
-      it inside a **OracleDB**, Memory Access so we don't depend on a database, a non relational database, and so on.
-    • So we can have the a single port, being implemented by multiple adapters 
+  • Flow: The use case requests a dependency (e.g. `EmailProvider` Port). "Someone" outside the core is responsible for
+  instantiating the concrete **Adapter** (e.g. `TokenJWTAdapter`) and injecting the implementation into the use case.
 
-  ● Adapters: Continuing our hexagon example, we know that the hexagon consist of our app that contains the use cases and
-  the entities, and the adapters that "glue" and implement our interfaces (the way of fitting in). Each port have a different
-  communication interface and implemented by their adapters.
-    • Each of these elements, external to our app, are adapters and at any moment we can inject that dependency by instantiating
-    a concrete adapter — A code that manipulates the oracle access or a code that will send e-mail via SendGrid through
-    its API. And we inject through the dependency injection, that implementation inside the app.
+  • Main idea: The application core dictates the interface, and the external layers conform to it.
 
-### How do Use Cases communicate with the ports? 
+#### Dependency Inversion Principle (SOLID 'D')
 
-  Inside a use case, we will say on its constructor that we depend on the port, like **EmailProvider** or **CollectionUser**,
-  and these interfaces may have the required methods and inside the use case, we receive this interface/port and "someone"
-  will have to give us an instance to use it.
+  this is the foundation of the ports and adapters architecture and "clean" architectures
 
-### Examples of adapters use
+  1. **The application Core** defines the high-level policy (Port/Interface).
+  2. The **infrastructure/external layer** defines the low-level details (**Adapter/Implementation**) 
+  3. The **dependency is inverted**: The external layer depends on the interface defined by the core, protecting the
+  business logic from technology changes.
 
-  1. We may have a **TokenJWTAdapter** and this means that for "someone" to use it, we will
-  need a **TokenProvider** or a concrete implementation that offers us an auth token.
+**Benefits of inversion:**
 
-  2. Suppose we have the necessity of having a data repository and we create one called `UserRepo` and inside of it we
-  create an **UserOracleDBAdapter** that implements this interface and have all the functions for a `OracleDB` that are
-  related to this interface. And we then create an interface and send it to the server. 
-    . The application doesn't depend on this. It will access the data through the defined port/interface and we will
-    reference these concrete instances after an interface defined by the App
-    . Therefore, who said how the interface needs to be, was the app — It said that it has the necessity of accessing
-    a collection of user and this interface needs to have all the necessary methods to handle the Users. And some interface
-    will then implement the **Oracle DB Adapter** that will retrieve these information, read from the OracleDB and save
-    inside of it.
-    . Following the same example, we can have a **MongoDBAdapter** for non relational databases that implement the same
-    interface, and other for an in memory database, and so on.
-  
-  • Therefore, we have now this possibility of creating interfaces, with the functions we desire from a given system, and
-  access them through this adapter.
+• The business logic becomes independent of the external systems.
+• Testing is simplified, as concrete dependencies (like a legacy app or a full database) can be easily **mocked** or faked
+by supplying a simple Adapter implementation
 
-  . We can even create a mocked version and fake the, for example, legacy app, and we won't have the necessity of having
-  a legacy app up and running for us to use it.
 
-### Dependency Inversion
 
-  Continuing the legacy app example, we can notice the benefits of the dependency inversion when we need a need a legacy
-  app to work, and instead of depending directly on it, we invert the logic, create an interface and "someone" passes us
-  an implementation of the given interface that meets this interface. 
-
-  Or in the ports and adapters definition: "Someone passes us an adapter that implements a port defined in our application"
-
-  This is the centre of the clean architecture, the letter D in Solid, and many times, considered one of the most relevant.
-  Because it is the essence of the "cleaning" of these architectures, since we separate what is business in a way it is
-  independent of what is outside of it. Including facilitating the tests
 
 
 
