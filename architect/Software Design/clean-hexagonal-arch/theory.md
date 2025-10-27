@@ -1326,6 +1326,79 @@ by supplying a simple Adapter implementation
   This lesson begins by showcasing a repository from a person that studied and dove into this principle, the webpage
   is: `https://jmgarridopaz.github.io/content/hexagonalarchitecture.html`
 
+  The instructor is also showing an two diagrams, the first diagram is separated by:
+
+  ### 1st Diagram explanation
+
+  . Drivers (Primary Actors)
+  . Driven Actions (Secondary Actors)
+
+  #### Driven Actors Interaction 
+
+  The driven are the actors are the ones who will be guided by our application (Databases, an eventual application, etc).
+
+  The image defines this interaction where the drivers interact with the application, that interact with the driven actors.
+
+  This interaction can be exemplified we can we think of a database that responds to an action/interaction of our app.
+  The app opens this interaction with the db, "asks" for it to do something and it returns something to us. Therefore,
+  the database is guided by our app. It won't fire a flow/use case. This is where a "driver" enters
+
+#### Driver Actors Interaction
+
+  Different from the driven actors, the drivers are the one who are "directing" or guiding our application, they consist
+  of test cases, and user, SPAs, mobile app. They are the ones interacting with the app and firing execution of flows and
+  processes inside the app.
+
+  ### 2nd Diagram Explanation
+
+  We also have a second figure that is similar to the first one, they are separated by driving e driven, and in the figure
+  we have
+
+  • Primary/Driving Adapters
+
+    - API Controllers
+    - Console Commands
+    - Consumer GUI Views & Controllers
+    - Admin GUi Views & Controllers
+  
+  • Secondary/Driven Adapters
+
+    - ORM Adapters (repositories): ORM <-> MySQL DB
+    - Elasticsearch Adapters: ES lib <-> Elastic Search
+    - Email Adapters: Email lib <-> Email service, such as gmail
+    - SMS Adapters: SMS lib <-> Communication satellite
+
+  This mean that we the driving adapters, implement ports inside our application. 
+  
+  #### Examples and final explanation of Driving Adapters / Driven Adapters
+ 
+ We may interact with our app via console commands, and a controller will transform this communication to meet the use
+ case's requirements or an administrative interface that has controls/visions that will call a use case.
+
+ The fact is that we have the use cases being invoked by what drives our application, like the tests, users, GUIs, and
+ the use case will need to invoke what is directed by the app, the secondary characters that may be a library of message
+ sending, e-mail, an ORM to map to a relational db, and more. And by this, we understand that we have a set of defined
+ ports with adapters implementing them so we are able to access these resources directed by our app.
+
+ Both the driver and the driven are outside of our app, we have our internal app, and it does'nt care if who is communicating
+ with it is a driver or a driven adapter, yet, they are still worked with the same ports and adapters principle.
+
+
+   
+
+
+
+
+
+
+
+  #### 
+
+
+
+
+  
+
 
 
 
