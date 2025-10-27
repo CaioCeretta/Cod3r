@@ -1,1 +1,1 @@
-### Comments about the course on Clean/Hexagonal Architectures
+### Comments about the course "Arquitetura Limpa e Hexagonal"

@@ -1,0 +1,1 @@
+### Comments about the course "Ferramentas Estratégicas"
