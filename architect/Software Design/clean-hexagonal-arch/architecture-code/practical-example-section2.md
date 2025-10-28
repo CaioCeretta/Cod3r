@@ -46,7 +46,12 @@ I followed some steps:
   4. Defined the file extensions, which is essential for ESM
   4. Configured the transform to inject custom tsconfig for tests
   5. Enabled isolatedModules to comply with our tsconfig's attribute and enforce that each file is treated as a separate,
-  isolated module
+  isolate module
+  6. The initial configuration, often used as "module¨: "nodenext", imposes strict ESM rule, such as relative imports must
+  include file extensions (e.g., ../src/calc.js)
+  So i changed the module to ESNext and the target to ES2022. By doing this, without explicitly enforcing the strict nodenext
+  module, ts "relaxed" it's path-resolving rules, allowing us to use the cleaner import syntax without extensions
+  7. And finally, downgraded jest from version 30 to 29.7 to fix compatibility issues with ts-jest
 
 
 ### Codings
@@ -54,8 +59,9 @@ I followed some steps:
   After configuring the code, create a calc.ts and exported a soma function that receives two parameters and returns the
   sum, inside test, created a calc.test.ts just to test if jest is working
 
-  
-  
+## Lesson 2 - Basic Example #02
+
+  We'll start by creating an hypothetical use case named `RegistrarUsuario.ts` inside src
   
 
   
@@ -127,11 +133,6 @@ our IDEs
 
 Adding this directive on top of our file is a fail-safe guarantee that enforces the compiler to include the types and make
 that error to vanish
-
-
-
-
-
 
 ## Errors
 
