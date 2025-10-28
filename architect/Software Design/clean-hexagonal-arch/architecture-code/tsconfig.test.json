@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json", // Inherits base configurations
+  "compilerOptions": {
+    "isolatedModules": true,
+    // Overwrites the configuration to include jest global types
+    "types": [
+      "jest",
+      "node"
+    ],
+    "jsx": "react-jsx" // Certifies that JSX is present if necessary
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*" // Include the test files
+  ]
+}

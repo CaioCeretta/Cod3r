@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "isolatedModules": true,
+    // Removes jest because it is now placed inside the tests tsconfig
+    "types": [
+      "node"
+    ],
+    // ... Rest of options
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
