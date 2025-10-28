@@ -1,5 +1,3 @@
-// jest.config.ts
-
 import type { Config } from "jest";
 import type { JestConfigWithTsJest } from "ts-jest";
 
