@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "ESNext",
+    "target": "ES2022",
     "isolatedModules": true,
-    // Removes jest because it is now placed inside the tests tsconfig
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     // ... Rest of options
     "outDir": "dist"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*"
   ]
 }
