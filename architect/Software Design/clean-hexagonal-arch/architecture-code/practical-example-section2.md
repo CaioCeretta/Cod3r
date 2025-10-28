@@ -61,7 +61,39 @@ I followed some steps:
 
 ## Lesson 2 - Basic Example #02
 
-  We'll start by creating an hypothetical use case named `RegistrarUsuario.ts` inside src
+  We're going to create an hypothetic scenario to start thinking, and then refactor it to apply the concepts of "Ports
+  And Adapters"
+
+  First we are going to look into an example outside of a system to then enter a more realistic scenario.
+
+  In the realistic scenario we will start in a very straight forward way, without using a more planned architecture and
+  then refactor it along the time
+
+  #### RegistrarUsuario Use Case
+
+  This use case will be consist of a RegistrarUsuario class, that has an array of 'usuarios' that consist of an empty array
+  and a single method `executar(nome: string, email: string, senha: string)`
+
+  This method will create a simple encryption for the password, by reversing simply reversing it, create a user constant
+  and push it to the array.
+
+  But the question is: "If I want to turn this use case flexible for not simply register an user in memory but also to save
+  it on a database, a file, any other place that isn´t necessarily this file. Is there a possibility of customizing the use
+  case?"
+
+  Other question is in case we want to encrypt the password in a different way, is that currently possible in the code?
+  The answer is no, because the code is completely hard-coded, it simply receives the three parameters, implement what is
+  inside the function body and there is nothing we can do to customize this use case\
+
+  In case we change this in-memory array and change it to use a database, it will also be hard-coded and we will be tied
+  to it. There would'nt be a possibility of saving it in any other place.
+  Why? Because the use case simply executes a given algorithm.
+
+  The question that arises is: "How can we apply the dependency inversion using the concept of Ports and Adapters so we can
+  make our use case more flexible?   
+
+
+
   
 
   
