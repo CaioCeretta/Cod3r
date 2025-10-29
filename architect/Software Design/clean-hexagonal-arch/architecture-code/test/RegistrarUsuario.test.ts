@@ -1,7 +1,10 @@
+import BancoEmMemoria from "../src/BancoEmMemoria";
 import RegistrarUsuario from "../src/RegistrarUsuario";
 
 test("Deve registrar um usuário", () => {
-	const casoDeUso = new RegistrarUsuario();
+	const bancoEmMemoria = new BancoEmMemoria();
+
+	const casoDeUso = new RegistrarUsuario(bancoEmMemoria);
 
 	const usuario = casoDeUso.executar("Caio", "ccc@zmail.com.br", "123456");
 

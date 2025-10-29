@@ -1,8 +1,15 @@
+import BancoEmMemoria from "./BancoEmMemoria";
+import Banco from "./BancoEmMemoria";
+import type Colecao from "./Colecao";
+import InverterSenha from "./InverterSenha";
+
 export default class RegistrarUsuario {
-	usuarios: any[] = [];
+	private inverterSenha = new InverterSenha();
+
+	constructor(private colecao: Colecao) {}
 
 	executar(nome: string, email: string, senha: string) {
-		const senhaCripto = senha.split("").reverse().join("");
+		const senhaCripto = this.inverterSenha.cripto(senha);
 
 		const usuario = {
 			id: Math.random(),
@@ -11,7 +18,8 @@ export default class RegistrarUsuario {
 			senha: senhaCripto,
 		};
 
-		this.usuarios.push(usuario);
+		this.colecao.inserir(usuario);
+
 		return usuario;
 	}
 }
