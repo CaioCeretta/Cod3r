@@ -92,6 +92,168 @@ I followed some steps:
   The question that arises is: "How can we apply the dependency inversion using the concept of Ports and Adapters so we can
   make our use case more flexible?   
 
+## Lesson 3 - Basic Example #03
+
+### First Refactoring
+
+We'll start by creating a `Banco.ts` class, with a single array property `itens`, and a method to insert the parameter inside
+this array, and then replacing the RegistrarUsuario, to instantiate this class and use this method.
+  . One interesting thing we can do, is to maintain a singleton approach to Banco array, defining the array as static, and
+  by doing this, it won't depend on the instances.
+
+We separated the responsibilities, however, we still aren't able to customize the code, it keeps on being hard-coded to save
+on the database, within separate instances or not. We Simply changed the internal implementation, but from the user's point
+of view the persistence place remains the same.
+
+This is clear case of where the use case is tightly coupled to the `BancoEmMemoria` implementation. Which violates the
+dependency inversion principle. In next refactorings, we would like it to depend on an abstraction, and not a concrete
+class.
+
+And even if we "try" to change something, like specifying that this is not a simple 'Banco', but a 'BancoEmMemoria' to 
+specify that this database is only in-memory? The `RegistrarUsuario` class is still tied to it.
+
+### Ok, if none of these changes modified this, how can i make it more flexible?
+
+The solution is to create a **Port** and having something that will adapt to this port.
+
+In further refactorings, we will introduce the database's implementation (the adapter) as a parameter inside the constructor
+(**dependency injection**). By doing this, the use case will only know about the interface (**Port**) and the code that
+invokes the use case will define if it will save it in memory, in a mysql, or simply in a JSON file
+
+We could also think of something similar to the method that will encrypt the password, and instead of coupling the logic
+inside the class.
+
+### Even though or tests are not still flexible, we are already separating the concerns
+
+We created two separate files, one for encrypting the password and other for the database, which removed the logic from
+the use case and now it only has to focus on doing what it is told to.
+
+The test only needs to call the use case method and checks if the use case's return matches the test expectation 
+
+. However, if the password was a rule, we grabbed a rule that is not part of the use case itself, and separate in a
+different file, placed that rule inside our use case and eventually we can reuse it in other places.
+
+### Password Encryption *notes*
+
+A password encryption method is not a business rule, but defining if a password must be encrypted
+
+Basically we will want to encrypt some data, maybe use a third party algorithm to do this and externalize it. Since implementing
+this algorithm is not a business focus.
+
+
+### Abstraction (Port) and Adapters Notes
+
+#### Abstraction 
+
+In a language such as TypeScript (Java or C#), abstraction is the contract, the definition of what has to be done, without
+specifying "the how"
+
+● Abstractions can be implemented with
+
+1. Interface (Recommended for Ports): It is a clear contract that defines only methods and properties, but without implementing
+the logic. e.g.
+  ```ts
+    interface IDataRepository { save(data: any): void}
+  ```
+
+2. Abstract class: A class, which cannot be instantiated. It may contain some already implemented methods and others that
+are abstract (with no implementation, requiring subclasses to implement them). e.g
+  ```ts
+    abstract class BaseRepository {
+      abstract save(data: any): void/
+    }
+  ```
+
+####  Implementation/Concrete (Adapter)
+
+The implementation  is the code that fills the abstraction, this is, the class inherits from the abstract class or
+implements the interface. Here we define how to saveInMemory or saveInDatabase
+
+### Final Conclusion
+
+  In summary
+  
+  • Abstraction often called **Port** defines the "what", the contract of functionalities that the core needs.
+
+    . It is the boundary that isolates business logic from external concerns.
+    . It is ideally represented as an interface (like `IDataRepository`) for a clear, pure contract
+
+  • The implementation (often called as **adapter**) defines the "how", the concrete logic that fulfills this contract. 
+    . The adapter is the code that realizes the abstraction and handles technical details such as saving data in memory, to a
+    database, or calling an external service.
+    . By implementing the interface of extending the abstract class, the Adapter ensures that the core system can interact
+    with the outside world without caring about the details of where ow how the action is executedd
+
+  Therefore, this creates a clean point of exchange (contract), and the implementation/Adapter provides the multiple
+  concrete mechanisms to meet that contract, resulting in highly decoupled and maintainable code
+
+
+
+## Lesson 4 - Basic Example #04
+
+### Second Refactoring
+
+### `RegistrarUsuario` class
+
+Now that we have configured the environment, we can start to define a flexible use case. For this, we will create an
+interface called `Colecao.ts`. At the moment, we won't worry about where this will be placed in the file structure and
+what it will this implementation become.
+
+Inside `Colecao.ts` we will define an interface called Colecao, which will have a method named inserir, it could be any
+name, but just following what we already have, since we still don't have contracts to meet. We will only define what the use case expects.
+
+Back to BancoEmMemoria class, we will make sure it implements the Colecao and comply with the Colecao interface
+
+And to make sure we have the flexibility in our use case, instead of directly instantiating the persistence type, in this
+case, `BancoEmMemoria`, we will want to receive the implementation on the constructor, e.g.
+
+If we simply utilize this.colecao.inserir, it knows what this type consist of, independent of the class/interface that is
+being used we know that it will have the `this.colecao.inserir()` method.
+
+```ts
+  	constructor(private colecao: Colecao) {}
+```
+
+This means that the constructor needs to receive a parameter that implements that Colecao interface. And this element, doesn't
+necessarily need to be a `BancoEmMemoria` or `BancoMySQL` as long as it adheres to the interface type.
+
+Since we no longer have this binding/coupling with `BancoEmMemoria`, this will turn the use case way more flexible.
+
+### RegistrarUsuario test
+
+With this being done, when we instantiate `RegistrarUsuario`, we now have to inform it an instance of `Colecao`, because
+by default, not even the use case that receives an implementation of `Colecao` knows about it. It  does not know which
+class can and will be inserted there, it only knows that it requires it via parameter.
+
+This is where we will have a **Dependency Injection**, which means that "someone" needs to pass down something it depends
+on.
+
+Now with this change, we need to go back to our test, and where we instantiate RegistrarUsuario, inside the parentheses
+we need to inform an instance of `Colecao` (Which can be an instance of `BancoEmMemoria`)
+
+We can notice that inside our use case, there is no dependency of `BancoEmMemoria`. It simply receives a `Colecao`, which
+could even be saving on the cloud or a database. 
+
+The fact is that an instance of `Colecao` is required for the class to work. By doing this, our use case became more
+flexible and we can utilize multiple ways configure our use case and create an instance of `RegistrarUsuario`
+
+
+#### Implementation Recall:
+
+  The implementation MUST satisfy the interface contract. The contract defines the signature of the method, its names,
+  number of parameters, type of parameters and type of return
+
+
+
+
+
+ 
+
+
+
+
+
+
 
 
   
