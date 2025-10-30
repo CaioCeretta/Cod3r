@@ -461,9 +461,82 @@ we don't have one and we won't have a full user, what should we do?
 In later classes, to improve organization, we can create interfaces that represent a use case, where this interface will
 be a standard among all the app's use cases.
 
-## Lesson 09 - Basic Example #09: Integrate with real database
+install the package dotenv to create a .env file
 
-Install knex (query builder (it can eventually have the db drivers)) and pg (driver to connect with postgresql)
+## Lesson 09 - Basic Example #09: Define a Real Database
+
+Install knex (query builder (it can eventually have the db drivers)) and pg (driver to connect with postgresql).
+
+Inside the adapters, create a knex folder and a knexfile.js to define its configurations, even though it is not going to
+be a concrete implementation, it will be used by the other db implementations
+  - The reason for this file being a .js, is because when using knex, we will be able to call the migration commands outside
+  of our project that is configured in typescript. So for it will important for us to define in tsconfig that it allowsJs
+
+Install dotenv to create an env file to store all the sensible configurations or environment specific (such as passwords
+and URLs), env files are important for the app to alter without changing its logic
+
+Inside env file, define a DB_URL with our database one and use it on knex's connection attribute
+
+Since our package.json type is a module, make the js file to be a .cjs, since the file extension overrules the definition
+in package.json
+
+### package.json knex scripts
+
+  All knex scripts will need to include the configuration path of the knexfile, because since knex isn't defined in the
+  root folder it won't automatically find it and need to be specified.
+
+  1. "migrate:make": Create a migration file that will make knex to read our config file and generate a template for us
+  to write db updates — such as createTable
+
+  2. "migrate:down": Undo the table creation
+
+  3. "migrate:up": Execute the table creation
+
+## Lesson 10: Basic Example #10: Update the Port
+
+  The ideal is not for us to simply create a "portas" folder and place all of our interfaces inside of it. The ideal is
+  to define the ports inside the contexts they are being used. This is, if we have an interface specific to the user, in
+  the instructor's opinion it is best to create this interface inside the 'usuario' folder.
+
+  Define an interface `ColecaoUsuario` that will handle the communication with the `usuarios` table. This interface will
+  define a `inserir` method. When inserting something in the database, is not a common approach, on real projects, to
+  return the inserted object. Insertion functions often return a void or a Promise<void>.
+  If eventually it encounter an error, it throws an exception, otherwise, it simply returns the function in a way the
+  user knows it was successful. Which is a more compatible implementation for databases.
+
+  This way, we can now start to "narrowing" our project's names and start making changes beginning with the BancoEmMemoria
+  
+    . since it handles only a user registration, change it to UsuarioEmMemoria.
+    . utilize the Usuario interface to type the user and the function return
+    . inside the Colecao type, with contain a generic port and the type of the collection is any, we are going to change
+    it and use the ColecaoUsuario defined inside the usuario folder
+
+    . Once it is implemented, we can go back to the use case, modify the generic colecao to use ColecaoUsuario, which is
+    a more specific one and even by changing the adapters the tests continue running normally
+
+
+### DB Connection Adapter
+
+  Now that we have defined our knex file configured, inside the knex folder, we are going to define a `ColecaoUsuario`
+  specific to knex, 
+
+
+
+
+  ### Shared folder
+
+    instead of placing the `ProvedorCriptografia` inside the ports folder, one option would be to create a shared folder
+    and place it inside that folder, in case many use cases make use of it.
+    If no other scenario uses the cryptography expect the user, it would be specific for the `usuario` needs and we could
+    move it together with the `ColecaoUsuario`.
+
+    In other words, if everything that has to do with a certain entity, like its use cases, its entities, and its necessities
+    (which could be seen as the Ports), they can be moved to the specific folder.
+
+    By doing this, by separating the concerns, with both the UsuarioColecao port and the ProvedorSenha inside the usuario
+    folder, we can even remove the ports folder
+
+
 
 
 
