@@ -412,7 +412,6 @@ with `hash(password, 10)`, are:
 
 
 ***Bcrypt comments: 
-
 Every time we are going to encrypt a password with bcrypt, we will need to generate a salt. The salt is not required, we
 can simply pass as the second parameter of the hash function, our "cost": (e.g., hash('myPassword', 10)), 10 is out cost
 factor, the bigger it is, the safer and slower it will be.
@@ -424,21 +423,47 @@ Salt is a random value added to the password before the cryptography, It is used
 When using methods such as genSaltSync, if we intend to save two passwords in the same render, it should not be used,
 since the passwords are going to have the same hash. If we are willing to generate more than one in the same render, the
 best approach would be bcrypt.hash(password, 10); and not a constant.
+***
 
-***Simple recap: 
+***
+Simple recap: 
 • Interface defines a method that should exist but not how they should be done. The implementation is the one
 responsible for fulfilling the contract and defining how each method really works.
 
 • Port contains the necessities that the app has, which in this case, is the necessity of a login, that will require both
 passwords to be compared.
-
-
-
-
 ***
 
 
+## Lesson 08 - Basic Example #08": User interface
 
+Now that we created a real cryptography version, we will create a real database class to persist on a database. This way,
+we can create a real example that will look like an integration test that will pass through a real adapter and save it on
+a postgresql database. This way, we generate a use case that is minimally functional.
+
+Within the folder `usuario` folder, define an interface Usuario
+
+Even though an interface may not be the best option, and the best one would be to create it as a class and make it as rich
+as possible, but the focus on the course is CA and Hexagonal Architecture, so it will remain an interface. 
+
+To use this new interface we will make some modifications:
+
+  1. In `RegistrarUsuario` class, type the usuario with this new interface, this way, we type guard the usuario constant
+  because we will clearly know its attributes and if the attributes correspond to its types.
+  2. Type the `executar` method return as `Usuario`
+  
+Suppose we have an occasion where we are creating a constant, defining its type as user, however its email is required and
+we don't have one and we won't have a full user, what should we do? 
+  - 1: Inside typescript we have the possibility of enclosing the `Usuario` type in an utility function named Partial<>,
+  and what it does is to turn every required attribute as optional
+  - 2. Define the interface attributes as optional.
+
+In later classes, to improve organization, we can create interfaces that represent a use case, where this interface will
+be a standard among all the app's use cases.
+
+## Lesson 09 - Basic Example #09: Integrate with real database
+
+Install knex (query builder (it can eventually have the db drivers)) and pg (driver to connect with postgresql)
 
 
 
