@@ -1,7 +1,7 @@
 ##### The primary objective of these lessons is not entering in configuration/coding details, but rather on the principles
 ####  and motivations behind utilizing this pattern 
 
-## Lesson 1 - Basic Example #01
+## Lesson 1 - Basic Example #01: Project Definition
 
 ### Configuration
 
@@ -59,7 +59,7 @@ I followed some steps:
   After configuring the code, create a calc.ts and exported a soma function that receives two parameters and returns the
   sum, inside test, created a calc.test.ts just to test if jest is working
 
-## Lesson 2 - Basic Example #02
+## Lesson 2 - Basic Example #02: Use Case Creation
 
   We're going to create an hypothetic scenario to start thinking, and then refactor it to apply the concepts of "Ports
   And Adapters"
@@ -92,7 +92,7 @@ I followed some steps:
   The question that arises is: "How can we apply the dependency inversion using the concept of Ports and Adapters so we can
   make our use case more flexible?   
 
-## Lesson 3 - Basic Example #03
+## Lesson 3 - Basic Example #03: Class `Banco`
 
 ### First Refactoring
 
@@ -189,7 +189,7 @@ implements the interface. Here we define how to saveInMemory or saveInDatabase
 
 
 
-## Lesson 4 - Basic Example #04
+## Lesson 4 - Basic Example #04: Dependency Injection (Database)
 
 ### Second Refactoring
 
@@ -243,22 +243,204 @@ flexible and we can utilize multiple ways configure our use case and create an i
   The implementation MUST satisfy the interface contract. The contract defines the signature of the method, its names,
   number of parameters, type of parameters and type of return
 
+## Lesson 5 - Basic Example #05: Dependency Injection (Cryptograph Password Provider)
 
+  ## Criptografar Senha
 
+  We are going to repeat the same sequence for the InverterSenha class:
 
+    1. Create a Cripto interface with the contract of a function named cripto which receives  a parameter `senha:string`
+    2. Inside InverterSenha, implement this `Cripto` interface, and define a cripto method
+    3. Inside `RegistrarUsuario` class, where we instantiate a new inverterSenha() class, remove where we were hard-coding
+    a n instance of InverterSenha, change its constructor to inject any class that implements the interface cripto
+    4. Inside the tests, pass down to the constructor of RegistrarUsuario, an instance of cripto. e. g
 
- 
+      ```
+        // `Registrar Usuario` class
+          	constructor(
+		          private colecao: Colecao,
+		          private cripto: Cripto,
+	          ) {}
 
+        // RegistrarUsuario.test
 
+          	const bancoEmMemoria = new BancoEmMemoria();
+            const inverterSenha = new InverterSenha();
 
+            const casoDeUso = new RegistrarUsuario(bancoEmMemoria, inverterSenha);
+      ```
 
+#### Instructor's naming conventions:
 
+  • Where i used Cripto to name the interface, he used ProvedorCriptografia, since it is an interface that will provide
+  a function to encrypt a password, and modify the whole code to conform with the new name.
 
+#### Different implementations
 
+  We can see the power of the dependency injection by creating another test using other implementation of ProvedorCriptografia
+  , and in the new example, we are going to use `SenhaComEspaco`, and create another test to show case the dependency
+  injection and how we can use two different implementations in the same test file
 
+  ## Lesson 6 - Basic Example #06 - Folders Configuration
+
+### The architecture must make the code intentions clear
+
+Even though folder conventions are not part of an architecture, we are advised in the CA (Clean Architecture) book, that
+to name files, functions and classes in a way that they reveal their intention — The names should make our intentions clear.
+
+The code must also be **"self-documenting"** — If we feel the need to add a comment to explain something that the name itself
+doesn't make clear, then the name is explanatory not enough.
+
+The author even extends this reasoning to an architectural level by saying:
+
+  "The architecture should scream the intent of the system"
+
+The idea behind this quote is:
+
+  • When someone opens our project and looks at the folder and file structure, they should immediately understand the
+  system's intent
+  • For example, an e-commerce system should not "scream" controllers, repositories, services; it should "scream" products,
+  orders, payments, etc
+
+### Folder organization and guiding questions
+
+  This is not going to be the definitive organization, but it will be used to exemplify how that separation should resemble
+
+  • Inside src create a folder `exemplo` and inside of it two other folders of `adaptadores` and `portas`. And the questions
+  we have to do to move the existent files is something as:
   
+    1. Now where should we put the `Colecao`: "Colecao is an interface which is used for the dependency injection and other
+     classes must implement from it", This means that it is an "entry PORT" inside our application
+    2. "Do our code have another interface, that acts like a contract to other classes?" The answer is yes, `ProvedorCriptografia`
+    is also a contract
+    3. And the adapters? do we have any for the adaptadores folder? and the answer is yes, `BancoEmMemoria`, `InverterSenha`,
+    `SenhaComEspaco` are all classes that implement these contracts and **ADAPTS** to them, which mean, they must go into the
+    adapters folder
+    4. Inside the exemplo folder, along with portas e adaptadores folders, we can create a folder that represents our app
+    6. Create an app folder and move everything related to our app. Therefore, move the ports folder to this folder (not
+    the adapters, adapters are part of the "rest"). 
+      - Inside the adapters there are implementations that may depend on databases, services, and therefore, we access
+      technologies with no restriction and inside the app folder, we don't have any dependency on frameworks and specific
+      databases because or application must be decoupled from this kind of dependency 
+    7. inside app, create a folder for each entity, in this case, we only have `usuario`. It will be used to centralize
+    everything related to a `Usuario`, which means we can move the use case RegistrarUsuario to that folder. Because the
+    organization can be separated by business and not aspects of infrastructure. In fact, even the DDD book has a chapter
+    that it talks about creating `modules` on top of infra details — In other words, technology names, For example, when
+    creating an "adaptadores" folder, at any moment we are saying that the business has that word "adaptadores", it is
+    simply a detail of infra and the pattern being used. If it makes sense to name it as adaptadores or not, it is a
+    matter of project's nomenclature choice. Therefore, in addition to making the architecture "scream", which is an
+    explicit architecture, we should always make the business we want to solve "screaming" in the app, every time we can
+    use folder names that represent aspects of the application, it is better than simply naming folders using technology
+    names.
+    8. We can also create multiple separate folders for the adapters. So for example, we have adapters for the database
+    and for the password encryption. Creating two separate folders for each of them and not placing both of them in the
+    root is a good approach.
 
+  ### Architectural Conclusion: Prioritizing the business
+
+This set of steps solidify the project structured based on two essential pillars: The dependency inversion and of Domain
+Priority.
+  1. Decoupling and Specific Boundaries
+    - App: It is the core of the application, in that folder should reside the ports and the entities use case, and is now
+    the "control center". By moving the interfaces to that folder, we ensures that the high level coding (the business)
+    defines the controls, and not the low level code (the infra).
+
+    - Infra (adapters): Kept separate, this folder contains the **concrete implementations** (`BancoEmMemoria`, `InverterSenha`,
+    etc). This separation ensures that what moves the application (use cases), remains technology-agnostic — We can
+    change a database without changing the business logic
   
+  2. "Screaming" architecture
+
+    - By separating the app in entities, we prioritize, we enforces the project to "scream" about its domain
+
+    Any developer who opens the folder app/usuario immediately knows that the system deals with users register. This is
+    infinitely more informative than having folders named just by technology (interfaces, services, repositories), that
+    may obscure the software main functionality.
+
+  In essence, we are creating a project where: 
+
+    . The dependency flows correctly: from the inside out (infra depends on the app)
+    . The structure reflects the business: the domain is visible and centralized
+
+  This approach does not only ensure technical flexibility, but also superior maintainability and scalability, since the
+  architecture protects the application core from outer changes
+
+#### Material Icon Theme Folders
+
+This doesn't have anything to do with our code, is just for better visualization.
+
+There are folders that are already associated with different icons, but some don't and is the main gray folder, to change
+this, we can check the material icon documentation and modify the global json settings.
+and associate the folders we have, that don't have icons associated with, to some of the already defined ones that express
+what we desire. 
+
+e.g.`"material-icon-theme.folders.associations": {"portas": "circleci"},`
+
+## Lesson 7 - Basic Example #07: Real Password Encryption
+
+We'll start this lesson by creating an user interface.
+
+We already have a `ProvedorCriptografia`, however, it would be important if in addition to just encrypting, it is able to
+compare an original password to an encrypted one.
+To create this, inside the interface, add a new contract `comparar(original: string, senhaCriptografada: string): boolean
+
+Since we altered the port, we are required to change every adapter that implements it, because they need to comply with
+the interface.
+
+However, we are using a strict comparing `===`, which is not necessary able to be resolved in the use case, therefore it
+is interesting that the implementation itself knows how to compare two encrypted passwords.
+
+Create a new password implementation to define a real encryption using the bcrypt library.
+Create a new test for this new implementation
+
+And we notice that for the use case, the adapter that implements the given contract, is irrelevant. We've kept the
+same use case for the tests while swapping between different adapters (e.g, simple encryption with password inversion, 
+and complex hashing with salts), and in both scenarios, the use case tests behaved the same worked the same.
+
+● Async | Sync
+
+The main difference between defining a constant to store the salt (` const salt = bcrypt.genSaltSync(10) `) and calling it
+with `hash(password, 10)`, are:
+
+1. Type: Asynchronous (non blocking) | Synchronous: blocking
+2. Salt: Automatically Generated. | Manually generated (two passwords in the same function call, use the same hash)
+3. Security: Same level
+4. Performance: Better suited for servers and APIs | May block the event loop if multiple executions happen simultaneously
+5. Simplicity: Cleaner and more common nowadays. | Slightly more verbose 
+
+
+
+
+***Bcrypt comments: 
+
+Every time we are going to encrypt a password with bcrypt, we will need to generate a salt. The salt is not required, we
+can simply pass as the second parameter of the hash function, our "cost": (e.g., hash('myPassword', 10)), 10 is out cost
+factor, the bigger it is, the safer and slower it will be.
+
+Salt is a random value added to the password before the cryptography, It is used to ensure that:
+  . Two people with the same password will have 2 different hashes
+  . rainbow tables attack, that hackers use to try to figure out a password, are ineffective 
+
+When using methods such as genSaltSync, if we intend to save two passwords in the same render, it should not be used,
+since the passwords are going to have the same hash. If we are willing to generate more than one in the same render, the
+best approach would be bcrypt.hash(password, 10); and not a constant.
+
+***Simple recap: 
+• Interface defines a method that should exist but not how they should be done. The implementation is the one
+responsible for fulfilling the contract and defining how each method really works.
+
+• Port contains the necessities that the app has, which in this case, is the necessity of a login, that will require both
+passwords to be compared.
+
+
+
+
+***
+
+
+
+
+
 
 
 ## Overall Concepts
