@@ -1,14 +1,14 @@
 import BCryptAdapter from "../src/exemplo/adaptadores/auth/BCryptAdapter";
 import InverterSenha from "../src/exemplo/adaptadores/auth/InverterSenha";
 import SenhaComEspaco from "../src/exemplo/adaptadores/auth/SenhaComEspaco";
-import BancoEmMemoria from "../src/exemplo/adaptadores/db/BancoEmMemoria";
+import UsuarioEmMemoria from "../src/exemplo/adaptadores/db/UsuarioEmMemoria";
 import RegistrarUsuario from "../src/exemplo/app/usuario/RegistrarUsuario";
 
 test("Deve registrar um usuário invertendo a senha", () => {
-	const bancoEmMemoria = new BancoEmMemoria();
+	const usuarioEmMemoria = new UsuarioEmMemoria();
 	const inverterSenha = new InverterSenha();
 
-	const casoDeUso = new RegistrarUsuario(bancoEmMemoria, inverterSenha);
+	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, inverterSenha);
 
 	const usuario = casoDeUso.executar("Caio", "ccc@zmail.com.br", "123456");
 
@@ -18,10 +18,10 @@ test("Deve registrar um usuário invertendo a senha", () => {
 });
 
 test("Deve registrar um usuário colocando espaços entre a senha", () => {
-	const bancoEmMemoria = new BancoEmMemoria();
+	const usuarioEmMemoria = new UsuarioEmMemoria();
 	const senhaComEspaco = new SenhaComEspaco();
 
-	const casoDeUso = new RegistrarUsuario(bancoEmMemoria, senhaComEspaco);
+	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaComEspaco);
 
 	const usuario = casoDeUso.executar("Caio", "ccc@zmail.com.br", "123456");
 
@@ -31,10 +31,10 @@ test("Deve registrar um usuário colocando espaços entre a senha", () => {
 });
 
 test("Deve registrar um usuário com senha criptografada", () => {
-	const bancoEmMemoria = new BancoEmMemoria();
+	const usuarioEmMemoria = new UsuarioEmMemoria();
 	const senhaCriptografada = new BCryptAdapter();
 
-	const casoDeUso = new RegistrarUsuario(bancoEmMemoria, senhaCriptografada);
+	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaCriptografada);
 
 	const usuario = casoDeUso.executar("Caio", "ccc@zmail.com.br", "123456");
 

@@ -1,4 +1,5 @@
 export default interface ProvedorCriptografia {
-	criptografar(senha: string): any;
+	criptografar(senha: string);
+
 	comparar(senha: string, senhaCriptografada: string): boolean;
 }
