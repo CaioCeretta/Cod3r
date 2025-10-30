@@ -1,5 +1,6 @@
 import type Colecao from "../portas/Colecao";
 import type ProvedorCriptografia from "../portas/ProvedorCriptografia";
+import type Usuario from "./Usuario";
 
 export default class RegistrarUsuario {
 	constructor(
@@ -7,9 +8,9 @@ export default class RegistrarUsuario {
 		private provedorCripto: ProvedorCriptografia,
 	) {}
 
-	executar(nome: string, email: string, senha: string) {
-		const usuario = {
-			id: Math.random(),
+	executar(nome: string, email: string, senha: string): Usuario {
+		const usuario: Usuario = {
+			id: `${Math.random()}`,
 			nome,
 			email,
 			senha: this.provedorCripto.criptografar(senha),
