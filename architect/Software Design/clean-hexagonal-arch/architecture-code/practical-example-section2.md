@@ -494,40 +494,59 @@ in package.json
 
 ## Lesson 10: Basic Example #10: Update the Port
 
-  The ideal is not for us to simply create a "portas" folder and place all of our interfaces inside of it. The ideal is
-  to define the ports inside the contexts they are being used. This is, if we have an interface specific to the user, in
-  the instructor's opinion it is best to create this interface inside the 'usuario' folder.
+  The previous lessons established the core concepts of Ports and Adapters. Now, we are making some important architectural
+  refinement by moving from generic interfaces to context-specific Ports
 
-  Define an interface `ColecaoUsuario` that will handle the communication with the `usuarios` table. This interface will
-  define a `inserir` method. When inserting something in the database, is not a common approach, on real projects, to
-  return the inserted object. Insertion functions often return a void or a Promise<void>.
-  If eventually it encounter an error, it throws an exception, otherwise, it simply returns the function in a way the
-  user knows it was successful. Which is a more compatible implementation for databases.
+  The idea isn't just to drop interfaces into a single "portas" folder. That's a temporary step. The real goal is to be
+  coherent and define the ports inside the contexts they belong to
 
-  This way, we can now start to "narrowing" our project's names and start making changes beginning with the BancoEmMemoria
+    . If an interface is specific to managing user data, it belongs right next to the `User` entity and its `Use cases`,
+    inside the `usuario` folder
   
-    . since it handles only a user registration, change it to UsuarioEmMemoria.
-    . utilize the Usuario interface to type the user and the function return
-    . inside the Colecao type, with contain a generic port and the type of the collection is any, we are going to change
-    it and use the ColecaoUsuario defined inside the usuario folder
+  This grouping makes sure that when we look at the `usuario` module, we see everything related to users, be them entities,
+  business logic, and its contracts (ports) needed for it.
 
-    . Once it is implemented, we can go back to the use case, modify the generic colecao to use ColecaoUsuario, which is
-    a more specific one and even by changing the adapters the tests continue running normally
+  ### Defining the User-Specific Port: `ColecaoUsuario`
 
+  We can start by defining this context-specific port. This interface will handle all communication according with the 
+  `usuarios` data table.
 
-### DB Connection Adapter
+  And the reason why the inserir method's return is a Promise<void> and not the actual user, is because in real-world
+  projects, database insertions functions rarely return the full object. They often return nothing or a Promise<void>.
+  Success is implied by the return; and errors are signaled by throwing an exception.
 
-  Now that we have defined our knex file configured, inside the knex folder, we are going to define a `ColecaoUsuario`
-  specific to knex, 
+### Refactoring the `BancoEmMemoria` adapter
 
+  Since our existing in-memory database only handles users insertion. We can also make it specific and align it wit the 
+  new refactorings
 
+    Therefore, we are going to follow some steps:
+    
+    1. Rename: Change the class from the generic `BancoEmMemoria` to `UsuarioEmMemoria`.
+    2. Typing: The adapter now explicitly implement the new `ColecaoUsuario`, and the usuarios will adhere to the
+    `Usuario` interface we've created
 
+    And by changing the adapter name and type to be specific to `Usuario`, we narrow its responsibility, making the code
+    cleaner and easier to read
 
-  ### Shared folder
+### Implementing the database adapter
+
+With the port defined, we can create an adapter based on knex, and it will handle the actual SQL connection
+
+### Centralized knex connection
+
+Inside knex folder, we can create a file to export the configured connection object. Which will act as a reusable code
+among the resources that can make use of the db. This will happen by exporting a `conexao` constant as default, which will
+be the result of calling knex library `knex` method and invoke it wrapping our connection as argument: e.g. `knex(config)`
+
+Now our ColecaoUsuarioDB can simply import conexao and call:
+  `await conexao.table("usuarios").insert(usuario)`
+
+  ### Shared dependencies folder
 
     instead of placing the `ProvedorCriptografia` inside the ports folder, one option would be to create a shared folder
-    and place it inside that folder, in case many use cases make use of it.
-    If no other scenario uses the cryptography expect the user, it would be specific for the `usuario` needs and we could
+    and place it inside that folder, in case multiple use cases make use of it.
+    If no other scenario uses the cryptography except the user, it would be specific for the `usuario` needs and we could
     move it together with the `ColecaoUsuario`.
 
     In other words, if everything that has to do with a certain entity, like its use cases, its entities, and its necessities
@@ -536,6 +555,102 @@ in package.json
     By doing this, by separating the concerns, with both the UsuarioColecao port and the ProvedorSenha inside the usuario
     folder, we can even remove the ports folder
 
+## Lesson 11 - Basic Example #11 (Architectural "Crime")
+
+In this lesson we are going to commit a "crime" against the architecture to show that sometimes we can violate the architecture,
+be it by bringing a library to our core. However, inside an approach where we measure the "trade-offs" and come to the
+conclusion that nothing will be loss and there won't be a large coupling in the architecture, and if eventually we have
+to change a strategy, we can create a port and adapters for it.
+
+### Possible Trade-Off Example
+
+We are going to install a dependency called 'uuid' to generate random ids and send them directly to our application's
+database, where we will like our application to control the id's generation and not the database.  
+
+This is a good option if we are thinking on changing the database and it can be positive depending on our architectural
+choices — We can choose that the best is our application to create or the db to define it.
+
+Within the `app` folder, we can create that shared folder we just talked about. Where it will consist of classes such
+as the id, that will be shared among multiple use cases.
+
+The id class will simply have a static gerar method.
+
+"We may think, but in earlier classes, you hadn't said that the application/core should not depend on external libraries?"
+
+However, we may also think: "Well, the cost/impact of the uuid library is very small and would not make our code coupled,
+so i think there isn't a problem"
+
+**The instructor's approach of using the import uuid for Id class didn't work for the tests, so i moved to randomUUID();**
+
+In the test case of registering a user on the real db, we are executing the test, without passing an id, who deals with
+its generation is the use case.
+
+The insert in the database happens based on the object's interface. If eventually, one of the database columns is different
+from the interface, we would net to create a mapping which could including be inside that class, where we create a private
+function to convert it to the way the database wants, and to convert back when we consult a user from the DB.
+
+### Check e-mail exist
+
+If we would also like the rule that confirms that uniqueness of an e-mail to also exist on the use case and to not depending
+uniquely on the database to do so, we will have to update the port — `ColecaoUsuario` to allow this verification
+
+#### But why? 
+
+  - The database already blocks duplication (technical rule / infra)
+  - But inside **Clean architecture**, the **business rule should not depend on the database** to validate something so
+  important
+  - Therefore, a **Use Case Layer** must "ask" to the repository if that e-mail already exist, and this is a business rule
+  reinforcement. 
+
+To do so, there are some steps to follow:
+
+  1. Changing the `ColecaoUsuario`interface: define in its contract a new `buscarPorEmail(email: string): Promise<Usuario | null>`
+
+  2. Implement that check in the ColecaoUsuarioDB adapter
+
+  3. Add this function to the useCase
+
+  4. Test remains the same
+
+  5. And for the in-memory database, we must also need to implement this new contract, however, it is not in the database
+  how can we return a Promise? Simple, when defining a method as async, we are already wrapping this method in a Promise
+  we just need to iterate over all the users, check if any has the given e-mail, and throw, use this method in inserir
+  and the adapter also won't be much different from the real db
+
+  6. Since in the local test, the itens array is static, and the database acts like a singleton among all the tests, we
+  need to add a reset method before each test. Or we can simply add a different e-mail for each test, but for study purposes
+  a reset function will be created and used in the beforeEach() function of the test file.
+    6.1 Since the database adapter won't make use of this function, we can simply create an utility function that will empty
+    the itens array, and there will be no need to change the port
+
+
+### Classes that have only one static method
+
+  We have an Id class which the only purpose is to encapsulate the function uuid() making it accessible via
+  `Id.gerar()`.
+
+  However, the main argument against classes that contain only static methods (known as utility or helper classes), is
+  that they violate one of the principles of OOP by being used essentially procedurally
+
+  If a class does not have state (non static instance variables) and doesn't need to be instantiated (created with the
+  keyword `new`), many argument that it should not be a class
+
+  One cleaner and more modern approach to group utility functions is simply creating a module (file) that exports functions
+  (and not a class)
+
+  ```ts
+      import { v4 as uuid } from "uuid";
+
+      export function gerarId: string {
+        static gerar(): string {
+          return uuid();
+        }
+      }
+  ```
+
+
+ 
+ 
 
 
 
