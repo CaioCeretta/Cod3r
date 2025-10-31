@@ -648,6 +648,28 @@ To do so, there are some steps to follow:
       }
   ```
 
+## Lesson 12 - Basic Example #11: Last example
+
+We've started with as an example, begin the refactoring, added some code that will remain in the final app, and later
+we will start to move the folders as the application evolve.
+
+This lesson the instructor started by creating a check for an existent e-mail, however, it has already been done.
+
+One thing i didn't do is a test that test to check if the error is going to be thrown in case an e-mail already exist, and
+for this test, we are going to make use of the postgreSQL adapter
+
+The way we can test if an error was thrown is by doing: 
+  
+  1. assign to a constant a function call
+  2. And create the expect call like this
+    ```ts
+      const run = async () => await casoDeUso.executr(nome, email, senha);
+
+      await expect(run).rejects.toThrowError("E-mail já cadastrado")
+    ```
+
+
+
 
  
  
