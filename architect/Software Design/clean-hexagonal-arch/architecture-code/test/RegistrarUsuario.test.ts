@@ -75,3 +75,19 @@ test("Deve registrar um usuario no banco real", async () => {
 	expect(usuario.nome).toBe("Caio");
 	expect(senhaCriptografada.comparar("123456", usuario.senha)).toBeTruthy;
 });
+
+test("Deve lançar erro ao utilizar um e-mail já cadastrado", async () => {
+	const colecao = new ColecaoUsuarioDB();
+	const provedorCripto = new BCryptAdapter();
+	const casoDeUso = new RegistrarUsuario(colecao, provedorCripto);
+
+	const nome = "Caio Ceretta";
+	const email = "caioceretta@gmail.com";
+	const senha = "123456";
+
+	await casoDeUso.executar(nome, email, senha);
+
+	const run = async () => await casoDeUso.executar(nome, email, senha);
+
+	await expect(run).rejects.toThrowError("E-mail já cadastrado");
+});
