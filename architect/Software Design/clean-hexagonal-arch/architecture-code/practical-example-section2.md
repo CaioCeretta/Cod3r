@@ -665,8 +665,7 @@ The way we can test if an error was thrown is by doing:
     ```ts
       const run = async () => await casoDeUso.executr(nome, email, senha);
 
-      await expect(run).rejects.toThrowError("E-mail já cadastrado")
-    ```
+      await expect(run).rejects.toThrowError("E-mail j[])
 
 
 

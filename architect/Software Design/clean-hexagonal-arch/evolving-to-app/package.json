@@ -1,0 +1,36 @@
+{
+  "name": "architecture-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only  src/index.ts",
+    "test": "jest",
+    "migrate:make": "knex migrate:make --knexfile ./src/exemplo/adaptadores/db/knex/knexfile.cjs --knexpath ./src/exemplo/adaptadores/db/knex/",
+    "migrate:down": "knex migrate:rollback --knexfile ./src/exemplo/adaptadores/db/knex/knexfile.cjs --knexpath ./src/exemplo/adaptadores/db/knex/",
+    "migrate:up": "knex migrate:latest --knexfile ./src/exemplo/adaptadores/db/knex/knexfile.cjs --knexpath ./src/exemplo/adaptadores/db/knex/"
+  },
+  "keywords": [],
+  "author": "Caio Ceretta Soares",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/knex": "^0.15.2",
+    "@types/node": "^24.9.1",
+    "@types/uuid": "^10.0.0",
+    "jest": "^29.7.0",
+    "knex": "^3.1.0",
+    "ts-jest": "^29.1.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.16.3",
+    "uuid": "^13.0.0"
+  }
+}

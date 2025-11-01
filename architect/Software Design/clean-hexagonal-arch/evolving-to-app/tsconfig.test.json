@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json", // Inherits base configurations
+  "compilerOptions": {
+    // Forces jest/ts-jest to compile to CommonJS
+    "module": "CommonJS",
+    // Essential for commonjs in node
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    // Overwrites the configuration to include jest global types    
+    "types": [
+      "jest",
+      "node"
+    ],
+    "jsx": "react-jsx", // Certifies that JSX is present if necessary
+    // Recommended: Stable target for node
+    "target": "es2020"
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*" // Include the test files
+  ]
+}

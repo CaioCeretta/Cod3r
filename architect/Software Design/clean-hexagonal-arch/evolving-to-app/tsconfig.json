@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2022",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "types": [
+      "node",
+      "jest"
+    ],
+    "allowJs": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ]
+}
