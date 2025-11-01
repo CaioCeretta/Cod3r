@@ -81,8 +81,101 @@ But for know we will make a drawing of how our application is organized and link
     • App scenario: Abstracting the API framework would only be necessary in cases where we explicitly want the **Controller**
     (which is the adapter) to have absolutely no direct dependency on the web framework classes.
 
+
+
+
+
+## Ports, Adapters, and the Core Boundary Recap
+
+  1. **Where the Ports Reside**
+
+    • **Ports (Interfaces) are inside** the Application Core (The hexagon)
+      
+      • They are the contracts defined by our business logic. They represent "what" the application can do (Driver Port)
+      or "what" the application needs (Driven Port)
+      • **They are NOT external to the application**. They are the application's boundary
+    
+    • **Adapters and Actors are outside** the application core
+
+      • The **Actors** are external entities (Database, User, Test Suite, API)
+      • The Adapters are technical implementations that translate the external Actor's technology to the internal Port's
+      language.
   
-     
+  2. **The relationship between Ports and Driven Actors**
+
+    For this example, we will use our current app.
+
+    Component             Location            Role                                Dependency
+    **Driven Port**           **Inside** the core     The contract the core needs         Core depends on the **Port** (abstraction)
+    (`Colecao Usuario                         to save the data                  
+    interface`)
+    ____________________________________________________________________________________________________________________
+    
+    **Driven Adapter**        **Outside** the core    The implementation that talks       Adapter depends on the **Port** (implementation)  
+    (`ColecaoUsuarioDB`)                        to the external actor (PostgreSQL)                                          
+    ____________________________________________________________________________________________________________________
+
+    **Driven Actor**          **Outside** the System   The actual external                 **Adapter** depends on the **Actor** (framework/)
+    (PostgreSQL, DB)                           resource/technology                 driver
+
+
+    • Ports do not configure as Driven Actors
+    • The driven actor is the external system itself (e.g. PostgreSQL)
+    • The **Driven Port** is the abstract interface (ColecaoUsuario) that allows the Core to interact with the Actor
+    without the Actor knowing the Actor's details
+
+  3. (**The critical Dependency Inversion Rule**)
+
+    The key goal of hexagonal architecture is to enforce DIP so that the core remains independent
+
+    • **Driver Side (Primary)**: The external adapter (e.g. a controller) **uses** the Driver Port to call the use case
+      • **Dependency Direction**: Adapter -> Port -> Use Case (all inside the core)
+
+    • **Driven Side (Secondary)**: The Core **uses** the Driven Port (e.g. ColecaoUsuario). The external adapter, e.g.,
+    `ColecaoUsuarioDB` **implements** that Port
+      • Dependency Direction: Adapter -> Port <- Core
+
+  Using `ColecaoUsuario` as example
+    1. **Core** uses the interface (ColecaoUsuario).
+    2. **Adapter** (ColecaoUsuarioDB) implements the interface (`ColecaoUsuario`)
+
+  This setup keeps the core clean: the external infrastructure (the adapter and the actor/db) must adhere to the contracts
+  (Ports) defined **inside** the core
+
+### **Why is the interface inside the core a "Driven Port**?
+
+    In our case:
+
+      ```ts
+        interface ColecaoUsuario {
+          inserir(usuario: Usuario): Promise<void>
+        }
+      ```
+    
+    • It is inside the **core**
+    • The core **uses this interface** to save data
+    • The core **does not know which db will be used**
+
+    So:
+
+    • **Core depends on the Port** (abstraction)
+    • **Adapter implements the Port** (concretizes)
+    • **External actor** (Postgres) is used by the adapter
+
+  
+  Therefore: 
+    • Interface `ColecaoUsuario` is the **Driven Port**, because it is **the Core that needs it** to send data to outside
+    • "Driven" here means "**The Core is depend on this dependency**" — Core is "depending" on it, even if it is inside
+    • Core depends on a contract, adapter **implements** this contract and connects to an actor, and the core doesn't know the
+    adapter nor the actor directly
+
+  Quick summary is: 
+    •**Driven is not where the code lives, but who is dependency of the Core**
+    • Core uses the Port -> Port is **driven**
+    • Adapter implements -> simply concretizes this dependency
+
+
+  
 
 
 
