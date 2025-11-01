@@ -17,58 +17,69 @@ But for know we will make a drawing of how our application is organized and link
 **the drawing will be on **progress.excalidraw**.
 
 
-
-
-
   ### Drawing Comments
 
-  . The drawing won't consist of an hexagon like the pattern's name, and is interesting to think that the creator only
-    used this polygon because he wanted to move away from the "common place" and use a figure that haven´t been used before,
-    and he also consider a polygon with multiple sides what ideal to symbolize that the application have multiple "faces"
-    or ways of interacting with the external world.
+  1. The philosophy behind the geometrical shape
 
-    - According to the Cockburn's itself, he opted by the hexagon because it would be the geometrical form that would allow
-    him to draw **enough faces** for the multiple I/O elements of a system without having to redraw the diagram every time
-    a new element was added. A pentagon could be too narrow, and an octagon was visually more complex by that time.
+    • The hexagon symbol (Cockburn's intent)
 
-  . When we have a port, we are mostly going to have a least 2 implementations to it
-    - For example, we have the ColecaoUsuario interface which is implemented by a class that connects and make calls to a
-    postgresql, and we may think: Ok, but i don't want to connect to other database, the changes of linking to a mysql db
-    is very small, and if i'd like to add another db, it would probably be for other functionality different from the use
-    that i have for this one
-      - The question that will arise after this question is: "And for the tests? Should'nt i have other implementation for
-      the tests without depending on the real db?"
-    
-    - Therefore, we right away create a port because there are already two explicit necessities of providing two different
-    implementations. One for the tests and other for the real database.
+      . the creator chose the hexagon not because of the need of having six sides, but to break away from the tradition of
+      rectangular layered diagrams, which would encourage mixing business logic with infrastructure.
 
-  . By the end of the basic example we had two ports: `ColecaoUsuario` and `ProvedorCripto`, of something that would be
-  guided by our app, who will call these providers, is our application, and that's why these two ports with their respective
-  adapters are DRIVEN by the app.
+      . The hexagon shape is a symmetrical shape that provide sufficient visual space to represent the multiple "faces" or
+      interfaces (Ports) required for the application's core to communicate with the external world without having to redraw
+      the basic structure for every new i/o element
 
-  - And different from the ports, the tests are responsible for firing the use cases and that's why, they are part of the
-  drivers and are going to be one of our application guides.
+      . The multi-sided polygon the diverse ways of interaction (multiple drivers and driven actors) that the application
+      have.
 
-  . We are now going to create an API, which is also a driver, and an API usually stays outside of our app's core — which
-  only contain the business model.
-
-    - This API will be responsible for firing the flows inside our app.
+  2. Ports and the necessity for multiple implementations
   
-  . One question that we could make based on the APIs is if it makes sense for us to create a port to have multiple API
-  providers.
-    - Suppose we create a port named `servidor`, and it will have a method to register a something, such as a route, and
-    we could create an `ExpressAdapter` and a `FastifyAdapter`, and will eventually having the possible of sending multiple
-    implementations to this port that will guided by some external source.
-      - The answer is, if it makes sense to our app, we could.
+    • When we have a port, we are mostly going to have a least 2 implementations to it.
+
+    • A practical example is the **ColecaoUsuario** interface, although the initial need might only be for a single production
+    database connection, e.g. PostgreSQL, the requirement for automated tests emerges right away.
     
-    - However, normally we don't see much necessity because the API can simply call a use case, and in the controller that
-    program it, we can have direct access to these servers, since the controllers are also going to be outside of the app
-    on the driver side, and it can directly access express.
-      - The case where this would be applied is for cases where we don't want the controller to have direct access to
-      express.
+    • The testing implementation is usually a **MockAdapter** and it is crucial for testing the app's core (use cases)
+    **without depending on the actual database**.
 
+    • We end up concluding that the necessity for both a Production and a Testing implementation explicitly drives the
+    need for a Port (ColecaoUsuario) and, consequentially, its two corresponding adapters.
 
+  3. Classification of components: Drivers (Primary) vs Driven (Secondary)
 
+    • **Driven ports & Adapters (Secondary)**:
+
+      • Components whose functionality is guided/called by the application`s core
+      • Examples: ColecaoUsuario and ProvedorCripto ports are DRIVEN because the core (application) invokes them to persist
+      data or perform encryption
+
+    • **Driver Ports & Adapters (Primary):
+
+      • These are the external components that trigger use cases within the application's core. They act as application
+      guides
+      • Example (Tests): Tests are responsible for firing the use case flows and are, therefore, categorized as **drivers**
+
+    • API as a Driver:
+
+      • The API (Controller/HTTP Adapter) is a type of **Driver** that resides outside the application's core (which only
+      contain business logic)
+      • Its function is to receive external requests and initiate internal flow (use cases)
+
+  4. The optional abstraction of input frameworks (API)
+
+    • **The Question**: Does it make sense to create a Port to abstract the API framework (e.g., a `Server` Port with
+    `ExpressAdapter` and `FastifyAdapter` adapters)?
+      . The port would define a method to register a route and the adapter would implement this using the specific technology
+    
+    • The Rule of Thumb: Creating this port is only justifiable **if it makes business sense** and if the application has
+    a genuine need to swap out or support multiple API frameworks.
+
+    • Common Practice: This is typically not done, the **Controller** (The driver adapter) is already **outside the core**.
+    It can directly access the framework's features (e.g., Express) to define routes and then simply invoke the use case
+
+    • App scenario: Abstracting the API framework would only be necessary in cases where we explicitly want the **Controller**
+    (which is the adapter) to have absolutely no direct dependency on the web framework classes.
 
   
      
