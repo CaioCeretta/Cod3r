@@ -82,6 +82,10 @@ But for know we will make a drawing of how our application is organized and link
     (which is the adapter) to have absolutely no direct dependency on the web framework classes.
 
 
+## Lesson 2 - Express configuring
+
+
+
 
 
 
@@ -174,8 +178,105 @@ But for know we will make a drawing of how our application is organized and link
     • Core uses the Port -> Port is **driven**
     • Adapter implements -> simply concretizes this dependency
 
+### Ambiguity of the name "Port"
+
+  • In my understanding. i am mixing two rules that are true, which are: "Ports define the contracts that adapters must
+  implement¨ and  "Driver actors call the use case, such as APIs, Controllers, Tests and"
+
+    1. General Rule (Driven): Port is the contract which the adapter implements (Valid for the driven side)
+    2. Driver Rule: Who calls the use case is the driver actor (api/controller). (Valid for the driver side)
+
+  But let's solve this confusion by showing that our *use case** (the implementation) is in the middle and behaves in two
+  different ways
+
+  ● Addressing the confusion
+
+  1. **DRIVEN Port (The one which the adapter implements)**
+
+  This is the rule we learned first and is correct, it is valid since `ColecaoUsuario` is the contract that the adapter
+
+  • Port:  defines the contract (`ColecaoUsuario` interface)
+  • Adapter: implements the contract class
+  • Actor (core): uses the contract to ask for something `ColecaoUsuarioDB` implements.
+  
+
+  2. **DRIVER Port (The one that the adapter USES).
+
+  Here the rule is **reversed**, the adapter does not implement it, it uses it.
+
+  • Port:  defines the contract (`RegisterUser` interface with the method `executar`)
+  • The adapter in this case is the (API/Test): It uses this contract to call the business logic\
+  • Actor (Core): Implements the Contract (`RegistrarUsuario` class)
+
+  ● Summarizing the confusion
+
+  Our confusion was because we were forcing the rule 1 (**Adapter implements the Port**) with the same logic as the second
+  side (Driver Port)
+
+  **The truth is**: The driver adapter (does not implement there driver port), he **utilizes** the Driver Port. The use
+  **use case implementation**  is the one who implements it.
+
+  The adapter is required to implement the port **ONLY** on the **DRIVEN** side.
+
+###  Final Explanation: Isolated core and tested)
+
+  Let's use our code for this example
+
+  1. Untouchable Core (The driver port implementation)
+
+    `RegistrarUsuario` (use case) is our core, the implementation of a driver port. We can notice that the code is inside 
+    the use case and it never changes, independent of what is injected. It only uses the contracts (`ColecaoUsuario`,
+    `ProvedorCriptografia`) .
+
+  2. Driven port and "plug-and-play" adaptation
+
+    Our tests demonstrate the complete flexibility of the secondary ports through the DI
+
+    • Port `ColecaoUsuario` (persistence)
+
+      • For the unit tests `(test('deve registar...'))` we inject the UserInMemory (adapter driven mock). This ensures that
+      the test is quick and do not depend on a database
+      • In the last tests (`test('deve registrar um usuario no banco real)`), we injects `ColecaoUsuarioDB` (Infra Driven Adapter)
+      proving that the core can use the same logic with the original db
+
+  3. The test as the driver adapter (primary)
+
+    Each `test()` block acts as a primary driver adapter
+
+      1. It prepares the environment (create driven adapters instances)
+      2. Initiates the control flow: (casoDeUso.executar(...))
+      3. It validates the result returned by the Core (expect(...))
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
 
 
 
