@@ -1,5 +1,5 @@
-import type ColecaoUsuario from "../../app/usuario/ColecaoUsuario";
-import type Usuario from "../../app/usuario/Usuario";
+import type ColecaoUsuario from "../../core/usuario/ColecaoUsuario";
+import type Usuario from "../../core/usuario/Usuario";
 
 export default class UsuarioEmMemoria implements ColecaoUsuario {
 	private static itens: Usuario[] = [];

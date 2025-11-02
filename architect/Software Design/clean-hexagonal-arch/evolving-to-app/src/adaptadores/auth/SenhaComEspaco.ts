@@ -1,4 +1,4 @@
-import type ProvedorCriptografia from "../../app/usuario/ProvedorCriptografia";
+import type ProvedorCriptografia from "../../core/usuario/ProvedorCriptografia";
 
 export default class SenhaComEspaco implements ProvedorCriptografia {
 	comparar(senha: string, senhaCriptografada: string): boolean {

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import type ProvedorCriptografia from "../../app/usuario/ProvedorCriptografia";
+import type ProvedorCriptografia from "../../core/usuario/ProvedorCriptografia";
 
 export default class BCryptAdapter implements ProvedorCriptografia {
 	criptografar(senha: string) {
