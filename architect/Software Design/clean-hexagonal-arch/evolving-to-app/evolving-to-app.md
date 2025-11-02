@@ -84,6 +84,30 @@ But for know we will make a drawing of how our application is organized and link
 
 ## Lesson 2 - Express configuring
 
+  We will start this lesson by installing the dependencies: `jsonwebtoken`, `express`, and `axios` and the dev dependencies
+  `@types/express`, `@types/jsonwebtoken`, and `@types/axios`
+
+  The reason for axios is because that in our **E2E** tests, we will call our api through it.
+
+  ### Express Setup
+
+  • Initialize express and assign it to an app constant with `const app = express()`
+  • Define app.use(express.json()) this will enable express's middleware to automatically parse JSON request bodies, making
+  it available in req.body
+  • Also `app.use(express.urlencoded({extended: true}))`. This enables express to parse URL-encoded data, such as form
+  submissions, and makes the values available in `req.body`
+  • Finally, call app.listen for the server to run on the desired port, which can be set inside the .env variables.
+    . Since our code is not using frameworks, or anything, we must always remember that to access the .env variables we
+    need to use the dotenv library we installed (this library, even though our core isn't supposed to have external libraries
+    and so, it has little possibility of causing coupling and the use we have for it is pretty simple, easy to replace
+    if needed)
+  
+
+## Lesson 3 - Registering Route
+
+
+
+
 
 
 
@@ -200,7 +224,7 @@ But for know we will make a drawing of how our application is organized and link
   • Actor (core): uses the contract to ask for something `ColecaoUsuarioDB` implements.
   
 
-  2. **DRIVER Port (The one that the adapter USES).
+  2. **DRIVER Port (The one that the adapter USES)**.
 
   Here the rule is **reversed**, the adapter does not implement it, it uses it.
 
@@ -247,7 +271,22 @@ But for know we will make a drawing of how our application is organized and link
       2. Initiates the control flow: (casoDeUso.executar(...))
       3. It validates the result returned by the Core (expect(...))
 
-  
+ ### tsconfig moduleInterop
+
+ Even though i removed the type: module in my package.json and my code went back to work as commonjs, it still was able
+ to understand the ESM syntax i'm using in my code... Why?
+
+ In our tsconfig we have something called esModuleInterop as true
+
+ This attribute "tells" TypeScript to generate "interoperability code" during CommonJS transpile
+
+ So if we say in our code:
+ `import express from 'express';` in the generated CJS it will turn to `const express = require('express')
+
+
+ 
+
+
 
 
 
