@@ -1,9 +1,9 @@
-import BCryptAdapter from "../src/adaptadores/auth/BCryptAdapter";
-import InverterSenha from "../src/adaptadores/auth/InverterSenha";
-import SenhaComEspaco from "../src/adaptadores/auth/SenhaComEspaco";
-import ColecaoUsuarioDB from "../src/adaptadores/db/knex/ColecaoUsuarioDB";
-import UsuarioEmMemoria from "../src/adaptadores/db/UsuarioEmMemoria";
-import RegistrarUsuario from "../src/core/usuario/RegistrarUsuario";
+import BCryptAdapter from "../../src/adapters/auth/BCryptAdapter";
+import InverterSenha from "../../src/adapters/auth/InverterSenha";
+import SenhaComEspaco from "../../src/adapters/auth/SenhaComEspaco";
+import ColecaoUsuarioDB from "../../src/adapters/db/knex/ColecaoUsuarioDB";
+import UsuarioEmMemoria from "../../src/adapters/db/UsuarioEmMemoria";
+import RegistrarUsuario from "../../src/core/usuario/RegistrarUsuario";
 
 beforeEach(() => {
 	UsuarioEmMemoria.resetar();
