@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",

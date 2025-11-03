@@ -1,11 +1,12 @@
-import type { Config } from "jest";
 import type { JestConfigWithTsJest } from "ts-jest";
 
 // Use the ES Module syntax (import and export default)
 const config: JestConfigWithTsJest = {
 	// 1. The ESM Preset is the core transpilation engine
 	preset: "ts-jest/presets/default-esm",
+
 	testEnvironment: "node",
+	setupFiles: ["<rootDir>/test/.env.ts"],
 
 	// 2. Extensions - Essential for ESM mode
 	moduleFileExtensions: ["ts", "js", "json", "node"],
