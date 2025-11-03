@@ -288,57 +288,26 @@ However, there were some
     4. Tests: Update tests to reflect the new signature, passing the Input DTO and expecting the Output DTO (including
     nested properties, such as usuario.nome). This ensures coverage of the new structure
 
+  ### DTOs (Data Transfer Objects)
 
+      #### DTOs (Data Transfer Objects)
+    The input type (IN) and the output type (OUT) we use in our Use Cases are formally known as DTOs (Data Transfer Objects).
 
+    #### What are they?
+    DTOs are purely data objects, designed to be the transportation medium for information between the different layers of your application (e.g., between the Controller and the Use Case, or between the Use Case and the Domain/Infrastructure layer).
 
+    **Simplicity**: A DTO should be as simple as possible, consisting only of public properties and their values
+    **Absence of Behavior**: They must not contain business logic, validation methods, or any other rules. They are simply
+    "containers" for data
 
+  ##### Usage in Use Cases
 
-
-
-
-  At this moment, we will start by uncoupling our `Usuario` (which is a domain object representing a piece of the problem
-  our application is going to solve). When we utilize this `Usuario` object to be used inside our use cases. We can get
-  to the following situation: 
-
-    • This use case need an attribute token, and then add this new attribute to the Usuario interface.
-    • But then we think: "Is the token part of the business rule like an Usuario? If i talk to a business specialist, will
-    he say that a user has a token?" The answer is probably no, and when we couple our domain object, that represent a
-    user for that institution/business, and we start linking it to multiple use cases, one time or another we will end up
-    leaking the object and start placing attributes that are not represented by the domain and are not part of the domain
-    modeling we have, it can be a single specific use case attribute. Therefore, creating attributes that do not belong
-    to a domain object, inside the domain object, is not a good idea. 
-
-  With this being said, we can go to the RegistrarUsuario use case, and implement the CasoDeUso interface we created.
-  The two parameters related to the generics we will pass to it are.
-
-  The output will be an Usuario, as it is already defined, and the input will be the object with nome, email and senha.
-
-  Modify the tests so it passes an object for the use case method
-
-  We need to fix the controller, so it now passes an object as argument
-
-  For the login, we will do the same steps, create an Input DTO consisting of an object with the properties we are already
-  using, use it as the generic's "IN", and modify the controller call to pass a single object, and also the tests
-
-  In the output, we will also have a `dto` passing the usuario but also the token
-
-  In the LoginUsuarioController, when invoking executar, we also need to pass the dto object, and on the `Response`, we
-  can pass the returned by the useCase
-
-  we can even use that constant on the return, but we need to be cautious that if the use case change, we will need to make
-  the given modification so it will meet the `Out` type
-
-  As final touches, we will modify the test. since it is an usuario object being returned, the data will have the usuario
-  property
-
+    • `IN` (Input DTO): Transports the raw data from the interface (e.g., an HTTP request) into the Use Case.
+    • `OUT` (Output DTO): Transports the processed result from the Use Case back to the presentation/response layer
+    
+  In Summary: The **DTO** is a data contract that ensures the right information, in the correct format, is passed between
+  components, keeping business rules isolated where they belong.
   
-
-  ### DTOs
-
-  • The type Entrada we are using for the use case, this type is often referred as DTO (Data Transfer Object).  
-  • DTO is object as simple as possible. It does not worry about validation, and nothing. It is simply an object which
-  will have the data that will traffic between the layers of the app
-
 
 
 
