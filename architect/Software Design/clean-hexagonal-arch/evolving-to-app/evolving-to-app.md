@@ -307,8 +307,63 @@ However, there were some
     
   In Summary: The **DTO** is a data contract that ensures the right information, in the correct format, is passed between
   components, keeping business rules isolated where they belong.
+
+
+    ## Lesson 8 - Generating Token
+
+  For the token, we are going to create it a new `ProvedorToken` port in the usuario folder, and define a method to generate
+  a token. This port will have two contracts, one for generating a token and one for validating it
+
+  • To define a new token we will need the payload that will receive as argument, a secret, we will receive in the class
+  instantiation, and the options
+
+  • To validate we will receive a string or object that is the payload of that token, if it is able to resolve, it returns
+  the same payload used in the generation, otherwise it will simply throw an exception.
+  Therefore, to "unravel the secret" it needs to have access to the same secret used its generation.
+
+  • One thing we can do is: 
+    . When we pass down the token through axios, it will send a `Bearer Token` — a bearer is a http's pattern. In the
+    jwt validate method, we will replace the token with an empty string where it finds the word 'Bearer'. This is used
+    to simply return the raw token we want to validate.
+    . This important when the validation is made through 'axios'
+
+
+  Even though we create the JWToken adapter needs with the Port definition, it does not mean that we are adapting the app
+  to the technology. Independent of the token generation, this will basically be the same — we pass a token and receive
+  an object that generated it, or pass a string (payload) and we will generate a token.
+  
+  Therefore, if we notice that sometimes it lack some kind of vision, of how the interfaces are going to be created, implement
+  an adapter while thinking of an interface that is generic enough for, in the future, change to another adapter if necessary.
+
+  ### Instantiate it
+
+  • First we modify our use case to inject in this class, a new token provider
+  • Now in the index, we are going to instantiate it, and as a argument, we use the JWT_SECRET we created in the .env.
+  • Since login receives a token provider adapter, in the returned object, we utilize it to generate a token and as the
+  `gerar` method secret argument, we will use an object with the user information, like:
+
+    ```ts
+      return {
+				usuario: { ...usuario, senha: undefined } as Usuario,
+				token: this.provedorToken.gerar({
+          id: usuario.id,
+          nome: usuario.nome,
+					email: usuario.email,
+        }),
+			};
+    ```
+
+
+
+
+
   
 
+
+
+
+
+  
 
 
 
