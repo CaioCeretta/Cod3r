@@ -245,17 +245,109 @@ However, there were some
 
     ## Lesson 7 - Standardizing the Use Cases
 
-   We will create a CasoDeUso file inside the shared folder (it could also be named service, it would be an application
-   service, which is something that will coordinate a flow of our app, which is the name used by `DDD`), to standardize
-   all our use cases.
+    This pattern is adopted to **standardize application logic** and ensure **low coupling** with domain objects. Here
+    we will follow the best practices of **Application Services** from the **Domain-Driven Design**
 
-  CasoDeUso will be an interface with a method executar, and every use case will implement it and have to meet its
-  requirements: e.g,.
-  ```ts
-  export default interface CasoDeUso<IN, OUT> {
-    executar(entradas: IN): Promise<OUT>;
-  }
-  ```
+   1. Interface `CasoDeUso`
+
+    All use case must implement the interface `CasoDeUso<IN, OUT>`, located in the shared folder (or service)
+
+    ```ts
+    export default interface CasoDeUso<IN, OUT> {
+      executar(entradas: IN): Promise<OUT>;
+    }
+    ```
+
+  . **Purpose**: Defines a single contract for executing any application feature
+  . **IN (Input)**: Represents the Input DTO (Data Transfer Object) with the required data for execution
+  . **OUT (Output)**: Represents the **Output DTO** with the data to be returned
+
+  2. Decoupling and DTOs
+
+    ● Core Principle: Use cases MUST NOT directly depend on domain object** for their inputs (`IN`) or outputs (`OUT`)
+    when attribute specific to the use case (like `token`) are required.
+
+    • The Coupling Problem: If a use case (e.g., login), needs an attribute that is not part of the **core business rule**
+    of a Domain Object (e.g., a business specialist wouldn't say a `Usuario` has a `token`), and adding this attribute to
+    the `Usuario` object causes **Domain Leakage** — This is, when specific details of the app or infra are introduced and
+    contaminate the core domain modeling
+
+    • The DTO Solution:
+      . Create separate Input DTOs (for `IN`) and Output DTOs (for `OUT`)
+      . Example: The `LoginUsuario` will use an **OutputDTO** that contains the `Usuario` domain object AND the application
+      specific `token` attribute.
+
+  3. Implementing and Refactoring (Example: `RegistrarUsuario` and `LoginUsuario`)
+
+    1. Inputs (IN): Defines an explicit input DTO (e.g. RegistrarUsuarioInput) for `nome`, `email`, `senha`, this replaces
+    multiple arguments with a single object, improving method signature and coupling
+    2. Outputs (OUT): Defines an input DTO that returns the necessary data (e.g. for Login, include the Usuario and the
+    token), this isolate application-specific data (like token) from the Usuario domain object
+    3. Controller: Adjust the controller to pass the Input DTO as the single argument to the executar method. This ensures
+    consistency with the CasoDeUso interface contract
+    4. Tests: Update tests to reflect the new signature, passing the Input DTO and expecting the Output DTO (including
+    nested properties, such as usuario.nome). This ensures coverage of the new structure
+
+
+
+
+
+
+
+
+
+  At this moment, we will start by uncoupling our `Usuario` (which is a domain object representing a piece of the problem
+  our application is going to solve). When we utilize this `Usuario` object to be used inside our use cases. We can get
+  to the following situation: 
+
+    • This use case need an attribute token, and then add this new attribute to the Usuario interface.
+    • But then we think: "Is the token part of the business rule like an Usuario? If i talk to a business specialist, will
+    he say that a user has a token?" The answer is probably no, and when we couple our domain object, that represent a
+    user for that institution/business, and we start linking it to multiple use cases, one time or another we will end up
+    leaking the object and start placing attributes that are not represented by the domain and are not part of the domain
+    modeling we have, it can be a single specific use case attribute. Therefore, creating attributes that do not belong
+    to a domain object, inside the domain object, is not a good idea. 
+
+  With this being said, we can go to the RegistrarUsuario use case, and implement the CasoDeUso interface we created.
+  The two parameters related to the generics we will pass to it are.
+
+  The output will be an Usuario, as it is already defined, and the input will be the object with nome, email and senha.
+
+  Modify the tests so it passes an object for the use case method
+
+  We need to fix the controller, so it now passes an object as argument
+
+  For the login, we will do the same steps, create an Input DTO consisting of an object with the properties we are already
+  using, use it as the generic's "IN", and modify the controller call to pass a single object, and also the tests
+
+  In the output, we will also have a `dto` passing the usuario but also the token
+
+  In the LoginUsuarioController, when invoking executar, we also need to pass the dto object, and on the `Response`, we
+  can pass the returned by the useCase
+
+  we can even use that constant on the return, but we need to be cautious that if the use case change, we will need to make
+  the given modification so it will meet the `Out` type
+
+  As final touches, we will modify the test. since it is an usuario object being returned, the data will have the usuario
+  property
+
+  
+
+  ### DTOs
+
+  • The type Entrada we are using for the use case, this type is often referred as DTO (Data Transfer Object).  
+  • DTO is object as simple as possible. It does not worry about validation, and nothing. It is simply an object which
+  will have the data that will traffic between the layers of the app
+
+
+
+
+
+  
+
+
+
+
 
   ### TS Generics Recap
 
