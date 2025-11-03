@@ -105,6 +105,238 @@ But for know we will make a drawing of how our application is organized and link
 
 ## Lesson 3 - Registering Route
 
+We'll start by defining a `controllers` folder inside src and as we remember, in CA a controller is part of the "interface
+adapter". However, if we follow the hexagonal architecture pattern, we will see that the adapters are outside the application.
+
+Even though, the folders structure do not define the architecture, but the entities relationship. But inside a "screaming
+architecture" that explicits and make clear for whoever sees it, what we are doing, the clearer are these folders name,
+the best. Therefore, if we are adhering to a given architecture, we should follow it as much as possible relating to it.
+
+However, not every architecture modelling like the "Ports and Adapters", it is not opinionated in multiple things, it does
+not say what is inside the application, so defining how we would like to organize and name is our criteria.
+
+We will have one controller for each use case, so we will create a `RegistrarUsuarioController`, its folder separation may
+eventually happen in the future in case we start having multiple use cases for a certain element type, then we can separate
+it into sub-folders
+
+Q: Do i want to link my controller to express? 
+ A: The decision to link our controller to the Express application directly is a design choice, not an architectural one, 
+ since it essentially will affect the code organization and coupling. The core question is whether the controller should
+ have access to the Express API. If we pass the Express instance as a parameter, the controller handles its own setup,
+ which would simplify the initialization but increasing coupling. Alternatively, by keeping the controller separate and
+ handling routing externally in the application's main file (such as index.ts), we achieve better separation of concerns
+ and testability, which is generally preferred for scalable projects.
+
+The controller will receive in its constructor the use case `RegistrarUsuario` and an `Express` server
+
+Since we have access to the server, inside the controller we will register this use case to be called after a given url 
+
+This post method will call our use case executar method with the required parameters based on the body
+
+For this controller start to work, we must define it in the index
+
+### Defining the RegistrarUsuarioController in index.ts
+
+• For the first example, i will instruct step by step what i did
+
+• Inside index.ts, we must create the RegistrarUsuario use case, and as we remember, we need to instantiate a `Colecao`, and
+a `ProvedorCripto` to pass them through as parameter for the use case.
+
+• After assigning to a constant this new object, we are going to pass the use case to the controller, e. g.
+
+  ```ts
+  const registrarUsuarioController = new RegistrarUsuarioController(
+    app,
+    registrarUsuario,
+  );
+  ```
+
+• Now that the controller is defined, we can register this controller in the web by instantiating it
+
+## Lesson 4 - Testing the API
+
+One trick we can do here, is to create a .env.ts and define a base url so we don't have to configure on every test.
+To make that this file is called before every test, we need to add this attribute to the jest config 
+`setupFiles: ['<rootDir>/test/.env.ts']` 
+
+We then separate the tests in folder for tests related to the API and for the core
+
+for these test we will do the following:
+
+. import axios
+. Create a baseUrl const and assign to it what we just configured in the env
+. Create the test and create the route with axios
+. Treat the exception in the controller (try catch)
+
+## Lesson 5 ~ 6 - Login Use Case
+
+###  Create a Login use case on my own (my thoughts and coding).
+
+• The `LoginUsuario` use case enforces login behavior, and the port responsibilities are "Find user by email", because
+core needs user data to check password, Insert user -> because core needs to insert data
+• Login the user is not a DB operation, it is a workflow/use case that uses the port
+
+• We have to think
+  Use case: what does the system need to do? (business rule)
+  Port: What external capability do i need to enforce the rule?
+  Adapter: How do i technically provide that capability?
+
+• Therefore, ports are not use cases, it enables use cases
+
+• Instead of ColecaoUsuarioDB.login, it leaks business logic into persistence
+
+  - We want LoginUsuario use case to control the login rules
+  - ColecaoUsuario.buscarPorEmail is the technical requirement
+  - ProvedorCriptografia.comparar helps enforce the rule
+
+Therefore, these a re the steps i will follow
+
+• I won't create login method inside port, since not all business logic (it is a workflow/use case that uses the port, with
+other required methods that will enable us to do it)  such as "user should be able to login", should be inside of it 
+
+• I will simply create the LoginUsuario use case, following the same pattern as RegistrarUsuario, to receive the `colecao`
+implementation and the provedorCriptografia inside the constructor
+
+• the `executar` function will receive the email and password, and then create a constant `usuario` to the buscarPorEmail
+call
+
+• Check if a user was returned based on its email, if no user was found, throw an error
+
+• Use ProvedorCriptografia to check if the password compare to the one received as parameter
+
+• return the user in case of success
+
+
+### Even though this worked, there are some caveats and important observations to evolve
+
+The logic is correct
+
+  • The use cases orchestrates
+  • Uses the port method to fetch a user by email
+  • Compares password inside ProvedorCriptografia
+  • Decides if the login is valid
+
+  • Which we use methods define by the business logic implementation and the core is the the one deciding and not the db
+
+However, there were some 
+
+  1. I'm throwing an exception for invalid login
+
+    This is acceptable by now, but in the real world, we usually
+
+      . Throw only unexpected errors
+      . Return null or some kind of controlled error for invalid login
+    
+    Why?
+
+    A wrong password is not an domain exception, but is a normal flow, a cleaner approach would simply be
+
+    ```ts
+        const usuario = await this.colecao.buscarPorEmail(email);
+        if (!usuario) return null;
+
+        const senhaConfere = this.provedorCripto.comparar(senha, usuario.senha);
+        if (!senhaConfere) return null;
+    ```
+
+  2. Error messages in the domain
+    We could also create specific errors, such as `class UsuarioNaoEncontradoError extends Error{}` or
+    `class CredenciasInvalidasError extends Error{}
+
+
+
+### Instructor's approach
+
+  • He started by creating the LoginUsuario use case.
+  • Fetched the userByEmail
+  • Compared its password via the ProvedorCripto and assigned it to a `mesmaSenha` constant
+  • Inside the use case, return the user with a token, but for now, simply return the existingUser we retrieved by
+  the buscarPorEmail.
+  • Make sure the use case do not return the user with password (it is also important to have tests ensuring that the
+  use case do not return the password ).
+  
+  His approach was pretty similar to mine
+
+
+### Tests
+
+For the test, we need to:
+
+1. Register it a `LoginUsuarioController` and call the use case with the email and password
+2. The test will consist of the API call for the /login route, 
+3. Inside the controller, assign the constant to the use case return and return this usuario in the json message
+4. As soon as the controller is created and return the login values, and treating the exception in case an error was
+thrown.
+5. After the controller implementation, we need to register it on the index, and finally test the route we created and
+pass a real email and password
+
+### Test importance
+
+Even though, the test is one of the most essential part of this architecture, it is almost as a test is the most important
+driver we have in our application, before the front, mobile, and others. 
+
+Of course an application doesn't survive without the essential elements, it also is able to survive without the tests.
+However, our architecture should be "developer-friendly" so we can test in a simple way.
+
+### Try/Catch inside tests
+
+  • In our example where the catch throws an exception in case the email already is being used, we could think of doing
+  something as
+
+  ```ts
+      try {
+        const res = await axios.post(`${baseUrl}/registrar`, usuario);
+        expect(res.status).toBe(201);
+      } catch (e) {
+        expect(e.response.status).toBe(400);
+        expect(e.response.data).toBe("E-mail já cadastrado");
+      }
+  ```
+  
+  • However, the problem in structuring tests with a try catch, is that the test could return successful in case it felled
+  in the catch, so even if the user already exists, and the axios post throw an error, inside the catch, the assertions
+  pass, and the catch block finishes without throwing the exception
+
+  ● Solution (Separate the tests by scenario and use `rejects`)
+
+  • The best practice in Jest, is having a test for each scenario and use the function rejects or toThrow to test exceptions
+  or errors
+
+  1. Success Test (Single Register)
+    
+    The test we already were creating where assigned the User credentials to a user, and test if it returned 201
+  
+  2. Failure test (E-mail already exists )
+
+    For testing this error, we use the Jest's  `rejects` method or simply return a Promise and use .rejects.toThrow() if it
+    is a simple exception. Since it is an axios http error, rejects is cleaner
+
+    ```ts
+      test("❌ Deve retornar 400 se o e-mail já estiver cadastrado (Falha)", async () => {
+      const usuarioExistente: Partial<Usuario> = {
+        nome: "Caio Ceretta",
+        email: "ccer@zmail.com",
+        senha: "123456",
+      };
+
+      // wrap the axios call inside the expect, expecting it to be rejected
+      await expect(
+        axios.post(`${baseUrl}/registrar`, usuarioExistente)
+      ).rejects.toMatchObject({
+        // match object allow us to verify the error structure
+        response: {
+          status: 400,
+          data: "E-mail já cadastrado", // Assuming that the error is a pure string
+        }
+      })
+    ```
+
+
+
+
+
+
+
 
 
 
