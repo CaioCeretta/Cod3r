@@ -243,6 +243,136 @@ However, there were some
     We could also create specific errors, such as `class UsuarioNaoEncontradoError extends Error{}` or
     `class CredenciasInvalidasError extends Error{}
 
+    ## Lesson 7 - Standardizing the Use Cases
+
+   We will create a CasoDeUso file inside the shared folder (it could also be named service, it would be an application
+   service, which is something that will coordinate a flow of our app, which is the name used by `DDD`), to standardize
+   all our use cases.
+
+  CasoDeUso will be an interface with a method executar, and every use case will implement it and have to meet its
+  requirements: e.g,.
+  ```ts
+  export default interface CasoDeUso<IN, OUT> {
+    executar(entradas: IN): Promise<OUT>;
+  }
+  ```
+
+  ### TS Generics Recap
+
+  ● What are generics?
+
+    In TS (and in multiple other languages with strong typing, such as C# and Java), **generics** are powerful tools that
+    allow us to write code that can be reused to facilitate working with different types, and keeping the type safety
+    at the same time.
+
+    We can think of them as "type variables"
+
+    1. Type metaphor
+
+      When declaring a function or interface with a generic, such as the `CasoDeUso<IN, OUT> {}` 
+
+        • IN and OUT are the type variables
+        • By that moment, IN and OUT do not represent a specific type (such as string or number), but still a **reserved space** 
+        for a type that will be defined later.
+      
+    2. Problems solved by Generics
+
+      Suppose we want to create a function that returns exactly what it receives. Without generics, we would have two
+      options
+
+      A: Use `any` (Loses security)
+      B: Create specific functions (lose reuse)
+
+    3. Solution with generics
+
+      ```ts
+        function identity<T>(arg: T): T { // T defines the type variable
+          return arg;
+        }
+
+        // When used with strings
+        const stringResult = identity<string>("Ciao") // T is string
+        // The type of stringResult is 'string'. TS knows it
+
+        // When used with number
+        const numberResult = identity<number>(123) // T is number
+        // The type of numberResult is 'number'.
+      ```
+
+  • Therefore, that ś what differentiates fixed types from generics.
+
+  We HAVE to specify the concrete types (IN and OUT) at the moment we are using or implementing the generic interface,
+  inside the CasoDeUso example
+
+  **1. In the definition (We are in the model)**
+
+    At this point, we don't know yet what will be the exact type, we are just creating the model or contract (the interface)
+
+      ```ts
+        // Here <IN, OUT> are PLACEHOLDERS (type variables)
+        // We are telling TS: "This interface will use two types that will be defined later
+        export default interface CasoDeUso<IN, OUT> {
+          executar(ENTRADAS: IN): Promise<OUT>
+        }
+      ```
+
+  2. Inside the implementation, (we are in the "Commitment" mode)
+
+    Here we create a class that meet the CasoDeUso contract. It is at this moment that we need to **lock** the types, replacing
+    the generics IN, OUT with real types
+
+    It is the clause implements which requires the definition
+
+    ```ts
+    interface CreateUserInput { /* ... */ }
+    interface CreateUserOutput { /* ... */ }
+
+    // Here we need to define the types
+    // The class `CriarUsuarioCasoDeUso`  agrees to use CriarUsuarioInput for IN and CriarUsuarioOut for OUT.
+    class CriarUsuarioCasoDeUso implements CasoDeUso<CreateUserInput, CreateUserOutput> {
+      // type script now knows exactly what to expect for
+      async executar(entradas: CreateUserInput): Promise<CreateUserOutput> {
+        // logic with type safety
+      }
+    }
+    ```
+
+    • Why are the types required? If we didn't specify the types, TS would not know which types to use for IN and OUT and
+    would probably fall back to any, breaking all the security we want when using generics
+
+  3. In the consume (We are in the "Use" mode)
+
+  When we instantiate the class, we are already using the types defined in the implementation (step 2)
+
+  ```ts
+    const createUser = new CreateUserUseCase();
+
+    // TS (through type inference) already knows that:
+    // - The parameter of `executar` must be CreateUserInput
+    // - The return value will be Promise<CreateUserOutput>
+
+    const output = await createUser.executar({ name: 'Jorge', email: 'j@j.com'})
+
+    console.log(output.id) // Safe, the compiler helps us
+  ```
+
+  **Conclusion:**
+
+  The generics (<IN, OUT>) in our interface are like **blank spaces** in our model. They only gain a meaning (and type
+  safety) when we fill them with concrete types at the implementation (using the syntax implements CasoDeUso<TipoA, TipoB>)
+
+  This ensures that our interface will be an universal "mold", but that each implementation is a strict, yet, verifiable
+  contract
+
+
+
+
+
+
+
+
+
+
 
 
 ### Instructor's approach
