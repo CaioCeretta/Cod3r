@@ -4,6 +4,7 @@ dotenv.config();
 
 import express from "express";
 import BCryptAdapter from "./adapters/auth/BCryptAdapter";
+import JWTAdapter from "./adapters/auth/JWTokenAdapter";
 import ColecaoUsuarioDB from "./adapters/db/knex/ColecaoUsuarioDB";
 import LoginUsuarioController from "./controllers/LoginUsuarioController";
 import RegistrarUsuarioController from "./controllers/RegistrarUsuarioController";
@@ -19,12 +20,17 @@ app.use(express.urlencoded({ extended: true }));
 
 const colecaoUsuario = new ColecaoUsuarioDB();
 const provedorCripto = new BCryptAdapter();
+const provedorToken = new JWTAdapter(process.env.JWT_SECRET);
 const registrarUsuario = new RegistrarUsuario(colecaoUsuario, provedorCripto);
 new RegistrarUsuarioController(app, registrarUsuario);
 
 // ----------------------------------------------------------------------------- Authenticated Routes
 
-const loginUsuario = new LoginUsuario(colecaoUsuario, provedorCripto);
+const loginUsuario = new LoginUsuario(
+	colecaoUsuario,
+	provedorCripto,
+	provedorToken,
+);
 new LoginUsuarioController(app, loginUsuario);
 
 // ----------------------------------------------------------------------------- Server configure and launch
