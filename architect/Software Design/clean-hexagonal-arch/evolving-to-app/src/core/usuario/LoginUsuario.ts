@@ -1,22 +1,36 @@
+import type CasoDeUso from "../shared/CasoDeUso";
 import type ColecaoUsuario from "./ColecaoUsuario";
 import type ProvedorCriptografia from "./ProvedorCriptografia";
 import type Usuario from "./Usuario";
 
-export default class LoginUsuario {
+type Entrada = {
+	email: string;
+	senha: string;
+};
+
+type Saida = {
+	usuario: Usuario;
+	token: string;
+};
+
+export default class LoginUsuario implements CasoDeUso<Entrada, Saida> {
 	constructor(
 		private colecao: ColecaoUsuario,
 		private provedorCripto: ProvedorCriptografia,
 	) {}
 
-	async executar(email: string, senha: string): Promise<Usuario> {
-		const usuario = await this.colecao.buscarPorEmail(email);
+	async executar(dto: Entrada): Promise<Saida> {
+		const usuario = await this.colecao.buscarPorEmail(dto.email);
 
 		if (!usuario) {
 			throw new Error("Usuario nao encontrado");
 		}
 
-		if (this.provedorCripto.comparar(senha, usuario.senha)) {
-			return { ...usuario, senha: undefined };
+		if (this.provedorCripto.comparar(dto.senha, usuario.senha)) {
+			return {
+				usuario: { ...usuario, senha: undefined } as Usuario,
+				token: "123",
+			};
 		} else {
 			throw new Error("Nao foi possivel realizar o login");
 		}

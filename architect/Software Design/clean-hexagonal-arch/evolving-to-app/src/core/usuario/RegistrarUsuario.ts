@@ -1,24 +1,33 @@
+import type CasoDeUso from "../shared/CasoDeUso";
 import gerarId from "../shared/id";
 import type ColecaoUsuario from "./ColecaoUsuario";
 import type ProvedorCriptografia from "./ProvedorCriptografia";
 import type Usuario from "./Usuario";
 
-export default class RegistrarUsuario {
+export type Entrada = {
+	nome: string;
+	email: string;
+	senha: string;
+};
+
+export default class RegistrarUsuario implements CasoDeUso<Entrada, Usuario> {
 	constructor(
 		private colecao: ColecaoUsuario,
 		private provedorCripto: ProvedorCriptografia,
 	) {}
 
-	async executar(nome: string, email: string, senha: string): Promise<Usuario> {
-		const existente = await this.colecao.buscarPorEmail(email);
+	async executar(dto: Entrada): Promise<Usuario> {
+		const senhaCripto = this.provedorCripto.criptografar(dto.senha);
+
+		const existente = await this.colecao.buscarPorEmail(dto.email);
 
 		if (existente) throw new Error("E-mail já cadastrado");
 
 		const usuario: Usuario = {
 			id: gerarId(),
-			nome,
-			email,
-			senha: this.provedorCripto.criptografar(senha),
+			nome: dto.nome,
+			email: dto.email,
+			senha: senhaCripto,
 		};
 
 		this.colecao.inserir(usuario);

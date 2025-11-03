@@ -28,6 +28,7 @@ test("Deve logar com e-mail e senha corretos", async () => {
 	});
 
 	expect(res.status).toBe(200);
-	expect(res.data.nome).toBe("Caio Ceretta");
-	expect(res.data.email).toBe("cacer@zmail.com");
+	expect(res.data.usuario.nome).toBe("Caio Ceretta");
+	expect(res.data.usuario.email).toBe("cacer@zmail.com");
+	expect(res.data).toHaveProperty("token");
 });

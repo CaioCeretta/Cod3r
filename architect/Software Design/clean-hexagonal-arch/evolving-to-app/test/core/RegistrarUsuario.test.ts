@@ -15,11 +15,11 @@ test("Deve registrar um usuário invertendo a senha", async () => {
 
 	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, inverterSenha);
 
-	const usuario = await casoDeUso.executar(
-		"Caio",
-		"ccc@zmail.com.br",
-		"123456",
-	);
+	const usuario = await casoDeUso.executar({
+		nome: "Caio",
+		email: "ccc@zmail.com.br",
+		senha: "123456",
+	});
 
 	expect(usuario).toHaveProperty("id");
 	expect(usuario.nome).toBe("Caio");
@@ -32,11 +32,11 @@ test("Deve registrar um usuário colocando espaços entre a senha", async () => 
 
 	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaComEspaco);
 
-	const usuario = await casoDeUso.executar(
-		"Caio",
-		"ccc@zmail.com.br",
-		"123456",
-	);
+	const usuario = await casoDeUso.executar({
+		nome: "Caio",
+		email: "ccc@zmail.com.br",
+		senha: "123456",
+	});
 
 	expect(usuario).toHaveProperty("id");
 	expect(usuario.nome).toBe("Caio");
@@ -49,11 +49,11 @@ test("Deve registrar um usuário com senha criptografada", async () => {
 
 	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaCriptografada);
 
-	const usuario = await casoDeUso.executar(
-		"Caio",
-		"ccc@zmail.com.br",
-		"123456",
-	);
+	const usuario = await casoDeUso.executar({
+		nome: "Caio",
+		email: "ccc@zmail.com.br",
+		senha: "123456",
+	});
 
 	expect(usuario).toHaveProperty("id");
 	expect(usuario.nome).toBe("Caio");
@@ -65,11 +65,11 @@ test("Deve registrar um usuario no banco real", async () => {
 	const senhaCriptografada = new BCryptAdapter();
 	const casoDeUso = new RegistrarUsuario(colecao, senhaCriptografada);
 
-	const usuario = await casoDeUso.executar(
-		"Caio",
-		"ccc@zmail.com.br",
-		"123456",
-	);
+	const usuario = await casoDeUso.executar({
+		nome: "Caio",
+		email: "ccc@zmail.com.br",
+		senha: "123456",
+	});
 
 	expect(usuario).toHaveProperty("id");
 	expect(usuario.nome).toBe("Caio");
@@ -85,9 +85,7 @@ test("Deve lançar erro ao utilizar um e-mail já cadastrado", async () => {
 	const email = "caioceretta@gmail.com";
 	const senha = "123456";
 
-	await casoDeUso.executar(nome, email, senha);
-
-	const run = async () => await casoDeUso.executar(nome, email, senha);
+	const run = async () => await casoDeUso.executar({ nome, email, senha });
 
 	await expect(run).rejects.toThrowError("E-mail já cadastrado");
 });
