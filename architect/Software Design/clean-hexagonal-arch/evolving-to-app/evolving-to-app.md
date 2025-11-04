@@ -353,26 +353,6 @@ However, there were some
 			};
     ```
 
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-  
-
-
-
-
-
   ### TS Generics Recap
 
   ● What are generics?
@@ -481,16 +461,6 @@ However, there were some
   contract
 
 
-
-
-
-
-
-
-
-
-
-
 ### Instructor's approach
 
   • He started by creating the LoginUsuario use case.
@@ -576,20 +546,6 @@ However, our architecture should be "developer-friendly" so we can test in a sim
         }
       })
     ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## Ports, Adapters, and the Core Boundary Recap
 
@@ -761,8 +717,64 @@ However, our architecture should be "developer-friendly" so we can test in a sim
  So if we say in our code:
  `import express from 'express';` in the generated CJS it will turn to `const express = require('express')
 
+    ## Lesson 10 - Usuario Middleware
 
- 
+This lesson will be focused on developing a middleware to retrieve a user after the token authorization sent with each
+request.
+
+After receiving that token, we are going to extract the user information, fetch it from the DB, and if it is indeed
+present, attach to the request
+
+● `next()` Function
+
+In every Express route handler, besides the `request` and `response` parameters, there is a third parameter called `next`
+This function is used to continue the request flow. When `next()` is called, Express moves on to the next middleware
+or to the controller
+
+● Protected Route Middleware
+
+  • A **public route**, simply receives the request and goes straight to the handler function (for example, a user registration
+  route)
+  
+
+  • Protected routes, on the other hand, have a "filter", the **middleware**. This middleware intercepts the request, and
+  run some logic before reaching the controller.
+  If everything is ok, `next()` is called and the controller runs.
+  In essence, this middleware ensures that only authenticated users can access the given route.
+
+  • The token will be extracted from the request headers. That token determines whether the user is able to access
+  the specific controller logic. 
+  
+  In short: **the controller only runs if the middleware ensures there is a valid logged-in user**
+
+  ● Middleware Structure
+
+    For now, this middleware will be created inside the controllers folder
+
+    Steps to build it:
+
+    1. Import `Request`, `Response` and `NextFunction` from Express.
+    2. Define a constructor function whose receives.
+      1. UsuarioRepositorio: To verify if the user exists in the db
+      2. ProvedorToken: To validate whether the token is valid or not
+    
+    With these two elements, the middleware can return a function that receives req, res, and next.
+    
+    We will move the "Bearer" extraction logic from `JwtAdapter.validar` into this middleware, since here we have more
+    context to determine which type of token we are receiving and whether we actually want to strip the `Bearer` prefix.
+
+    After isolating the token (removing the `Bearer`) we call the `validar` method from the token provider to verify it.
+    If everything is valid, we attach the user to the request as `req.usuario`
+
+    It is also important to set a try catch if an error occur during this process.
+
+  ● Chain of Responsibility
+
+    What we implemented here is called a **chain of responsibilities**.
+    Before a request reaches the controller, one or multiple middleware functions may execute, calling `next()` until
+    the final handler is reached.
+
+
 
 
 
