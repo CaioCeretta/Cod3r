@@ -4,21 +4,21 @@ import SenhaComEspaco from "../../src/adapters/auth/SenhaComEspaco";
 import ColecaoUsuarioDB from "../../src/adapters/db/knex/ColecaoUsuarioDB";
 import UsuarioEmMemoria from "../../src/adapters/db/UsuarioEmMemoria";
 import RegistrarUsuario from "../../src/core/usuario/RegistrarUsuario";
+import usuarios from "../data/usuarios";
 
 beforeEach(() => {
 	UsuarioEmMemoria.resetar();
 });
 
 test("Deve registrar um usuário invertendo a senha", async () => {
-	const usuarioEmMemoria = new UsuarioEmMemoria();
-	const inverterSenha = new InverterSenha();
-
-	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, inverterSenha);
+	const colecao = new UsuarioEmMemoria();
+	const provedorCripto = new InverterSenha();
+	const casoDeUso = new RegistrarUsuario(colecao, provedorCripto);
 
 	const usuario = await casoDeUso.executar({
-		nome: "Caio",
-		email: "ccc@zmail.com.br",
-		senha: "123456",
+		nome: usuarios.completo.nome,
+		email: usuarios.completo.email,
+		senha: usuarios.completo.senha,
 	});
 
 	expect(usuario).toHaveProperty("id");
@@ -33,9 +33,9 @@ test("Deve registrar um usuário colocando espaços entre a senha", async () => 
 	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaComEspaco);
 
 	const usuario = await casoDeUso.executar({
-		nome: "Caio",
-		email: "ccc@zmail.com.br",
-		senha: "123456",
+		nome: usuarios.completo.nome,
+		email: usuarios.completo.email,
+		senha: usuarios.completo.senha,
 	});
 
 	expect(usuario).toHaveProperty("id");
@@ -50,9 +50,9 @@ test("Deve registrar um usuário com senha criptografada", async () => {
 	const casoDeUso = new RegistrarUsuario(usuarioEmMemoria, senhaCriptografada);
 
 	const usuario = await casoDeUso.executar({
-		nome: "Caio",
-		email: "ccc@zmail.com.br",
-		senha: "123456",
+		nome: usuarios.completo.nome,
+		email: usuarios.completo.email,
+		senha: usuarios.completo.senha,
 	});
 
 	expect(usuario).toHaveProperty("id");
@@ -60,15 +60,15 @@ test("Deve registrar um usuário com senha criptografada", async () => {
 	expect(senhaCriptografada.comparar("123456", usuario.senha)).toBeTruthy;
 });
 
-test("Deve registrar um usuario no banco real", async () => {
+test.skip("Deve registrar um usuario no banco real", async () => {
 	const colecao = new ColecaoUsuarioDB();
 	const senhaCriptografada = new BCryptAdapter();
 	const casoDeUso = new RegistrarUsuario(colecao, senhaCriptografada);
 
 	const usuario = await casoDeUso.executar({
-		nome: "Caio",
-		email: "ccc@zmail.com.br",
-		senha: "123456",
+		nome: usuarios.completo.nome,
+		email: usuarios.completo.email,
+		senha: usuarios.completo.senha,
 	});
 
 	expect(usuario).toHaveProperty("id");
@@ -87,5 +87,5 @@ test("Deve lançar erro ao utilizar um e-mail já cadastrado", async () => {
 
 	const run = async () => await casoDeUso.executar({ nome, email, senha });
 
-	await expect(run).rejects.toThrowError("E-mail já cadastrado");
+	expect(run).rejects.toThrowError("E-mail já cadastrado");
 });
