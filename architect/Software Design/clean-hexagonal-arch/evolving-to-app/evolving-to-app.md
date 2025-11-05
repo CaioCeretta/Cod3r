@@ -649,29 +649,34 @@ This makes our code much easier to test.
 
   ## Lesson 11 - Adding the Auth
 
-  In the index, we start by creating or first protected route. For this route, we start by creating an instance of
-  `UsuarioMiddleware` we just created, and for its instantiation, add an instance of `Colecao` — so we can retrieve the
-  user based on its e-mail, and a TokenProvider class, for decrypting and comparing.
+In the index file, we start by setting up our first protected route. To do that, we instantiate the `UsuarioMiddleware` we
+created earlier, passing two dependencies: a `Colecao` instance (so we can retrieve the user by email) and a TokenProvider
+(for decrypting and validating the token).  
 
-  After the userMiddleware is defined, we will pass it down to the `useCaseController`. As the controller third parameter
-  we will spread on a parameter middleware which may or not be an array. Therefore, after passing the two first  required
-  parameters, everything we pass in the object construction, will be applied to the middleware array
+Once the middleware is defined, we pass it to the `SalvarTransacaoController`. Since the controller requires a middleware
+array as the third argument, anything we spread into that object will be included in the middleware chain.
 
-  With this configured we are going to add a new test. However, if we try to execute the test to add new transaction we
-  are going to receive an auth error right now, and will i have to instantiate a user every time i try to test?
+Next, we add a new test. At first, this test will fail with an auth error because we would need to create a user every
+single time we run a protected test. But instead of doing that manually, we’ll create a data folder inside the test
+directory, add a usuarios file, and define a user that follows the Usuario interface. Then, in the tests, we simply import
+this array and reuse it.
 
-  The answer is no, inside the test folder, we are going to create another folder named data, and a `usuarios` file, and
-  inside of it, create a user adhering to the `Usuario` interface. And now on the tests, we import the `usuarios` array,
-  and modify every code to apply the same.
+We also create a util folder in the test directory and add an auth.ts file, exporting a helper function that calls /login
+and returns an object containing the Authorization header with the token from the response.
 
-  Inside the test folder, create a util folder, and define an auth.ts, which will export to export an authorization header.
-  This function basically makes a call for the /login route, and return an object, with an Authorization attribute containing
-  the token returned by the req.header token
+With this in place, we can log in using the complete user, get its token, and pass that token every time we test a protected
+route. Back in our transaction test, at the top, we just call getAuthorizationHeader() and reuse that token for our protected
+requests.
 
-  With these changes, we are able to login after the `complete` usuario with its token, and now we can pass down this token
-  when we are doing any protected request
+  ## Lesson 12 - Save Transaction #02
 
-  Back to the transaction test, on top of the test, we utilize the `getAuthorizationHeader()` function
+We start this lesson by creating a migration.
+- The syntax is `npm run migrate:make criar_tabela_transacoes" and create our tables in that file
+
+After we complete the implementation we run
+- `npm run migrate:up`
+
+
 
 
 
