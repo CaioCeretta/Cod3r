@@ -2,9 +2,9 @@ import type Usuario from "../../src/core/usuario/Usuario";
 
 export default {
 	completo: {
-		id: "0c7fa33f-a966-4e2b-96c1-13ffea75b1c7",
+		id: "abf92b3a-7a64-4591-a84b-970397a761f0",
 		nome: "Caio",
-		email: "ccc@zmail.com.br",
+		email: "caioceretta@gmail.com",
 		senha: "123456",
 	} as Usuario,
 };
