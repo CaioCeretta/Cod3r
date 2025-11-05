@@ -1,11 +1,13 @@
 const dotenv = require("dotenv");
+const path = require("node:path");
 
-dotenv.config({ path: `../../../../.env` });
+dotenv.config({ path: path.resolve(__dirname, `../../../../.env`) });
 
 module.exports = {
 	client: "pg",
-	connection: "postgres://caiocer@localhost:5432/arquitetura",
+	connection: process.env.DB_URL,
 	migrations: {
+		directory: path.resolve(__dirname, "migrations"),
 		tableName: "knex_migrations",
 	},
 	pool: {
