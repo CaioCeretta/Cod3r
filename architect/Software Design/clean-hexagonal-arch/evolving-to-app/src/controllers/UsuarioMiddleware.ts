@@ -8,10 +8,11 @@ export default function UsuarioMiddleware(
 	provedorToken: ProvedorToken,
 ) {
 	return async (req: Request, res: Response, next: NextFunction) => {
-		const token = req.headers.authorization.replace("Bearer", "");
 		const acessoNegado = () => res.status(403).send("Token Invalido");
 
 		try {
+			const token = req.headers.authorization.replace("Bearer ", "");
+
 			if (!token) {
 				acessoNegado();
 				return;
