@@ -286,7 +286,12 @@ However, there were some
     3. Controller: Adjust the controller to pass the Input DTO as the single argument to the executar method. This ensures
     consistency with the CasoDeUso interface contract
     4. Tests: Update tests to reflect the new signature, passing the Input DTO and expecting the Output DTO (including
-    nested properties, such as usuario.nome). This ensures coverage of the new structure
+    nested properties, such as usuario.nome). This ensures coverage of the new structur
+
+
+
+
+
 
   ### DTOs (Data Transfer Objects)
 
@@ -547,6 +552,252 @@ However, our architecture should be "developer-friendly" so we can test in a sim
       })
     ```
 
+     ## Lesson 10 - Usuario Middleware
+
+This lesson will be focused on developing a middleware to retrieve a user after the token authorization sent with each
+request.
+
+After receiving that token, we are going to extract the user information, fetch it from the DB, and if it is indeed
+present, attach to the request
+
+● `next()` Function
+
+In every Express route handler, besides the `request` and `response` parameters, there is a third parameter called `next`
+This function is used to continue the request flow. When `next()` is called, Express moves on to the next middleware
+or to the controller
+
+● Protected Route Middleware
+
+  • A **public route**, simply receives the request and goes straight to the handler function (for example, a user registration
+  route)
+  
+
+  • Protected routes, on the other hand, have a "filter", the **middleware**. This middleware intercepts the request, and
+  run some logic before reaching the controller.
+  If everything is ok, `next()` is called and the controller runs.
+  In essence, this middleware ensures that only authenticated users can access the given route.
+
+  • The token will be extracted from the request headers. That token determines whether the user is able to access
+  the specific controller logic. 
+  
+  In short: **the controller only runs if the middleware ensures there is a valid logged-in user**
+
+  ● Middleware Structure
+
+    For now, this middleware will be created inside the controllers folder
+
+    Steps to build it:
+
+    1. Import `Request`, `Response` and `NextFunction` from Express.
+    2. Define a constructor function whose receives.
+      1. UsuarioRepositorio: To verify if the user exists in the db
+      2. ProvedorToken: To validate whether the token is valid or not
+    
+    With these two elements, the middleware can return a function that receives req, res, and next.
+    
+    We will move the "Bearer" extraction logic from `JwtAdapter.validar` into this middleware, since here we have more
+    context to determine which type of token we are receiving and whether we actually want to strip the `Bearer` prefix.
+
+    After isolating the token (removing the `Bearer`) we call the `validar` method from the token provider to verify it.
+    If everything is valid, we attach the user to the request as `req.usuario`
+
+    It is also important to set a try catch if an error occur during this process.
+
+  ● Chain of Responsibility
+
+    What we implemented here is called a **chain of responsibilities**.
+    Before a request reaches the controller, one or multiple middleware functions may execute, calling `next()` until
+    the final handler is reached.
+
+
+
+
+     ## Lesson 11 - Save Transaction #01
+
+In this lesson we are going to create a new use case to save the transactions inside the DB. In the class the full use
+case won't be created, but a temporary version, and we can apply the authorization concern and only allow the user to
+reach this temporary use case, only if we have an actual logged in user.
+
+First step will be to create a use case itself, for it, create a `transacao` folder inside the core folder and define an
+interface `Transacao.ts`
+
+Define a use case SalvarTransacao and a Controller to it.
+
+This controller will be used both for creating a new transaction as well as updating an existing one. One with the :id\
+parameter for updates and another without it for creating a new resource.
+
+### Using/testing by step recap:
+
+1. Create the dto/interface that will be used in the CasoDeUso
+2. Define the class that implements that interface, defining the type of executar the same as the first parameter
+3. Create the use case and implement its processing
+4. Create a controller instance, receive the server we are dealing with, up to know we still have only
+the Express since we are not dealing with an interface port of multiple implementations, and the useCase we are going to
+call.
+5. Call the use case's executar method to run it, and finally, use the server to define with http route will target this
+controller
+6. In the index file, create an instance of the use case, and instantiate the controller using this instance and the current
+server instance
+
+### Separation of Concerns
+
+Transacao: Defines the Data Structure
+SalvarTransacao (Caso de Uso): Contains the business logic
+SalvarTransacaoController (Adapter): Contains the interface logic (HTTP) and calls the business logic
+
+This makes our code much easier to test.
+
+  ## Lesson 11 - Adding the Auth
+
+  In the index, we start by creating or first protected route. For this route, we start by creating an instance of
+  `UsuarioMiddleware` we just created, and for its instantiation, add an instance of `Colecao` — so we can retrieve the
+  user based on its e-mail, and a TokenProvider class, for decrypting and comparing.
+
+  After the userMiddleware is defined, we will pass it down to the `useCaseController`. As the controller third parameter
+  we will spread on a parameter middleware which may or not be an array. Therefore, after passing the two first  required
+  parameters, everything we pass in the object construction, will be applied to the middleware array
+
+  With this configured we are going to add a new test. However, if we try to execute the test to add new transaction we
+  are going to receive an auth error right now, and will i have to instantiate a user every time i try to test?
+
+  The answer is no, inside the test folder, we are going to create another folder named data, and a `usuarios` file, and
+  inside of it, create a user adhering to the `Usuario` interface. And now on the tests, we import the `usuarios` array,
+  and modify every code to apply the same.
+
+  Inside the test folder, create a util folder, and define an auth.ts, which will export to export an authorization header.
+  This function basically makes a call for the /login route, and return an object, with an Authorization attribute containing
+  the token returned by the req.header token
+
+  With these changes, we are able to login after the `complete` usuario with its token, and now we can pass down this token
+  when we are doing any protected request
+
+  Back to the transaction test, on top of the test, we utilize the `getAuthorizationHeader()` function
+
+
+
+### Builder Pattern, Fluent API
+
+The instructor also gave mentioned another version without some properties, or even creating a "builder". This is similar
+to a fluent API pattern, used to build objects step-by-step. For example, something like `UsuarioBuilder.comId()`, 
+`UsuarioBuilder.semNome()`, etc.
+
+#### Builder Pattern
+
+The builder pattern basically means that instead of having one static object (such as 'completo') with every property, we
+can build variations of the user for different test scenarios. A `UserBuilder` (or `UsuarioBuilder`) could look like this
+conceptually
+
+```ts
+  const usuario = new UsuarioBuilder()
+    .comNome("Caio")
+    .semEmail()
+    .build();
+```
+
+This pattern is common in tests to make data setup flexible, readable, and reusable.
+
+A simple UsuarioBuilder idea (TS example for clarity)
+
+```ts
+  class UsuarioBuilder {
+    private usuario: Usuario = {
+      id: "default-id",
+      nome: "Default Name",
+      email: "default@mail.com",
+      senha: "123456",
+    };
+
+    comId(id: string) {
+      this.usuario.id = id;
+      return this;
+    }
+
+    semNome() {
+      this.usuario.nome = '';
+      return this;
+    }
+
+    semEmail() {
+      this.usuario.email = '';
+      return this;
+    }
+
+    comEmail(email: string) {
+      this.usuario.email = email
+      return this
+    }
+
+    build() {
+      return { ...this.usuario}
+    }
+  }
+
+  // Usage
+
+  const usuario = new UsuarioBuilder().semNome().comEmail("caioceretta@gmail.com").build();
+```
+
+This is useful for testing, because static fixtures, like `usuario.completo` even though it is simple and quick, it is hard
+to customize for special cases, while builder pattern is flexible, readable, and has slightly more setup
+
+##### Fluent API
+
+1. What is a Fluent api?
+
+Fluent API (or fluent interface) programming interface design style that has as objective to make the code more readable,
+concise and expressive, allowing the method chaining.
+
+It is a pattern by its own, such as the Builder, it is essentially an implementation technique. It is frequently used to
+implement project patterns (like Builder, Decorator, or Command) or to create specific domain languages.
+Its core principle is to make the code to be read naturally, almost like a sentence.
+
+2. How does the "fluidity" works?
+
+The "secret" behind the method chaining is very simple, and we have seen above in the 'UsuarioBuilder' example
+
+• The Return: Each method in the cain, such as `comNome()`, `semEmail()` must return the object instance itself
+(`return this`)
+
+So by utilizing:
+
+`comNome("Caio"), we modify the name of the internal user, and returns the `UsuarioBuilder` object itself, and the same is
+happens when clearing an attribute.
+
+Since the return is the object itself, we can immediately call its next method.
+
+3. Typical example outside of builder
+
+Fluent API is very common outside of builder and we can even see it on tests
+```
+expect(novoUsuario)
+  .not // 1. commences with the negation
+  .toBeNull // 2. Verifies if it is not null
+  .toHaveProperty('id', 101) // 3. Verifies if it has the 'id' property with the value of 101
+```
+
+##### Relationship between Builder Pattern and Fluent API
+
+The confusion or association between the two is natural because they walk side-by-side
+
+1. Builder Pattern: Defines the structure to build an object step by step. It ensures that the object is only finished
+(and returned) when the build() method is called
+
+2. Fluent API (The style/interface): It is the style that the Builder adopts so that the construction is readable and
+chainable.
+
+**In Summary**: Builder pattern uses the fluent api technique to be more friendly and readable.
+
+
+  
+  
+
+
+
+
+
+
+
+
 ## Ports, Adapters, and the Core Boundary Recap
 
   1. **Where the Ports Reside**
@@ -556,7 +807,7 @@ However, our architecture should be "developer-friendly" so we can test in a sim
       • They are the contracts defined by our business logic. They represent "what" the application can do (Driver Port)
       or "what" the application needs (Driven Port)
       • **They are NOT external to the application**. They are the application's boundary
-    
+     
     • **Adapters and Actors are outside** the application core
 
       • The **Actors** are external entities (Database, User, Test Suite, API)
@@ -716,63 +967,9 @@ However, our architecture should be "developer-friendly" so we can test in a sim
 
  So if we say in our code:
  `import express from 'express';` in the generated CJS it will turn to `const express = require('express')
+       
 
-    ## Lesson 10 - Usuario Middleware
 
-This lesson will be focused on developing a middleware to retrieve a user after the token authorization sent with each
-request.
-
-After receiving that token, we are going to extract the user information, fetch it from the DB, and if it is indeed
-present, attach to the request
-
-● `next()` Function
-
-In every Express route handler, besides the `request` and `response` parameters, there is a third parameter called `next`
-This function is used to continue the request flow. When `next()` is called, Express moves on to the next middleware
-or to the controller
-
-● Protected Route Middleware
-
-  • A **public route**, simply receives the request and goes straight to the handler function (for example, a user registration
-  route)
-  
-
-  • Protected routes, on the other hand, have a "filter", the **middleware**. This middleware intercepts the request, and
-  run some logic before reaching the controller.
-  If everything is ok, `next()` is called and the controller runs.
-  In essence, this middleware ensures that only authenticated users can access the given route.
-
-  • The token will be extracted from the request headers. That token determines whether the user is able to access
-  the specific controller logic. 
-  
-  In short: **the controller only runs if the middleware ensures there is a valid logged-in user**
-
-  ● Middleware Structure
-
-    For now, this middleware will be created inside the controllers folder
-
-    Steps to build it:
-
-    1. Import `Request`, `Response` and `NextFunction` from Express.
-    2. Define a constructor function whose receives.
-      1. UsuarioRepositorio: To verify if the user exists in the db
-      2. ProvedorToken: To validate whether the token is valid or not
-    
-    With these two elements, the middleware can return a function that receives req, res, and next.
-    
-    We will move the "Bearer" extraction logic from `JwtAdapter.validar` into this middleware, since here we have more
-    context to determine which type of token we are receiving and whether we actually want to strip the `Bearer` prefix.
-
-    After isolating the token (removing the `Bearer`) we call the `validar` method from the token provider to verify it.
-    If everything is valid, we attach the user to the request as `req.usuario`
-
-    It is also important to set a try catch if an error occur during this process.
-
-  ● Chain of Responsibility
-
-    What we implemented here is called a **chain of responsibilities**.
-    Before a request reaches the controller, one or multiple middleware functions may execute, calling `next()` until
-    the final handler is reached.
 
 
 
