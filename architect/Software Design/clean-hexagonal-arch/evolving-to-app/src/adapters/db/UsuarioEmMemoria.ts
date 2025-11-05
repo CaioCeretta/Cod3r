@@ -8,14 +8,11 @@ export default class UsuarioEmMemoria implements ColecaoUsuario {
 		const usuario = UsuarioEmMemoria.itens.find(
 			(usuario) => usuario.email === email,
 		);
-
 		return usuario ?? null;
 	}
 
 	async inserir(item: Usuario): Promise<void> {
 		UsuarioEmMemoria.itens.push(item);
-
-		return Promise.resolve();
 	}
 
 	static resetar() {
