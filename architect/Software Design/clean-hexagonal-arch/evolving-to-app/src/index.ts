@@ -8,6 +8,9 @@ import JWTAdapter from "./adapters/auth/JWTokenAdapter";
 import ColecaoUsuarioDB from "./adapters/db/knex/ColecaoUsuarioDB";
 import LoginUsuarioController from "./controllers/LoginUsuarioController";
 import RegistrarUsuarioController from "./controllers/RegistrarUsuarioController";
+import UsuarioMiddleware from "./controllers/UsuarioMiddleware";
+import SalvarTransacao from "./core/transacao/SalvarTransacao";
+import SalvarTransacaoController from "./core/transacao/SalvarTransacaoController";
 import LoginUsuario from "./core/usuario/LoginUsuario";
 import RegistrarUsuario from "./core/usuario/RegistrarUsuario";
 
@@ -23,15 +26,19 @@ const provedorCripto = new BCryptAdapter();
 const provedorToken = new JWTAdapter(process.env.JWT_SECRET);
 const registrarUsuario = new RegistrarUsuario(colecaoUsuario, provedorCripto);
 new RegistrarUsuarioController(app, registrarUsuario);
-
-// ----------------------------------------------------------------------------- Authenticated Routes
-
 const loginUsuario = new LoginUsuario(
 	colecaoUsuario,
 	provedorCripto,
 	provedorToken,
 );
 new LoginUsuarioController(app, loginUsuario);
+
+// ----------------------------------------------------------------------------- Authenticated Routes
+
+const usuarioMiddleware = UsuarioMiddleware(colecaoUsuario, provedorToken);
+const salvarTransacao = new SalvarTransacao();
+
+new SalvarTransacaoController(app, salvarTransacao, usuarioMiddleware);
 
 // ----------------------------------------------------------------------------- Server configure and launch
 
