@@ -29,8 +29,6 @@ export default function UsuarioMiddleware(
 				return;
 			}
 
-			console.log(usuario);
-
 			(req as any).usuario = usuario;
 
 			next();
