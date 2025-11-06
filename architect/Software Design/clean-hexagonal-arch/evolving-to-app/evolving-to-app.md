@@ -845,6 +845,56 @@ expected by the application's core
       })
     ```
 
+3. How does the use case receives an user if we don't pass any?
+
+  A: When we register a new transaction, first we define a `const headers = getAuthorizationHeader()`
+  this function, calls the `login` route, with a hard-coded db user. The login route returns to us a token inside its
+  response, which we use this token to add it on the request header `Authorization`
+
+  If we remember, when we call the login route, it fetches by the email sent, with this email, retrieves the user information
+  from the database, and after comparing the password we sent, with the one saved on the database, it returns an object
+  with that given user and a token attribute, which would be generated with the payload being the user information.
+
+  Since its a protected route, before reaching the controller, it goes through a `UsuarioMiddleware`, which will check if
+  there is a token inside the authorization header, and if the middleware successfully checks that header, it will separate
+  removes the `Bearer ` from the header, and invokes a function to validate the token.
+
+  The `validar` function inside the JwtAdapter, will receive the token, and translate this token and retrieves the payload
+  used.
+
+  That translation, will give us back the same user as saved on the database, and it will fetch on the database that same
+  user, ensuring security
+
+  After that fetch is done, it will add that `usuario` to the request, using `(req as any).usuario = usuario`. The reason
+  why we utilized that req as any, is because an express request does not have a usuario property, so it is simply to
+  avoid errors.
+
+  Finally, since the usuario is now on the header, inside the controller, when we call the use case, we pass an attribute
+  `usuario: (req as any).usuario` to the property that expects an user.
+
+  #### Final Summary
+
+  ##### How does the use case receive the user (Context Flow)
+
+  1. **Client** sends a request to `POST /transacao` with the **JWT** in the header's `Authorization`
+  2. **Express** | directs that request to the **`Usuario MIddleware`** (since the route is protected)
+  3. The Middleware **validates the JWT** and fetches the given user in the database
+  4. The middleware **injects** that user in the request: `(req as any).usuario = usuario`
+  5. **SalvarTransacaoController** is executed and accesses the injected object: `usuario: (req as any).usuario`
+  6. Controller passes down this object to the **use case** input: `casoDeUso.executar({ ..., usuario: (req as any).usuario })`.
+  7. **SalvarTransacao** receives the object **usuario** and uses it for the business rule validation
+
+  
+
+
+
+
+
+
+
+  
+
+
 ### Builder Pattern, Fluent API
 
 The instructor also gave mentioned another version without some properties, or even creating a "builder". This is similar
