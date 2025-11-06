@@ -5,6 +5,7 @@ dotenv.config();
 import express from "express";
 import BCryptAdapter from "./adapters/auth/BCryptAdapter";
 import JWTAdapter from "./adapters/auth/JWTokenAdapter";
+import ColecaoTransacaoDB from "./adapters/db/ColecaoTransacaoDB";
 import ColecaoUsuarioDB from "./adapters/db/ColecaoUsuarioDB";
 import LoginUsuarioController from "./controllers/LoginUsuarioController";
 import RegistrarUsuarioController from "./controllers/RegistrarUsuarioController";
@@ -35,8 +36,9 @@ new LoginUsuarioController(app, loginUsuario);
 
 // ----------------------------------------------------------------------------- Authenticated Routes
 
+const colecaoTransacaoDB = new ColecaoTransacaoDB();
 const usuarioMiddleware = UsuarioMiddleware(colecaoUsuario, provedorToken);
-const salvarTransacao = new SalvarTransacao();
+const salvarTransacao = new SalvarTransacao(colecaoTransacaoDB);
 
 new SalvarTransacaoController(app, salvarTransacao, usuarioMiddleware);
 

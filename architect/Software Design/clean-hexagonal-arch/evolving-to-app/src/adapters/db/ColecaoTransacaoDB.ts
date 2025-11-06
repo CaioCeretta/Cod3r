@@ -4,14 +4,16 @@ import conexao from "./conexao";
 
 export default class ColecaoTransacaoDB implements ColecaoTransacao {
 	adicionar(transacao: Transacao): Promise<void> {
-		return conexao.table("transacoes").insert(this._praTabela);
+		return conexao.table("transacoes").insert(this._praTabela(transacao));
 	}
+
 	atualizar(transacao: Transacao): Promise<void> {
 		return conexao
 			.table("transacoes")
 			.where("id", transacao.id)
-			.update(this._praTabela);
+			.update(this._praTabela(transacao));
 	}
+
 	async buscarPorId(idUsuario: string, id: string): Promise<Transacao | null> {
 		const transacoes = await conexao
 			.table("transacoes")
@@ -38,9 +40,11 @@ export default class ColecaoTransacaoDB implements ColecaoTransacao {
 
 	private _praTabela(transacao: Transacao): any {
 		return {
-			...transacao,
+			id: transacao.id,
+			descricao: transacao.descricao,
+			valor: transacao.valor,
 			vencimento: transacao.vencimento.toISOString(),
-			usuarioId: transacao.idUsuario,
+			usuario_id: transacao.idUsuario,
 		};
 	}
 

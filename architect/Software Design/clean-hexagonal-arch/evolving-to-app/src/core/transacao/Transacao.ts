@@ -1,5 +1,5 @@
 export default interface Transacao {
-	id: string;
+	id?: string;
 	descricao: string;
 	valor: number;
 	vencimento: Date;
