@@ -1,4 +1,5 @@
 import axios from "axios";
+import transacoes from "../data/transacoes";
 import { getAuthorizationHeader } from "../util/auth";
 
 const baseUrl = process.env.API_URL;
@@ -6,6 +7,15 @@ const baseUrl = process.env.API_URL;
 test("Deve registrar uma nova transação", async () => {
 	const headers = await getAuthorizationHeader();
 
-	const resp = await axios.post(`${baseUrl}/transacao`, {}, headers);
-	expect(resp.status).toBe(200);
+	try {
+		const resp = await axios.post(
+			`${baseUrl}/transacao`,
+			transacoes.semId,
+			headers,
+		);
+		expect(resp.status).toBe(200);
+	} catch (error) {
+		console.error(error.response?.status, error.response?.data);
+		throw error;
+	}
 });
