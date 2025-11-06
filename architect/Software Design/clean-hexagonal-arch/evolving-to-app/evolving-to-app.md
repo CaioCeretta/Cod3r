@@ -647,7 +647,7 @@ SalvarTransacaoController (Adapter): Contains the interface logic (HTTP) and cal
 
 This makes our code much easier to test.
 
-  ## Lesson 11 - Adding the Auth
+  ## Lesson 11 - Save Transaction #02: Adding the Auth
 
 In the index file, we start by setting up our first protected route. To do that, we instantiate the `UsuarioMiddleware` we
 created earlier, passing two dependencies: a `Colecao` instance (so we can retrieve the user by email) and a TokenProvider
@@ -668,7 +668,7 @@ With this in place, we can log in using the complete user, get its token, and pa
 route. Back in our transaction test, at the top, we just call getAuthorizationHeader() and reuse that token for our protected
 requests.
 
-  ## Lesson 12 - Save Transaction #02
+  ## Lesson 12 - Save Transaction #03: TransacaoColecao interface and ColecaoTransacaoDB
 
 We start this lesson by creating a migration.
 - The syntax is `npm run migrate:make criar_tabela_transacoes" and create our tables in that file
@@ -676,7 +676,60 @@ We start this lesson by creating a migration.
 After we complete the implementation we run
 - `npm run migrate:up`
 
+By creating the table transacoes, we will first define an interface `ColecaoTransacao`, similar to `ColecaoUsuario`. This
+interface will consist of the contracts to add/update and consult the given values.
 
+We may try to fetch a transaction by id, and because of some logic error, the transaction may not belong to that given
+user. To fix this we should tie both the user id, as well as the transaction id, to that function. Therefore, because if
+by chance, we try to fetch a transaction that doesn't belong to the logged in user, it simply won't return anything.
+
+● Move files
+
+• `UsuarioEmMemoria` class, which deals with an internal array constant just for testing, makes more sense for it to be moved
+to the folder `test`, since it won't live anywhere out of the testes
+• Since everything inside the db folder, both the ColecaoUsuarioDB and the ColecaoTransacaoDB, have to do with knex, it
+does not make sense for us to have another knex folder inside db, and we can move everything to the db folder
+
+With this interface created, we can create a `ColecaoTransacaoDB` adapter and implement the contracts
+
+However, we will create a `_prTabela` function, and this function will be used to return the data in a specific format
+required by the database. It's not required, but since the code will be repeated, is a good option, so for example,
+instead of doing this formatting to the database, we simply create a function where we return an object with these
+values, and use the function in place of them
+
+  ```ts 
+  		return {
+			...transacao,
+			vencimento: transacao.vencimento.toISOString(),
+			usuarioId: transacao.idUsuario,
+		};
+
+    // and we can simply change the insert code, for example, to
+
+    	adicionar(transacao: Transacao): Promise<void> {
+		    return conexao.table("transacoes").insert(this._praTabela);
+	    }
+  
+    /* instead of
+
+    	adicionar(transacao: Transacao): Promise<void> {
+		return conexao.table("transacoes").insert({
+			...transacao,
+			data: transacao.vencimento.toISOString(),
+			usuario_id: transacao.idUsuario,
+		});
+	}
+
+  */
+```
+
+  We will also create the opposite of _praTabela, which will be a function _DaTabela, which will convert from the database
+
+  and for the buscaPorMes, sql has a function like `whereRaw("extract(year from vencimento) = ?", ano))`, which , so for
+   example:`mes` and `ano` are parameters that represent the date we want to filter the transactions.
+
+
+  ## Lesson 13 - Save Transaction #04
 
 
 
