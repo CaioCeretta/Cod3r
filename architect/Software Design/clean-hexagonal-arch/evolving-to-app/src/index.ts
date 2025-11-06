@@ -5,7 +5,7 @@ dotenv.config();
 import express from "express";
 import BCryptAdapter from "./adapters/auth/BCryptAdapter";
 import JWTAdapter from "./adapters/auth/JWTokenAdapter";
-import ColecaoUsuarioDB from "./adapters/db/knex/ColecaoUsuarioDB";
+import ColecaoUsuarioDB from "./adapters/db/ColecaoUsuarioDB";
 import LoginUsuarioController from "./controllers/LoginUsuarioController";
 import RegistrarUsuarioController from "./controllers/RegistrarUsuarioController";
 import UsuarioMiddleware from "./controllers/UsuarioMiddleware";

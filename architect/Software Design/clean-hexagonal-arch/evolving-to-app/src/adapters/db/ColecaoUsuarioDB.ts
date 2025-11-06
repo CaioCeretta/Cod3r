@@ -1,5 +1,5 @@
-import type ColecaoUsuario from "../../../core/usuario/ColecaoUsuario";
-import type Usuario from "../../../core/usuario/Usuario";
+import type ColecaoUsuario from "../../core/usuario/ColecaoUsuario";
+import type Usuario from "../../core/usuario/Usuario";
 import conexao from "./conexao";
 
 export default class ColecaoUsuarioDB implements ColecaoUsuario {

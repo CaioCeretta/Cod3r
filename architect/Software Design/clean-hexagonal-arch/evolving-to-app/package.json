@@ -8,10 +8,10 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "jest",
-    "migrate:make": "knex migrate:make --knexfile ./src/adapters/db/knex/knexfile.cjs --knexpath ./src/adapters/db/knex/",
-    "migrate:down": "knex migrate:rollback --knexfile ./src/adapters/db/knex/knexfile.cjs --knexpath ./src/adapters/db/knex/",
-    "migrate:up": "knex migrate:latest --knexfile ./src/adapters/db/knex/knexfile.cjs --knexpath ./src/adapters/db/knex/",
-    "migrate:rollback:all": "knex migrate:rollback --all --knexfile ./src/adapters/db/knex/knexfile.cjs --knexpath ./src/adapters/db/knex/"
+    "migrate:make": "knex migrate:make --knexfile ./src/adapters/db/knexfile.cjs --knexpath ./src/adapters/db/",
+    "migrate:down": "knex migrate:rollback --knexfile ./src/adapters/db/knexfile.cjs --knexpath ./src/adapters/db/",
+    "migrate:up": "knex migrate:latest --knexfile ./src/adapters/db/knexfile.cjs --knexpath ./src/adapters/db/",
+    "migrate:rollback:all": "knex migrate:rollback --all --knexfile ./src/adapters/db/knexfile.cjs --knexpath ./src/adapters/db"
   },
   "keywords": [],
   "author": "Caio Ceretta Soares",
