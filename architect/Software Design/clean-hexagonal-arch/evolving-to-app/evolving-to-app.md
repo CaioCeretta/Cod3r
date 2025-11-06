@@ -729,9 +729,121 @@ values, and use the function in place of them
    example:`mes` and `ano` are parameters that represent the date we want to filter the transactions.
 
 
-  ## Lesson 13 - Save Transaction #04
+  ## Lesson 13 - Save Transaction #04: Use Case / Controller
+
+In this lesson we defined the transaction saving flow (both creation and updating) has been structured, covering the use case,
+the controller, and the database
+
+### Use Case (`SalvarTransacao`)
+
+The use case `salvarTransacao`, will be responsible for deciding whether a transaction will be created or updated and
+ensuring the user has permission to perform the operation
+
+#### DTO
+
+Following the pattern as we did on the `RegistrarUsuario`, this is going to be slightly different, as it requires additional
+information for the update and the security context
+
+• transacao: Transacao: The object with the transaction data (descricao, valor, vencimento, idUsuario).
+• usuario: Usuario: The authenticated user object. This is crucial for simplifying tests and security.
+• id: string: The transaction ID, will come from the controller (if it's an update via URL) or be null/undefined. This is what
+defines which operation will be done.
 
 
+#### Core Logic 
+
+1. Authorization validation right at the start, it ensures that the idUsuario of the transaction being saved is the same
+as the id of the authenticated `usuario`
+
+2. `transacao`: preparing the data
+
+  ```ts
+    const transacao = {
+      ...dto.transacao,
+      id: dto.id ?? gerarId(), // Use existing ID or generate a new one
+    };
+  ```
+
+  Here we create a new `transacao` object. if the dto.id (Id passed by the controller) exists, it's used. If it doesn't exist
+  we generate a new Id with the gerarId() function
+
+3. Creation or Update Decision
+
+  The presence of dto.id is the final criteria, exist we update, otherwise, we add
+
+### The Controller
+
+The controller is the entry point for every request, and its job is to format the HTTP data into the format expected by the
+use case
+
+#### Routes and fn (handler function)
+
+We defined two **POST** routes that point to the same fn function. Since the fn function handles the saving logic, the
+use case will make the distribution based on the req.params.id
+
+#### Formatting and Execution
+
+Inside the fn function, we prepare the data
+
+1. We create the transacao object, ensuring the correct typing, converting `valor` to a number and `vencimento` to a valid
+`Date` object.
+
+2. Executing the use case: The ID from the URL (req.params.id) and the `usuario` injected by the authentication middleware
+`(req as any).usuario` are passed directly to the use case, completing the input DTO
+
+### `ColecaoTransacaoDB`
+
+In the persistence layer, we implemented the `adicionar` (add) and `atualizar` (update) methods.
+
+. adicionar(transacao: Transacao): Simply inserts a new record into the database
+. atualizar(transacao: Transacao): Updates the record using the transaction's id to find the row
+
+#### Mapping To/From Table (`_praTabela` and `_daTabela`)
+
+The private methods handle adapting the `Transacao` object to the database format (and vice-versa), ensuring that column
+names like `usuario_id` are correctly handled
+
+In `praTabela` we convert vencimento to `toISOString` for the database and `daTabela` is responsible for converting the
+transaction data format received from the database (e.g. Knex/PostgreSQL result) into the internal Transacao object format
+expected by the application's core
+
+#### Overall Questions i had during the development
+
+1. I got confused on why did i had to pass the ID, should'nt the database generate one on the row creation:
+  A: since we defined the id as `table.uuid("id").primary()`, the line simply defines the column as a uuid as a primary
+  key, and it does not imply in a automatic value generation, not in the app's core, it could be different if we were
+  dealing with some framework
+
+2. How did express know which was the authenticated user? wasn't i simply retrieving the token for the check?
+  A: First, looking to how the controller was defined, we can see that in its constructor it injects the middlewares
+  received, which are responsible for verifying the auth status and they are passed to the routes
+
+  A middleware flow is:
+
+  1.  Request arrives, a user sends a post request to `/transacao` with the authentication token, in this case a JWT, in
+  the header `Authorization`, e.g. const headers = await getAuthorizationHeader();
+
+  2. The `UsuarioMiddleware` does the following: 
+    . Extracts the token: retrieves the token from the header `Authorization`
+    . Validates the token: Decrypts and verify the token, by checking its signing
+    . Fetches the user (if needed): Uses the payload's id to fetch the user's data inside the database
+  
+  3. Injection in the `req`: If the authentication is successful, the middleware attaches the object `Usuario` or at least
+  its id directly in express's req object — `(req as any).usuario = usuario;`
+    The type `(req as any)` inside the Controller is a way to get around the typing restrictions from TS, since the
+    property usuario doesn't exist by default in Express's Request
+
+  4. Controller access the user: Only after the middleware's next is called, the function fn is executed. At this point,
+  the object `req` is already "enriched" with the property usuario
+
+    And the controller accesses it as
+
+    ```ts
+      await casoDeUso.executar({
+        ///...
+        usuario: (req as any).usuario
+      })
+    ```
 
 ### Builder Pattern, Fluent API
 
