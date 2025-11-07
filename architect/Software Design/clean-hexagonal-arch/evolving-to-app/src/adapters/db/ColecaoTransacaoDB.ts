@@ -35,7 +35,7 @@ export default class ColecaoTransacaoDB implements ColecaoTransacao {
 			.whereRaw("extract(year from vencimento) = ?", ano)
 			.whereRaw("extract(month from vencimento) = ?", mes);
 
-		return transacoes;
+		return transacoes.map(this._daTabela);
 	}
 
 	private _praTabela(transacao: Transacao): any {
