@@ -886,13 +886,212 @@ expected by the application's core
 
   
 
+  ## Lesson 14 - Save Transaction #05: Update Transaction Test
+
+  We will start by duplicating the insert user transaction, the test will be made by using a fixed transacao id, but we
+  could create a use case to obtain by the transaction by id, or so.
+
+  
+  ### Time Stamps / Database Soft Deletion
+
+Knex on the create table command, it has, other than just defining a timestamp("columnName"), instead of creating two of
+these for created_at and updated_at, by defining `table.timestamps(true, true)` it will create these two attributes.
+Other than creating both elements, the true,true have a specific meaning, which are respectively
+  `useTimestamps`: If true, it creates the columns with the type timeStamp instead of `datetime`
+  defaultToNow: If true, defines `DEFAULT now()` in the database, i.e. fills automatically with the current time by creating
+  a new register
+This would be equivalent to
+  ```ts
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ```
+
+The instructor also mentioned an approach that some developers take that don't implement a row deletion, however, it was
+they are "Soft Deleted". A soft deletion happens when we have a column named like `deleted_at`, which is a nullable column.
+The soft deletion consist of simply "marking" that row column, as an element was excluded, but instead of "physically"
+deleting it from the database, we "virtually" delete it by simply setting this column.
+
+So for that approach, we will never use the delete command, but an update every time we will "delete" a given register.
+
+### Knex is not an ORM, it is a query builder
+
+This means that if we create that column, it won't automatically exclude from our queries the registers that were ¨deleted¨.
+For it, we would have to, in our queries, to say that we want all the results that the `deleted_date` is NULL
+
+However, the updates won't be automatic, in other frameworks/ORMs, which are more related to the persistency have a bigger
+role on creating a given mapping between objects and database and is more automated. Knex won't, knex is a query builder,
+and the update would require us to modify the column with triggers or by code.
+
+  ## Lesson 15 - Calculate Receipt
+
+Different from what we were doing up to know, we will create a class that is not a use case, it won't be responsible for
+any application flow, and won't be mapped to something on the database — it won't be stored in any place.
+  - But there may exist cases where it makes sense for us to store those given values, be it by storing a snapshot of an
+  account with a set of transactions and in the end of the month, we would like to get this statement.
+
+However, in this lesson we will see that not everything is a set of data to be persisted and not everything is about
+use cases. Many times we simply want to make a calculus that may be used in multiple different use cases.
+
+Assume we want the annual/monthly statement or a monthly receipt and expenses, andd so on. Therefore, we  can create a
+Balance class, to contain all these calculus, which may be used for multiple different use cases.
+
+We will show that we could create that type of classes that will express a business rule in a single place that we can
+reuse this rule wherever we desire. To express this, we will create a `Saldo` class inside the folder `Transacao`.
+
+After every calculus, either the total, `receitas` and `despesas`, we can create a single object, with these three values
+after the function return in case we want to return it in a JSON, or something.
+
+Create a `Saldo.test.ts` for tests about the new created class and methods.
+
+### Reducer Simplify
+
+  Example 1:
+  
+  assume we have the reduce
+
+    ```ts
+      get total(): number {
+        return this.transacoes.reduce((total: number, transacao: Transacao) => {
+          return total + transacao.valor)
+        }, 0)
+      }
+      
+      // We can simplify this code, by defining a dynamic reduce that will for multiple cases, if we don't have any
+      // different processing on each reduce, this simplifies the code.
+
+      private _totalizar(total: number, transacao: Transacao) {
+        return total + transacao.valor;
+      }
+
+      // Then total will be
+
+      return this.transacoes.reduce(this._totalizar, 0)
+    ```
+
+### How reduce works
+
+As previously said, the `_totalizar` function makes reducers a lot easier to work with, however, there was this case
+
+  ```ts
+    get receitas(): number {
+      return this.transacoes
+        .filter((el) => el.valor > 0)
+        .reduce(this._totalizar, 0);
+    }
+  ```
+
+I didn't understand why this was working even though this._totalizar didn't receive any params, but this is about how
+reduce works:
+
+#### Understanding reducer()
+
+The method array's method `reduce()` expects a callback function (in this case _totalizar) with the following signature:
+  `(accumulator: any, currentIndex: any, array: any[]) => any`
+
+When we pass our function this.totalizar as a callback to reduce(), it automatically calls it with the arguments it expects
+(the first few arguments from the `reduce` signature)
+
+1. `total`: accumulated value so far
+2. transacao: current element of the array
+3. optionally, but no commonly used, the current index and the full array)
+
+Our `_totalizar` function is specifically defined to receive the first two arguments that `reduce` passes during each
+iteration
+
+##### Why does it work without passing arguments? 
+
+  1. Function Reference: When we write `.reduce(this.totalizar, 0)`, we are not calling the `_totalizar` function. We
+  are merely passing a reference to it
+
+  2. Execution by `reduce()`: The `reduce()` method takes the responsibility of calling that function `_totalizar` for
+  every element in the filtered `transacoes` array, passing the accumulated total and the current transaction as argument
+
+  3. Initial Value: the 0 we pass as the second parameter to reduce() is the initial value for total
+
+***Conclusion***: We don't pass the arguments because `reduce()` is the one that automatically generates them and feeds
+them to our callback function (`_totalizar`) at every step of the iteration
+
+  ## Lesson 16 - Monthly Statement
+
+We can start by creating a transaction list inside the transacoes.ts file, that transactions file, will be made like this:
+
+1. Use the previous 'semId' transaction to use as `transacaoRef`
+2. Create a list array, which will be an array of 'transacoes'\
+3. Each transacao object, will use this `...transacaoRef` as first attribute, because it will determine the structure of a
+`transacao` and we will simply modify the desired values
+
+Duplicate the add transaction test, and map over that list to add multiple new transactions.
+
+Now we create a new use case, for the `buscarPorMes` method.
+
+This use case will be a simple one and we won't have much to talk about it. However, we return from this method, more than
+the transactions array, but also the Receipt. The `Saldo` class has something interesting, we created a dto object inside
+of it, and that dto would consist of the total, which would be calculated by the transacoes received, the receipt, why were
+the positive transactions, and the expenses, that where the  negative transactions.
+
+And inside the buscaPorMes method, on the return, we simply passed `saldo: new Saldo(transacoes).dto` and this would be
+enough for us to have all the information about the transacoes.
+
+As we remember, the use case is the orchestrator, which is responsible for coordinating our entities. Thinking on the CA
+our entities can have:
+  **crucial data**, 
+  **rich objects** with behaviors, that validate themselves, and so on.
+  **domain service** that are calculus we will utilize expressed by an entity
+
+When a use case start having implementations not related to this orchestrating, it is a big candidate for us to isolate
+that piece, and generate a specific class with that rule, such as the Saldo we just created, and this enforces the D.R.Y
+concept.
+
+With the use case created, we are now going to create the controller. This controller http method, will expect to receive
+both the `ano` as well as the `mes` on its params
+
+After both the use case and the controller was created, we will do its tests.
 
 
 
+### Benefits we noticed through the development
+
+Even though the application were getting bigger, with more use cases, more classes, more interfaces, more adapters, with
+this approach we could see everything on its place, i knew exactly where the code, class, interface, was located.
+
+Of course, we could separate the use cases into other nested folder, as well as the controllers, and so on. But even without
+doing so, i still knew where everything was.
+
+This shows us that this approach, of separating the concerns, of the dependency injection, of creating ports, adapters,
+entities interface, and so on. Makes the code more easy to scale, maintain and evolve.
+
+The use cases evolve in a much more linear way, without big couplings and difficulties. And by making everything so explicit
+of what each thing is doing.
+
+Therefore, once we express the domain, rules, use cases in a more organized way, without depending on the database or anything\
+on the "outside", we are able to focus only on what is important on each class. If we wanted to move the file to save
+on the firebase in place of the postgresql, we could do it simply by creating after the same interface the knex uses
+and both would work just fine.
+
+
+
+
+
+
+### Multiple inserts test
+
+In the transactions test, where we iterated over the list, where we commonly expect the status to be 200, we couldn't simply
+do it. So we created a constant `listaDeStatus` and assigned to it, the promise.all of the list iterations
+
+then on the expect, we expected listaDeStatus.every(s => s === 2000). Since the axios call, returns only a success status
+code, it iterated over each item and expected all to be true 
+
+  
 
 
 
   
+
+
+
+
+
+
 
 
 ### Builder Pattern, Fluent API
