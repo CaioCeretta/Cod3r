@@ -1,37 +1,37 @@
 import { Erros } from "../constants/Erros";
 import Validador from "../utils/Validador";
 
-export default class UsuarioAnemicoV3 {
+export default class UsuarioAnemicoV4 {
 	constructor(
-		private id: number,
-		private nome: string,
-		private email: string,
-		private senha?: string,
+		private _id: number,
+		private _nome: string,
+		private _email: string,
+		private _senha?: string,
 	) {
-		this.setId(id);
-		this.setNome(nome);
-		this.setEmail(email);
-		senha && this.setSenha(senha);
+		this.setId(_id);
+		this.setNome(_nome);
+		this.setEmail(_email);
+		_senha && this.setSenha(_senha);
 	}
 
 	getId(): number {
-		return this.id;
+		return this._id;
 	}
 
 	setId(id: number) {
-		this.id = id;
+		this._id = id;
 	}
 
 	getNome(): string {
-		return this.nome;
+		return this._nome;
 	}
 
 	setNome(nome: string) {
-		this.nome = nome;
+		this._nome = nome;
 	}
 
 	getEmail(): string {
-		return this.email;
+		return this._email;
 	}
 
 	setEmail(email: string) {
@@ -39,12 +39,12 @@ export default class UsuarioAnemicoV3 {
 	}
 
 	getSenha() {
-		return this.senha;
+		return this._senha;
 	}
 
 	setSenha(senha: string) {
 		if (senha.length < 6) throw new Error(Erros.SENHA_INVALIDA);
 
-		this.senha = senha;
+		this._senha = senha;
 	}
 }
