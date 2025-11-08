@@ -124,7 +124,21 @@ This interface doesn't say absolutely nothing of cases like
 
 We don´t have an idea of how these attributes behave inside the User
 
+## Lesson 3  Configuring the project
 
+Basic configuration with some comments
+
+defining a @paths attribute inside the tsconfig¨  
+  `
+    "paths": {
+			"@/*.": "[src/*]"
+		}
+  `
+
+This means that "@/anything" will point to src/something, so every time we use something as
+import { localClass }  from "@/class" the @ will always navigate to the src root, now we can change
+`import { somar } from "../src/index";` to `import { somar } from "@/index";`
+This approach removes the necessity of having to have those paths with tons of ../../../ and more.
 
 
 
