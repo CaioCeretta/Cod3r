@@ -1,3 +1,6 @@
 export default class Pessoa {
-	constructor(private _name: string) {}
+	constructor(
+		public name: string,
+		public id?: string,
+	) {}
 }
