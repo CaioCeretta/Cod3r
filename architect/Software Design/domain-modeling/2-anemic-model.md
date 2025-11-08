@@ -112,12 +112,62 @@ For example, if we call setSenha inside the constructor after receiving paramete
 password length, creating an object with an invalid password will immediately trigger validation — even though the field
 is optional.
 
-
-
 There are also cases where validations depend on more than one attribute. Say every Gmail user must have an empty password
 because they log in with Google, while other emails require a password. If we place this kind of logic inside the setter,
 it becomes too complex, since we might still be setting other properties when the validation triggers.
 
+## Lesson 6 - Validate E-mail
+
+1. Creating the Validation Utility
+
+Create a utils folder and define a file to test whether an email is valid or not
+
+2. The Setter Problem: Implicit behavior and degraded clarity
+
+We could change the set email logic to apply this validity check. For example:
+
+  ```ts
+    setEmail(email: string) {
+      if(Validador.isEmailValido(email)) {
+        this.email = email
+      }
+    }
+  ```
+
+While this appears to enforce validity, this approach introduces an **implicit behavior** that can degrade the code's
+clarity. A consumer of this classes expects that calling setEmail(value) will result in the email being set to `value`.
+However, because of the internal conditional check, the email might remain unchanged if the input is invalid.
+
+This creates a lack of **transparency** since there is no explicit indication that the method may not actually alter the
+state if the value is invalid. An action is expected to occur, but an internal implicit logic decision, dictates otherwise.
+
+3. The constructor logic hole
+
+The problem happens by how the setter interacts with the **constructor**. Consider the following scenario:
+
+1. The class is instantiated with `new Usuario(userObjectWithInvalidEmail)`
+
+2. constructor receives a simple string in the email attribute
+
+3. the constructor attempts to call the setter within the constructor
+
+• However, since the setter uses an implicit check, an instance could still be created where the email property is never
+successfully set, potentially leaving it an uninitialized or undesired state if the constructor implementation first sets a
+default/initial value AND THEN calls the setter. This generates the possibility of a user object starting with an invalid
+email or an empty email property
+
+### Conclusion
+
+So in the end of the third version, it is getting a better validation, it does not allow us to go to an inconsistent state,
+but we still have an implicit behavior, there is no "clarity" that this method won't actually be altered in case the value
+is invalid.
+
+And we must acknowledge that we still have incomplete protection and an implicit behavior, which will be used in future
+lessons.
+
+## Lesson 6 - Anemic User #04
+
+We will start by adding a _  before private attributes
 
 
 ### Erros constant
@@ -136,6 +186,44 @@ We defined a constant "Erros" equal to:
   e not the "SENHA_INVALIDA" literal itself
 
   With as const the type of SENHA_INVALIDA HAVE TO be "SENHA_INVALIDA" 
+
+
   
   And now, when throwing an error, we can simply throw Erros.SENHA_INVALIDA and the error will be thrown with that content
+
+## Lesson 7 - Entities and Objects of Value
+
+### What is entity?
+
+The most critical feature of an Entity is its unique identity (or ID).
+
+The identity is what makes the object distinct and is the primary basis for its equality. Two entities are considered the
+same if they have the same identity, even if their attributes (like name or address) change.
+
+The identity remains constant throughout the Entity's lifecycle.
+
+### Continuity through lifecycle
+
+An Entity is an object that has continuity through time, meaning it persists and can change state while still being the
+same conceptual object.
+
+Entities are typically mutable; their attributes and state can change, but the core object and its identity endure.
+
+Example: Inside an `EAD` platform we may have multiple courses, which each one of them has its own id. Eventually, we may
+change the course name, every chapter/lessons — suppose we have a 2015 version and we will update its classes to a new
+updated version — but since the ID remains the same. It continues to be the same course
+
+### Importance to the User
+Entities represent things in the domain that users and business experts care about tracking individually.
+
+The distinction of identity is important to the application's user. If the user needs to know if "this object X is the
+same as the object X I saw yesterday," then it's an Entity.
+
+### What is represents:
+
+An Entity represents a thing that can be tracked and differentiated over time, while a Value Object represents a descriptive
+quality of a thing where you only care about what it is, not which specific instance it is.
+
+## Lesson 8 - Class Pessoa
+
 
