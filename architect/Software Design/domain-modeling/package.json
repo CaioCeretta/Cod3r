@@ -2,12 +2,29 @@
   "name": "domain-modeling",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
-  "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "author": "",
+  "type": "commonjs",
+  "main": "./lib/index.js",
+  "scripts": {
+    "dev": "ts-node-dev -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node/modules src/index.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.11",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "./bin/*",
+    "./lib/*"
+  ],
+  "typings": "./lib/index.d.ts"
 }

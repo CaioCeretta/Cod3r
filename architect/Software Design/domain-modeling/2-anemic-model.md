@@ -107,16 +107,16 @@ fixes each issue.
 
 What bothers the instructor most is having implicit behavior, something happening that isn’t clear to whoever reads or
 uses the code.
-Let's say that we have a password setter and inside the constructor, after receiving the parameters, we call setParameter(value)
-and that setParameter, may have a validation already happening, and  if we try creating an object with an invalid password
-and that password is not null/undefined, since it is optional, the code will call the setSenha, apply the validation of larger
-than 6.
 
-There are other scenarios where a rule depend on other rule, for example, assume that every gmail e-mails are required to
-have an empty password because the access will be made after login with google. If it is an email different, the password
-is required to be filled. In this case, where a validation depends on two attributes, if we add this validation inside the
-setter, it will start being too complicated, because we may still be on the process of setting the attributes and we will
-break the flow because we set a password before setting the e-mail
+For example, if we call setSenha inside the constructor after receiving parameters, and that setter already validates the
+password length, creating an object with an invalid password will immediately trigger validation — even though the field
+is optional.
+
+
+
+There are also cases where validations depend on more than one attribute. Say every Gmail user must have an empty password
+because they log in with Google, while other emails require a password. If we place this kind of logic inside the setter,
+it becomes too complex, since we might still be setting other properties when the validation triggers.
 
 
 
