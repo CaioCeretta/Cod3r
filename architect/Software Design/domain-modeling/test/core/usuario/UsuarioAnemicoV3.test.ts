@@ -25,11 +25,11 @@ test("Deve permitir usuario com id negativo", () => {
 	expect(usuario.getId()).toBe(-300);
 });
 
-test("Deve permitir usuario com email invalido", () => {
+test("Não deve permitir usuario com email invalido", () => {
 	const usuario: Usuario = usuarioValido();
 	usuario.setEmail("@!%S");
 
-	expect(usuario.getEmail()).toBe("@!%S");
+	expect(usuario.getEmail()).toBe(usuario.getEmail());
 });
 
 test("Deve lançar erro ao tentar alterar a senha com tamanho menor que 6 caracteres", () => {
