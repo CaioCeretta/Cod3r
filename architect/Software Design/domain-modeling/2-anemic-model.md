@@ -224,6 +224,7 @@ same as the object X I saw yesterday," then it's an Entity.
 An Entity represents a thing that can be tracked and differentiated over time, while a Value Object represents a descriptive
 quality of a thing where you only care about what it is, not which specific instance it is.
 
-## Lesson 8 - Class Pessoa
+## Lesson 8 - Class `Pessoa`
 
+We will start by continuing in the last step of the anemic class lessons
 
