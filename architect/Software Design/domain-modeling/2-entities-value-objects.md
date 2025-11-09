@@ -509,7 +509,7 @@ modifying their CPF, or others app such as address, and so on.
 Imagine that we want to generate a clone of that `Pessoa` for eventually evolving that `Person` to something new, with
 new updated attributes.
 
-For this we will create a clone method, but some issues may arise with this. If we are going to clone a person, we will
+For this we will create a clone method, but some issues may arise with this. If w are going to clone a person, we will
 need every attribute passed on the constructor.
 
 The strategy picked by the instructor is to create a PessoaProps interface to store the attributes of a person, however,
@@ -531,6 +531,33 @@ our value objects into simpler JS objects. In case we would like to persist this
 In this lesson we grouped every parameter inside one interface, use it on the constructor, and it also makes the conversion
 in both ways easier, since we separate the rich object from the basic attributes through an interface, because in any way
 we need to declare this not only on the constructor, but also in the clone method
+
+## Lesson 24 - `Pessoa` clone
+
+We want to create a new `Pessoa` instance after the current object, and since we are working with immutable model, we
+won't change that object, but we are creating a new instance with altered values.
+
+For cloning, we instantiate a new object, which the properties being spread from the current properties and merging them
+with the new values we just received via the clone method parameters. But why are we merging? Because we want to retrieve
+everything we already have, and merge it with what was passed as new props.
+
+Let's suppose that when cloning we pass only the nome. This means that the new object will be the same as the current one,
+but with a different name. This way we get all the properties without having to replicate each one of them. And that is
+why, inside the interface, every param is optional, because when passing that interface to the clone, we only need to
+pass certain attributes
+
+We could also do the same thing as above by using the props inside the clone as a Partial<PessoaProps>, however, if any
+type is not optional, we may break our rich modeling since we enforce that every attribute is consistent.
+
+An issue that may occur, is during the clone, since when we instantiate a Pessoa, we only used the name and cpf, because
+since every parameter is optional, and an inexistent ID is generated in the Id object value, when cloning, the id won't
+be cloned, and a new id will be generated.
+
+To solve this and make the clone be capable to get the id, even though no id was informed. We can solve by where we
+use `this.props = {...props}` in the constructor, modify it to `{...props, id: this.id.valor }`.
+
+This way we ensure that even if inside the properties we don't receive the Id, we can still put the id generated in the
+instance inside the props attribute.
 
 
 
