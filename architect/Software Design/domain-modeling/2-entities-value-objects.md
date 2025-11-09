@@ -313,6 +313,244 @@ Entities form the core of the model, handling behavior and lifecycle.
 
 Value Objects are the support, describing the Entity and guaranteeing the validity of its crucial attributes.
 
+## Lesson 10 - Validador
+
+This lesson will focus on creating more examples/tests for the `Validador` class.
+
+
+
+Although many time overshadowed by the thinking behind the entities — We put too many things on the entities that could be
+distributed in value objects. The objects of value are a ddd's vital block of construction. Not only to DDD but to domain
+modeling as a whole.
+Examples of value objects are commonly modeled as values such as numbers like (e.g. 3, 10  291,51), text strings (e.g.
+"Hello, world", "Domain-Driven Design") dates and times...
+
+Assume i have a R$50,00 bill and you also have a R$50,00 bill. If we exchange one bill for the other, it won't have any kind
+of harm, because its value its what compounds its entity. Even though they may have a serial number, for us who are using
+the **value** of it, it don´t matter.
+
+Another example is a **CPF**: it has a unique number which is  the value that interest us, we don't care about the ID.
+Another example could be an e-mail. It also has lots of rules, like the CPF, and even though it is a unique element with
+a large set of rules, what matter to us is only the address. We don't want to use this e-mail as an entity, nor to have an
+ID/value to it, we only need the email address.
+
+** Transformative / Game-changing concept
+
+We must make an effort to model using "Value Objects", whenever possible, we should use it instead of entities. Even when
+a domain concept needs to be modeled as an Entity, the entity's project should favor using a value container, in place
+of a container of child entities.
+
+This is, the idea is that inside our entities, we have multiple objects of value instead of having other entities inside
+of it. Value types that measure, describe or quantify things are easier to create, test, utilize, optimize and maintain.
+
+### Problem: 
+
+Let's assume that we have three different classes: Employee, Client and Outsourced, and each of them, share similar attributes
+like `id: string, nome:string` and assume we have a rule for the Employee and for the Outsourced that are equal and the
+client can have a simpler rule.
+  - We won't insert duplicated rules inside the classes. We could create an inheritance and put the rule inside the parent
+  class. But multiple times the rules are not exactly the same and the composition is more interesting than the inheritance.
+
+### Solution: 
+
+We can solve that problem using objects of value, we can create an object that will encapsulate every name rule that will
+be used in any different class.
+The name and id attributes mean absolutely nothing of how a name must behave or how an id must behave. Grabbing a more
+generic scenario, to see how it would be without the VO, would be:
+
+```ts
+  class Pessoa {
+    constructor (
+      readonly id: string,
+      readonly nome: string,
+    ){}
+  }
+```
+
+Now, with VO, instead of having the primitive type `string`, we can
+
+```ts
+  class Pessoa {
+    constructor (
+      readonly id: Id,
+      readonly nome: NomePessoa,
+    ){}
+  }
+```
+
+Inside the types NomePessoa and Id, we encapsulate all the complexity and rules related to these attributes.
+This makes our code more expressive and easier to put the right behavior at the right place.
+
+This replacement that may look simple, at the end it will bring not only a richer model, but also the fact that we will
+be able to ensure that one time the name is instantiated, that name is valid. And this question of data consistency is
+extremely important — If we have an object named id, that object ID is able to ensure that the ID is valid and consistent.
+
+
+## Lesson 11 - `NomePessoa` VO
+
+We will start by creating a value object `NomePessoa`, the reason for it to be NomePessoa and not simply Nome, is because
+a Nome can be of multiple things: a course name, a car name, and each one have its own set of rules. It would'nt make
+sense to generalize the Nome, add something based on its surname and use the same value object on a car.
+ 
+Therefore, it must be also specific. Making it specific also increases the chances of thinking the right way is much
+greater than the chances of thinking in a very generic manner, and end up trying to load  too many responsibilities inside
+something that we can't clearly define its purpose.
+
+Thinking about the NomePessoa, we must first ensure that the name adheres the person name rules and to the possibility
+of adding some behaviors to this class.
+
+### Validations
+
+We know that the class `Validador` consist of many errors we can use to check on every value object, be null checks, undefined
+checks, empty checks, and more. Consequently, we know we are going to have many validations and possible errors. So we
+are going to create a behavior that will combine every validation and give us back not only one error string, but an
+array with all the errors string inside a validation.
+
+## Lesson 12 - Combine Validations
+
+The `combinar` method inside the `Validador` class, will filter every error that are not errors — that are empty, and in
+the end if the resulting array is not empty, it returns the array, otherwise, returns null.
+
+## Lesson 13 - Empty `NomePessoa``
+
+We can start by, on the constructor of the VO, to check whether the name is empty or not, and can also combine every error
+check we want in a single function
+
+## Lesson 14 - `Nome Pessoa`` Tests
+
+Tests to validate valid and invalid names.
+
+Up to now, we are already experimenting how it would be an app modeling, even if we are creating only basic examples, but
+here we notice that we don't need to start a new application with the DB, or the UI with the desired framework. We can
+start by creating the domain model, understanding the scenarios, the actors, the use cases, and we are able to implement
+a big part of the app only using the programming language. Leaving all these decisions aside, and leaving it for later, 
+will make us able to ensure that our business logic is completely uncoupled from technologies because we started by the
+heart of the app.
+
+## Lesson 15 - Testes `NomePessoa`
+
+We start by creating new errors values inside the errors file and creating tests for these possible errors.
+
+**TIP**: We can organize by alphabetical order by using the "Sort Lines" extension
+
+## Lesson 15 - Validation with the `NomePessoa` #01
+
+Lesson dedicated to fix test errors
+
+## Lesson 16 - Validation with the `NomePessoa` #02
+
+Lesson dedicated to fix test errors
+
+## Lesson 17 - `NomePessoa` methods
+
+We can enrich the ov by creating different methods on that type that will return different results, such as methods to
+return the complete name, or only the surnames, only the last surname, and so on. And to it, we make use of JS getter
+to make `get completo(){}` will turn completo to be an attribute of `NomePessoa`
+
+## Lesson 18 - `Id` VO
+
+The instructor prefers to create its own IDs rather letting that task for the DB — Since every DB have its own way of
+generating its own IDs. And the fact that we are going to transform the ID into a value object and it will have unique
+characteristics
+
+For the ID generation, we will use the `uuid` library, even though we are protecting our app from frameworks, some libraries
+as this one, is considered harmless, because it won't generate negative impacts nor undesired coupling.
+
+The ID VO, will have a required `valor` and in its constructor it can be optional. But why? It will be a string, but 
+in case we don't pass a hardcoded 'valor', it will simply generate a new one using the uuid library. And after that 
+generation, we can validate the id after uuid's validate and in case of errors, we will throw an error
+
+It would also be interesting to create a new property `novo` to say if is a new id or an id that was previously generated.
+And this can be useful when we are in the process of creating a new object. If that id was sent in the constructor,
+this means that is an old object.
+
+Its initial value will be the negation of the valor property, meaning that if an id is passed, it will be false, and if not
+it will be true
+
+And now, we can create tests for this VO.
+
+## Lesson 19 - Using the VOs
+
+The instructor likes to create the properties as readonly, and in case we find some use case, we define a function to
+update it or even we can create a behavior to clone a behavior other than altering an existing object
+
+We are defining the attributes as value objects like this: On the properties creation we are saying that id is of type
+Id, and nome is of type NomePessoa, however, on the constructor, we don't know yet if the id or nome the user passes in
+adheres to that Id or NomePessoa, so the constructor receives the primitive inputs (the pure value) that are going to be
+used to create the VO's `Id` and `NomePessoa`. Even though the inputs types are strings, only on the constructor body that
+we instantiate these properties as `new ValueObject(property)`
+
+We notice that at the moment we start dividing to conquer, and having these value objects being implemented so the entity
+becomes leaner, doing what it is really intended to do. We start having the possibility of creating the right validation
+in the right place. We don't need to repeat the person's name validation millions of times.
+
+If we go back to the `Usuario` anemic example, and in its interface, replace the name string type for NomePessoa, we will
+notice that every benefits of what already was implemented inside another class, and use it inside this other class — in
+case everything makes sense.
+
+## Lessons 20, 21, 22, 23  - Creating CPF Value Object
+
+Lessons targeted on creating a cpf value object to validate a given cpf.
+
+## Lesson 24 - Incorporate the CPF VO inside a `Pessoa` 
+
+Now that we created every validation and that all that rich behavior inside that value object, it becomes easy to utilize
+it inside the class, ensuring that every rule a CPF has will be followed, because now, everything is **encapsulated** inside
+that VO.
+
+We can notice that we have the entity `Pessoa` that have three different value objects, and we notice how it is consistent
+and we do not have to worry about specific rules of each attribute.
+
+## Lesson 24 - `Pessoa` props
+
+We notice that we are working with a readonly model, and this is a kind of characteristic that many times is interesting
+to work with. However, at some point, we will have to evolve this model, with the need of updating a person's name or
+modifying their CPF, or others app such as address, and so on.
+Imagine that we want to generate a clone of that `Pessoa` for eventually evolving that `Person` to something new, with
+new updated attributes.
+
+For this we will create a clone method, but some issues may arise with this. If we are going to clone a person, we will
+need every attribute passed on the constructor.
+
+The strategy picked by the instructor is to create a PessoaProps interface to store the attributes of a person, however,
+in the primitive types of the language and not in the VOs.
+
+This interface will have all the properties optional, and by this change, even the tests are going to become more interesting
+since we will not fall on errors like trying to create a user with empty name, for example, because we will now have
+named parameters after an object.
+
+Basically we created an interface just to define all the attributes of this object using the basic types in a way that if
+we eventually need these attributes, we can access them easily. We could even create another attribute `props` which will
+be of the type `PessoaProps`, and in the moment we initialize the object, we use `this.props = props`, and we will have
+access to the properties with the basic types passed to build our rich model, as well as every version of these basic
+types but with objects of value.
+
+Defining the interface, using only the basic types on the params, can also help us, if eventually we have to convert
+our value objects into simpler JS objects. In case we would like to persist this data inside a NOSQL database.
+
+In this lesson we grouped every parameter inside one interface, use it on the constructor, and it also makes the conversion
+in both ways easier, since we separate the rich object from the basic attributes through an interface, because in any way
+we need to declare this not only on the constructor, but also in the clone method
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
 
 
 
