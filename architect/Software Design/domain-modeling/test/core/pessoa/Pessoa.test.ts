@@ -16,7 +16,7 @@ test("Deve lançar erro ao tentar criar uma pessoa com nome vazio", () => {
 
 test("Deve criar uma pessoa válida", () => {
 	const nome = "Caio Ceretta Soares";
-	const pessoa = new Pessoa({ nome });
+	const pessoa = new Pessoa({ nome, cpf: "280.012.389-38" });
 
 	expect(pessoa.nome.primeiroNome).toBe("Caio");
 });
@@ -29,10 +29,22 @@ test("Deve criar uma pessoa válida", () => {
 // 	expect(novaPessoa.nome.completo).toBe("Pedro Augusto Pereira");
 // });
 
-// test("Deve clonar objeto com id alterado", () => {
-// 	const pessoa = PessoaBuilder.criar().agora();
-// 	const novaPessoa = pessoa.clone({ id: Id.novo.valor });
-// 	expect(novaPessoa.id.valor !== pessoa.id.valor).toBe(true);
-// 	expect(novaPessoa.nome.completo).toBe(pessoa.nome.completo);
-// 	expect(novaPessoa.cpf.valor).toBe(pessoa.cpf.valor);
-// });
+test("Deve clonar objeto com nome alterado", () => {
+	const pessoa = new Pessoa({ nome: "Caio Ceretta", cpf: "280.012.389-38" });
+
+	const novaPessoa = pessoa.clone({ nome: "Alex Ceretta" });
+
+	expect(novaPessoa.cpf.valor).toBe(pessoa.cpf.valor);
+	expect(novaPessoa.id.valor).toBe(pessoa.id.valor);
+	expect(novaPessoa.nome.completo).toBe("Alex Ceretta");
+});
+
+test("Deve clonar objeto com id alterado", () => {
+	const pessoa = new Pessoa({ nome: "Caio Ceretta", cpf: "280.012.389-38" });
+
+	const novaPessoa = pessoa.clone({ id: Id.novo.valor });
+
+	expect(novaPessoa.id.valor !== pessoa.id.valor).toBe(true);
+	expect(novaPessoa.cpf.valor).toBe(pessoa.cpf.valor);
+	expect(novaPessoa.nome.completo).toBe("Caio Ceretta");
+});

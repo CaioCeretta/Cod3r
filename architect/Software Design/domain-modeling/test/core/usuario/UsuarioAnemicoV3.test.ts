@@ -1,4 +1,4 @@
-import { Erros } from "@/core/constants/Erros";
+import Erros from "@/core/constants/Erros";
 import Usuario from "@/core/usuario/UsuarioAnemicoV3";
 
 const usuarioValido = () => {
