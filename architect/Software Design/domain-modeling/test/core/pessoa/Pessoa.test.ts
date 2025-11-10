@@ -1,6 +1,7 @@
 import Erros from "@/core/constants/Erros";
 import Pessoa from "@/core/pessoa/Pessoa";
 import Id from "@/core/shared/Id";
+import PessoaBuilder from "@/test/data/PessoaBuilder";
 
 // import PessoaBuilder from "@/test/data/PessoaBuilder";
 
@@ -16,18 +17,19 @@ test("Deve lançar erro ao tentar criar uma pessoa com nome vazio", () => {
 
 test("Deve criar uma pessoa válida", () => {
 	const nome = "Caio Ceretta Soares";
-	const pessoa = new Pessoa({ nome, cpf: "280.012.389-38" });
+	const pessoa = PessoaBuilder.criar().comNome(nome).semId().agora();
 
 	expect(pessoa.nome.primeiroNome).toBe("Caio");
+	expect(pessoa.id.novo).toBeTruthy();
 });
 
-// test("Deve clonar objeto com nome alterado", () => {
-// 	const pessoa = PessoaBuilder.criar().agora();
-// 	const novaPessoa = pessoa.clone({ nome: "Pedro Augusto Pereira" });
-// 	expect(novaPessoa.id.valor).toBe(pessoa.id.valor);
-// 	expect(novaPessoa.cpf.valor).toBe(pessoa.cpf.valor);
-// 	expect(novaPessoa.nome.completo).toBe("Pedro Augusto Pereira");
-// });
+test("Deve clonar objeto com nome alterado", () => {
+	const pessoa = PessoaBuilder.criar().agora();
+	const novaPessoa = pessoa.clone({ nome: "Caio Ceretta Soares" });
+	expect(novaPessoa.id.valor).toBe(pessoa.id.valor);
+	expect(novaPessoa.cpf.valor).toBe(pessoa.cpf.valor);
+	expect(novaPessoa.nome.completo).toBe("Caio Ceretta Soares");
+});
 
 test("Deve clonar objeto com nome alterado", () => {
 	const pessoa = new Pessoa({ nome: "Caio Ceretta", cpf: "280.012.389-38" });
