@@ -7,44 +7,40 @@ export default class UsuarioAnemicoV4 {
 		private _nome: string,
 		private _email: string,
 		private _senha?: string,
-	) {
-		this.setId(_id);
-		this.setNome(_nome);
-		this.setEmail(_email);
-		_senha && this.setSenha(_senha);
-	}
+	) {}
 
-	getId(): number {
+	get id(): number {
 		return this._id;
 	}
 
-	setId(id: number) {
+	set id(id: number) {
 		this._id = id;
 	}
 
-	getNome(): string {
+	get nome() {
 		return this._nome;
 	}
 
-	setNome(nome: string) {
+	set nome(nome: string) {
 		this._nome = nome;
 	}
 
-	getEmail(): string {
+	get email() {
 		return this._email;
 	}
 
-	setEmail(email: string) {
-		Validador.isEmailValido(email);
+	set email(email: string) {
+		if (Validador.isEmailValido(email)) {
+			this._email = email;
+		}
 	}
 
-	getSenha() {
+	get senha() {
 		return this._senha;
 	}
 
-	setSenha(senha: string) {
-		if (senha.length < 6) throw new Error(Erros.SENHA_INVALIDA);
-
+	set senha(senha: string | undefined) {
+		if (senha && senha.length < 6) throw new Error(Erros.SENHA_INVALIDA);
 		this._senha = senha;
 	}
 }
