@@ -1,4 +1,4 @@
-import { Erros } from "@/core/constants/Erros";
+import Erros from "@/core/constants/Erros";
 import NomePessoa from "@/core/shared/NomePessoa";
 
 test("Deve lançar erro ao tentar criar nome vazio", () => {
@@ -7,7 +7,7 @@ test("Deve lançar erro ao tentar criar nome vazio", () => {
 });
 
 test("Deve lançar erro ao tentar criar nome menor que 4 caracteres", () => {
-	expect(() => new NomePessoa("Caio Ceretta")).toThrow(Erros.NOME_PEQUENO);
+	expect(() => new NomePessoa("Cai")).toThrow(Erros.NOME_PEQUENO);
 });
 
 test("Deve lançar erro ao tentar criar nome maior que 120 caracteres", () => {
