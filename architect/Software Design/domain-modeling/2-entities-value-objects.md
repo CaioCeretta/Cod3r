@@ -501,7 +501,7 @@ that VO.
 We can notice that we have the entity `Pessoa` that have three different value objects, and we notice how it is consistent
 and we do not have to worry about specific rules of each attribute.
 
-## Lesson 24 - `Pessoa` props
+## Lesson 25 - `Pessoa` props
 
 We notice that we are working with a readonly model, and this is a kind of characteristic that many times is interesting
 to work with. However, at some point, we will have to evolve this model, with the need of updating a person's name or
@@ -532,7 +532,7 @@ In this lesson we grouped every parameter inside one interface, use it on the co
 in both ways easier, since we separate the rich object from the basic attributes through an interface, because in any way
 we need to declare this not only on the constructor, but also in the clone method
 
-## Lesson 24 - `Pessoa` clone
+## Lesson 26 - `Pessoa` clone
 
 We want to create a new `Pessoa` instance after the current object, and since we are working with immutable model, we
 won't change that object, but we are creating a new instance with altered values.
@@ -559,12 +559,208 @@ use `this.props = {...props}` in the constructor, modify it to `{...props, id: t
 This way we ensure that even if inside the properties we don't receive the Id, we can still put the id generated in the
 instance inside the props attribute.
 
+## Lesson 27 - `Entity`
+
+### Purpose of the `Entity` class refactoring
+
+he goal of this lesson is to create a strong, consistent foundation for all entity objects (like Pessoa, Produto, Pedido,
+etc.) within the system's model.
+
+1. Centralizing Common Entity Behavior (Inheritance)
+
+An Entity in Domain-Driven Design (DDD) is an object defined by its identity (its ID), which remains constant over time.
+Every Entity will necessarily have: 
+
+.An ID (e.g., id: string).
+
+. A set of properties or data it holds (often called props). 
+
+. Common methods, such as a way to clone itself.
+
+Instead of rewriting the ID management, the props storage, and the clone method in every Entity class (like `Pessoa`), we
+create the `abstract Entidade` class to centralize these elements.
+
+And the reasoning to choose composition or entity is basically:
+
+### Inheritance vs. Composition in our model
+
+Our current `Pessoa` class is designed primarily using Composition to handle its specific domain attributes. This
+demonstrates the recommended practice of favoring composition where possible. The refactoring introduces Inheritance fo
+managing common, structural requirements.
+
+### 1. Established Design: Composition ("Has a")
+We are already using Composition for the unique attributes of a Pessoa by incorporating Value Objects.
+
+The Relationship: The Pessoa class "has a" `NomePessoa`, an `Id`, and "has a" Cpf.
+
+### 2. The New Step: Introducing Inheritance ("Is an")
+
+That's an excellent clarification! You are absolutely right to point out that the implementation in the Pessoa class, before the refactoring to extend Entidade, already shows Composition. This is a crucial detail for understanding the gradual introduction of concepts.
+
+The core lesson is about using both Inheritance and Composition where they make the most sense, and your current structure highlights this perfectly.
+
+Here is the revised explanation to emphasize that Composition with Value Objects was already established, and the refactoring is the moment where Inheritance is introduced for structural reasons.
+
+⏳ Gradual Introduction: Composition First
+Your current Pessoa class is designed primarily using Composition to handle its specific domain attributes. This demonstrates the recommended practice of favoring composition where possible. The refactoring introduces Inheritance for managing common, structural requirements.
+
+1. Established Design: Composition ("Has a")
+You were already using Composition for the unique attributes of a Pessoa by incorporating Value Objects.
+
+Rationale: Composition is used because a person is not a name or a CPF; they **have** a name and a CPF. This keeps the
+data encapsulated and enforces domain rules within the smaller, focused Value Objects.
+
+2. The New Step: Introducing Inheritance ("Is an")
+
+The need for Inheritance arises when you realize that every domain model entity, not just Pessoa, but also Produto (Product),
+Pedido (Order), etc. Must share a fundamental structural identity.
+
+• Relationship: A Pessoa "is an" Entidade.
+
+• Rationale:
+
+  1. Code Reusability: The base Entidade class now centralizes the logic for the ID and the management of props, which
+  are common to all entities.
+
+  2. Structural Clarity: It formally defines the fundamental concept that all objects that extend it are considered
+  "Entities" in the system, defined by their unique identity.
+
+The refactoring is a move to isolate the two different concepts: Inheritance for shared structure/identity (`Entidade`)
+and Composition for unique behavior/attributes (`NomePessoa`, `Cpf)`.
+
+### Tests
+
+When executing the test, we will notice that everything works just fine, with the only difference being that when not
+passing the id in the properties, e.g. `const pessoa = new Pessoa({ nome: "Caio Ceretta", cpf: "280.012.389-38" });`, we
+notice that the check if the id is going to be the same after the clone will fail, since a new id will be generated. For
+this case, when cloning we must pass the current props.id to the object, and as second parameter of the object we must
+override the new id that would be created.
+
+### Conclusion
+
+Now we have an `Entity` and that class has an Id and the `Pessoa` will also have the id after the inheritance. Which means
+it receives the an id in its creation and we don't need to define it neither inside `PessoaProps` because we inherit from
+`EntidadeProps` as well as do not need to have that id inside `Pessoa` because the parent sends it by inheritance.
+
+To conclude the lesson is to define an `igualdade` method inside the `Entidade`, we already have a validity check inside
+the Id VO, and we can use the same strategy because the entity equality is associated to the equality of its id, which
+is established after the id.
+
+To define this equality we will make use of these comparisons already created in the ID vo
+
+## Lesson 28 - Clone
+
+We will move the cloning logic from the `Pessoa` to the `Entidade`.
+
+First we move the clone from pessoa to entidade, since every class that implements it, will have the ability to be cloned.
+
+• We change the parameter to the generic type `Props`
+
+And the second thing is that we won´t be able to directly instantiate after the generic type, and we will have to do  the
+following:
+
+  `return new (this.constructor as any)({ ...this.props, ...novasProps });`
+
+We can use `this.constructor` to call the child's class constructor since it will be used inside a concrete class, and when
+we do `this.constructor` it won't call the `Entidade` constructor. Since it calls the constructor of the class being instantiated.
+- Therefore, if it is a new `Pessoa` being created, this.constructor refers to the constructor inside its class.
+
+After this change, we run all the tests and it is still working. This shows how important it is to have a "battery of tests¨,
+because we changed an implementation, replaced its place, and we can continuously do this.
+
+And since this new clone method, is a generic clone, we must assume that inside the concrete class we are creating, it does
+not receive only these parameters, but also other parameters, like a `config?: any`, and we want to send them during the
+construction or cloning.
+
+For this, in the clone method, we can add a second parameter with will be a set of any possible arguments and merge them
+inside the object creation.
+
+Although the `Entidade` is now more flexible by adding the second parameters `...args`, we are still require to satisfy
+the `Props`. But in case we want to pass extra parameters to it, we are able to through the args
+
+### Entity class
+
+We want to create a class `Entidade` and `Pessoa` is an entity, and this is a tip of helping us to choose whether to use
+inheritance or composition.
+
+When defining an entity or abstract class, we can start by providing it its id. Inside the entity we can also provide
+the clone method, although the clone method can belong to a yet more generic class, but we'll add it to the `Entidade`
+class
+
+Inside the shared folder, we create this `Entidade` class as abstract — since we don't want it to be instantiated, only
+classes that implement it can be. and apply it to the `Pessoa` class.
+
+We start by moving the id, and props from `Pessoa` to the class `Entidade`. Define a constructor and use it to instantiate
+those properties. After the props property, we are able to pass the properties from the child element to the parent.
+
+The problem is that there is nothing that enforces or guarantee the presence of the id on the properties, since the props
+is of type any, and we can "appeal" to the use of generics
+
+The generic use is similar to the `CasoDeUso` in the previous chapter. We will create an EntidadeProps for this, and the
+reason why we type the generic, is to narrow the properties options, telling that the properties which will be passed to
+this class, inherit from those props and needs to adhere to them. Now, we even have autocomplete since by the props type
+we already know that there may have an id inside of it
+
+Now we make the class `Pessoa` to extend `Entidade`. And to extend generic, we need to inform it on the <> what is the type of
+`Props`, which is an object that has at least, the id attribute. And it is also interesting that the PessoaProps interface,
+also extend `EntidadeProps` so it is guaranteed that it has the type expected by the generic
+
+## Lesson 29 - `Entidade` clone method tests
+
+Before starting to create new tests, we need to fix some tests.
+
+### Clone `Pessoa` Clone typed any
+
+When we clone a `Pessoa`, we are receiving an `any` typed `Pessoa`, it is a `Pessoa` but ts is not sure.
+
+We can fix this, by saying that it will return a certain type, which is not `Props` but another generic type we will have
+to pass when instantiating a `Pessoa` 
+
+So here at the steps we should follow to make this:
+
+1. In the class `Entidade` define a new argument to the generic that will correspond to the current child being implemented.
+
+e.g. `export default abstract class Entidade<Tipo, Props extends EntidadeProps>`
+
+2. Pass this generic `Tipo` to every method, including as the return type of clone
+
+3. Modify the class Pessoa to say that this `Tipo` we pass to the `Entidade` generic is of the type `Pessoa`
+
+Now, by defining this, whenever we instantiate a child of Entidade, saying that the class itself is the type of `Tipo`, we
+won't have that problem anymore, since that when creating a `Pessoa`, we are indeed creating an object of type `Pessoa`.
+
+We can even see on the tests that the `novaPessoa`, which is created using `pessoa.clone` is of type `Pessoa`
+
+With this test, we could see another use of a generic type, and how the parent entity can call the child constructor
+and even have access to the class being passed
 
 
+## Lesson 30 - `Entidade` tests
 
+This lesson will be dedicated to testing the `Entidade` class
 
+## Lesson 31 - `Entidade` Builder
 
+We will create a data folder inside tests, and define a `PessoaBuilder.ts`
 
+First we start by defining a private constructor that will be called internally after a static method
+
+At the end of the process creation, we will want to create a `Pessoa`. If our objective inside the PessoaBuilder is to
+build a `Pessoa` we will define a build() method and instantiate it with the properties that are part of it
+
+We've already shown a builder example, but for a reminder, a builder works by calling multiple methods in a chained manner
+and at the end, it will call the `build()` to build a Pessoa and this is the objective of the class
+
+One example would be a method exemplo() which its return type is PessoaBuilder and it returns the object itself
+  - This means that once we have a method that returns the Builder — References the object itselF. Once we return the
+  PessoaBuilder, we can do the object chaining and in the end, call the build method 
+
+And the Builder allows us to generate multiple sets of tests and create as many customized methods inside the 
+Builder, which will enable us to create many different types of testing.
+
+Builder is also useful when we have complex data or objects that contain other complex objects inside of it 
+- Let's assume we are treating a course, and this course have chapters that has classes, and  so on.
+-  Inside the curso builder, we call another builder ('ChapterBuilder`) that calls another builder (`LessonBuilder`),
 
 
 
