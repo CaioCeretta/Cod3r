@@ -1,4 +1,3 @@
-import Pessoa from "../pessoa/Pessoa";
 import Id from "./Id";
 
 export interface EntidadeProps {
