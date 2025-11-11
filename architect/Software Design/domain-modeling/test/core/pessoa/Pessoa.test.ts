@@ -3,17 +3,18 @@ import Pessoa from "@/core/pessoa/Pessoa";
 import Id from "@/core/shared/Id";
 import PessoaBuilder from "@/test/data/PessoaBuilder";
 
-// import PessoaBuilder from "@/test/data/PessoaBuilder";
-
 test("Deve lançar erro ao tentar criar uma pessoa com nome vazio", () => {
-	expect(() => new Pessoa({ nome: "" })).toThrow(Erros.NOME_VAZIO);
+	expect(() => new Pessoa({ nome: "", cpf: "" })).toThrow(Erros.NOME_VAZIO);
+	expect(() => PessoaBuilder.criar().semNome().agora()).toThrow(
+		Erros.NOME_VAZIO,
+	);
 });
 
-// test("Deve lançar erro ao tentar criar uma pessoa sem cpf", () => {
-// 	expect(() => PessoaBuilder.criar().semCpf().agora()).toThrow(
-// 		Erros.CPF_INVALIDO,
-// 	);
-// });
+test("Deve lançar erro ao tentar criar uma pessoa sem cpf", () => {
+	expect(() => PessoaBuilder.criar().semCpf().agora()).toThrow(
+		Erros.CPF_INVALIDO,
+	);
+});
 
 test("Deve criar uma pessoa válida", () => {
 	const nome = "Caio Ceretta Soares";
