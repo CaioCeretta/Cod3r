@@ -15,7 +15,7 @@ export default class PessoaBuilder {
 		});
 	}
 
-	static criarListaDePessoas(qtde: number = 10) {
+	static criarLista(qtde: number = 10) {
 		return Array(qtde)
 			.fill(0)
 			.map(() => {
