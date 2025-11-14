@@ -9,8 +9,8 @@ export default class NomePessoa {
 
 		const erros = Validador.combinar(
 			Validador.naoVazio(this.nome, Erros.NOME_VAZIO),
-			Validador.tamanhoMaiorQue(this.nome, 4, Erros.NOME_PEQUENO),
-			Validador.tamanhoMenorQue(this.nome, 121, Erros.NOME_GRANDE),
+			Validador.tamanhoMaiorQueOuIgual(this.nome, 4, Erros.NOME_PEQUENO),
+			Validador.tamanhoMenorQueOuIgual(this.nome, 121, Erros.NOME_GRANDE),
 			Validador.naoVazio(this.nome.split(" ")[1], Erros.NOME_SEM_SOBRENOME),
 			Validador.regex(
 				this.nome,
