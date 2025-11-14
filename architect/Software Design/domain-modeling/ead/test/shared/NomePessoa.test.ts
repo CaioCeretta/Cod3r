@@ -20,7 +20,7 @@ test("Deve lançar vários erros ao tentar criar nome vazio", () => {
 });
 
 test("Deve lançar erro ao tentar criar nome menor que 4 caracteres", () => {
-	expect(() => new NomePessoa("Li Z")).toThrow(Erros.NOME_PEQUENO);
+	expect(() => new NomePessoa("Li")).toThrow(Erros.NOME_PEQUENO);
 });
 
 test("Deve lançar erro ao tentar criar nome maior que 120 caracteres", () => {

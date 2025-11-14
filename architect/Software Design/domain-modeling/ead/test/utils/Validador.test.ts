@@ -35,27 +35,27 @@ test("Deve retornar erro com texto undefined", () => {
 	expect(e1?.codigo).toBe(msgErro);
 });
 
-test("Deve retornar nulo com texto menor que o tamanho maximo", () => {
+test("Deve retornar nulo com texto menor que ou igual o tamanho maximo", () => {
 	const msgErro = "Tamanho menor que o tamanho maximo";
-	const e1 = Validador.tamanhoMenorQue("teste", 6, msgErro);
+	const e1 = Validador.tamanhoMenorQueOuIgual("teste", 6, msgErro);
 	expect(e1).toBeNull();
 });
 
-test("Deve retornar nulo com texto maior que o tamanho maximo", () => {
+test("Deve retornar nulo com texto maior que ou igual o tamanho maximo", () => {
 	const msgErro = "Texto maior que o maximo";
-	const e1 = Validador.tamanhoMenorQue("teste123", 6, msgErro);
+	const e1 = Validador.tamanhoMenorQueOuIgual("teste123", 6, msgErro);
 	expect(e1?.codigo).toBe(msgErro);
 });
 
-test("Deve retornar nulo com texto maior que o tamanho mínimo", () => {
+test("Deve retornar nulo com texto maior que ou igual o tamanho mínimo", () => {
 	const msgErro = "Texto menor que o tamanho mínimo";
-	const e1 = Validador.tamanhoMaiorQue("teste123", 6, msgErro);
+	const e1 = Validador.tamanhoMaiorQueOuIgual("teste123", 6, msgErro);
 	expect(e1).toBeNull();
 });
 
-test("Deve retornar erro com texto menor que o tamanho mínimo", () => {
+test("Deve retornar erro com texto menor que ou igual o tamanho mínimo", () => {
 	const msgErro = "Texto menor que o tamanho mínimo";
-	const e1 = Validador.tamanhoMaiorQue("teste", 6, msgErro);
+	const e1 = Validador.tamanhoMaiorQueOuIgual("teste", 6, msgErro);
 	expect(e1?.codigo).toBe(msgErro);
 });
 
