@@ -9,11 +9,7 @@ export default class NomeSimples {
 
 		const erros = Validador.combinar(
 			Validador.naoVazio(this.valor, Erros.NOME_VAZIO),
-			Validador.tamanhoMaiorQueOuIgual(
-				this.valor,
-				minimo - 1,
-				Erros.NOME_PEQUENO,
-			),
+			Validador.tamanhoMaiorQueOuIgual(this.valor, minimo, Erros.NOME_PEQUENO),
 			Validador.tamanhoMenorQueOuIgual(this.valor, maximo, Erros.NOME_GRANDE),
 		);
 
