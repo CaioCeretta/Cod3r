@@ -372,16 +372,256 @@ has to do with this class
 
 Lesson will be focused on creating tests for the new vo
 
+## Lesson 23 - Aula
+
+We are going to begin working with Aggregates. An aggregate is when we combine multiple elements inside our model to persist
+them in a single manner.
+
+We won't work with persistence, but it will make clear the relationship there will exist between `course`, `chapter` and 
+`lesson`.
+
+In this case, the aggregate root is the Course. When we persist a Course, we also persist its chapters and their lessons
+as part of the same aggregate. Whether this is stored in separate tables, a single table, or a NoSQL document is a
+persistence-modeling decision, not a domain decision.
+
+The folder we will create inside src is the name of the aggregate root, so we start on curso/Aula.ts
+
+In the super call inside the constructor, we pass an object with all the properties, and modify only the ordem to be equal
+to props.ordem or 1. The reason for it, is to ensure that ordem is initialized with a value.
+
+## Lesson 24 - Nome de Aula Builder / Gerador Nome de Aula / Test
+
+We will start by creating an array with multiple classes names and return the names after this array.
+
+The AulaBuilder will be similar to the UsuarioBuilder, with the difference that it will contain a static method to create
+a list of lessons, it will work like this:
+
+1. It receives how many lessons we wish to create via the parameter `qtde`
+2. Creates a local function `aula(i: number)`, this function will:
+  1. Call `AulaBuilder.criar()`, which creates a builder with random values (nome, duracao, videoUrl, ...)
+  2. Calls .comOrdem(i+1), which defines the ordem as i + 1
+  3. calls `.agora()` which builds and returns a final instance of `Aula`
+3. Uses `Array.from({ length: qtde })` to create an empty array of the desired length
+  . Example: `Array.from({ length: 3 }) -> [`undefined`,`undefined`,`undefined` ]
+4. It makes over that array and creates one lesson per position
+  ```ts
+    // criarListaCom(3)
+    [
+      Aula(ordem = 1, ...)
+      Aula(ordem = 2, ...)
+      Aula(ordem = 3, ...)
+    ]
+5. As a summary: each lesson is build using the builder, the order i s sequential starting at 1, the total number of lessons
+is defined by the method argument.
+
+## Lesson 25 - Capítulo #01
+
+This work involved creating the `Capitulo` entity and its related structures. This entity represents a chapter within a
+course and contains a collection of `Aula` entities.
+
+It will have a nome, a ordem, and the lessons representing the lessons of this chapter
+
+The Capitulo entity extends an `Entidade` by passing in the generic.
+
+### Attributes
+
+readonly nome: NomeSimples: Ensures the name adheres to length constraints (3 to 50 characters).
+readonly ordem: Ordem: Manages the chapter's sequential order.
+
+### Lesson Aggregation:
+
+readonly aulas: Aula[]: Stores the lessons.
+
+In the constructor, it maps the incoming AulaProps[] array to an array of Aula instances (props.aulas.map((a) => new Aula(a))),
+ensuring each lesson object is properly instantiated and validated.
+
+## Lesson 26 - CapituloBuilder
+
+CapituloBuilder will be very similar to the other builders, with the only difference that we are going to create a NomesCapitulo
+class to store possible names for that builder. And since we are now working with aggregates and every `Capitulo` has its
+`Lesson`.
+
+Therefore, in the `lessons` attribute of the `CapituloBuilder` it will also invoke the other builder to it
+
+## Lesson 27 - Capitulo Tests
+
+Create tests for the current implemented methods.
+
+## Lesson 28 - Capítulo #02
+
+In this lesson we will implement the duracao method, where we will sum all the lessons duration and return it.
+
+For it, we reduce over the aulas attribute, and their duracao attribute. Our accumulator `duracaoTotal`, will be of type
+Duracao and this mean that it have to return a new instance of `Duracao` and it needs to receive a duracao in seconds
+in its parameters.
+
+Also create getters for quantity of lessons, the first/last lesson, and so on.
+
+Although, there are some other methods we are going to need to work with.
+
+One of them addresses the correct ordering of its data. Because for example
+
+• If we pass the data in a reversed order, such as a lesson with ordem 1, then another lesson with ordem 1, and so on.
+  . Are we going to maintain the order 1 for every lesson of a chapter?
+• By the time we have the rich behavior, and we pass inconsistent data, such as ordem 1 for every lesson, it is important
+that we create this order and put the correct data inside the object. 
+
+## Lesson 28 - Capítulo - Ordenação
+
+In this lesson we will continue to implement the method that corrects the sorting of the lessons.
+We will create this method to run automatically, meaning that we won't need a separate method to explicitly trigger the 
+ordering.
+
+We are also going to create another behavior for rearranging.
+
+The reason for two different behaviors is because the rearranging will be used both now and other behaviors.
+It will receive the current order, and simply assign the new orders, 
+
+• `reatribuirOrdens`: This function will basically get each item on the aulas array and incrementally assign the ordem
+value of the `Aula`, in creation order. This will be used in case we move a lesson X to the third position, and want it
+to be reordered to the initial position.
+
+. ordenarAulas: This function will receive the aula with the AulasProps type and not the method itself, why?
+  . Because we want to order right away, when we receive its properties, and before instantiating the object, we want the
+  aulas array to already be arranged.
+  . This means that if we pass the properties disordered, we will already store inside the `Capitulo` they previously ordered
+  . The method will need to be static because at the time we call the method, the object isn't created yet, meaning that
+  no instance member can be accessed.
+  
+  . Method explanation:
+    - We receive in the parameter aulasProps equal to AulaProps[], map over that aulasProps, and for each `AulaProps` we
+    instantiate a new `Aula` by cloning the current `Aula` with the `ordem` based on the index.
+    - We create a constant aulasOrdenadas and assign to it the aulas.sort(Ordem.ordenar), where Ordem.ordenar is a method
+    that creates the ordering based on the current ordem, see if it is equal, and if yes, it reorders it
+    - In the return those `aulasOrdenadas` are passed as parameter for the `reatribuirOrdens` method, map over the ordered
+    aulas and convert them back to the properties to satisfy the return
+
+
+We now instead of passing the entire props for the constructor, we spread the props, and for the `aulas` it will receive
+`Capitulo.ordenarAulas(props.aulas)`
+
+## Lesson 29 - Capitulo Tests #02
+
+First, in this lesson, we are going to implement tests for new methods, such as the ordering ones, and the ones to retrieve
+the first and last lesson.
+
+## Lesson 30 - Adicionar Aula
+
+We'll start this lesson by creating a new method inside `Capitulo` to add a new class
+
+Inside the aula class we will add the possibility of adding a new `Aula` to this object.
+
+The adicionarAula method will receive the `Aula` itself, and the position it will be placed in.
+
+### adicionarAula implementation
+
+• create a constant novasAulas that will be equal to
+  . is the posicao defined? no, define it in the end of the aulas.array, if yes, it will separate the aulas array in two
+  and we will return an object with:
+    1. 1 will be the aulas spread from the position 0, until the posicao (which is not included)
+    2. the aula itself
+    3. Will start from the position, which is 1 index over the  expected index, until the end
+
+• Create a `aulas` constant and assign to it the result of rearranging the lessons with the new array, and map over it and
+
+• Finally, return clone with the aulas constant
+
+## Lesson 31 - Remover Aula
+
+This method basically filters the aulas array and return every item except the selected one
+
+So the return will rearrange this new array and will return the cloning of these entities
+
+## Lesson 32/33 - Mover Aula
+
+For this method, we will simply remove an `Aula` and insert it back on the given location.
+
+## Lesson 34 - Mover uma posiçao
+
+Now that we have the possibility of moving a lesson to a specified place, we will create two methods so that we can move
+the lesson according do their position in the chapter.
+
+The position is defined essentially by the order we defined — which will impact the index of how the lesson is organized
+inside `aulas` array inside a chapter
+
+### Methods implementation
+
+• moverAulaParaCima: 
+  - Utilize findIndex and `igual` method to find the `posicao`
+  - If its the first one, assign to a const `primeira`
+  - If `primeira` simply return, otherwise, utilize moverAula to move to the desired position
+
+• moverAulaParaBaixo:
+  - Utilize findIndex and `igual` method to find the `posicao`
+  - If it is the last position in the array, assign to a constant ultima
+  - If ultima, simply return, otherwise, utilize moverAula to move to the desired position
+
+## Lesson 35 - Aggregate
+
+When modeling a course, we may have a list of courses, that have a list of chapters, and they have a list of lessons, and
+we imagine that we will send to the database the complete structure. However, at the moment of querying some `Curso`, there
+may have two ways of doing that
+
+1 - Query only the course with nothing, no chapters or lessons, only the Curso itself with its information
+2 - Query a course with its chapters and lessons.
+
+This means there isn't supposed to exist one situation where we query a course's chapter but don't fetch their lessons.
+The modeling also doesn't allow chapter to fetch one without its lesson.
+
+Or we bring a chapter with its lessons, or only a course without chapters and lessons.
+
+Because imagine a scenario where we have 20 courses, and we would like only to show the courses without having to "enter"
+inside of it because the quantity of data it could bring with it, may be to big.
+
+Therefore, at the persistence time, we only have the option of persisting all at once, because a course may be consulted
+dozens of times more than it will ever need to be saved. So we save when we are registering for the first time and after
+that, thousands of people are going to access that course with the same structure, with the difference that some times we
+want to show the course directly and other times, we want to bring the course with its chapters/lessons.
+
+Given this, when persisting a course, we need to consider these scenarios
+
+. Does it make sense for a course, other than having an id, name, details, etc. To have its duration calculated?
+  - We are able to calculate the duration after the chapters and the lessons.
+  - We could have the duration, if we fetched the complete course. 
+. But what if we want to obtain the duration without the need of having the structure loaded? 
+  - Does'nt it make sense for when we save a course, to replicate this information so we can have its duration without the
+  need of loading the whole structure? 
+  - It could be positive, since the duration of a course is something important, something that will eventually want to
+  show, such as a "course card", where it could have a badge containing its duration
+. If we would like to showcase all the courses inside cards containing `name`, `duration`, `quantity of lessons`, `registration
+button`, etc. If we don't have the duration previously calculated, or the other information to build the card. So we are
+able to do this. we are required to bring every chapter/lessons and it would bring with it a heavier load than we desire.
+
+. This is why when consulting a course we should have both options: To create a valid course without the chapters and to
+create a valid course with the loaded chapters, since both scenarios are considered in the application.
+
+## Lesson 36 - Curso
+
+The course is responsible for aggregating and calculating metrics from its chapters, it will initially have two private 
+static methods  to ensure data consistency on its instantiation.
+
+1. `calcularNumerosDoCurso(props: CursoProps)`: This method will be responsible for calculating the total duration and the
+total number of lessons of the entire course by iterating over the provided chapter properties
+  . This method has the two logic implementations
+   - 1. Simplified / pre-calculated mode if !props.capitulos is true. This method checks if the `capitulos` are not provided
+   (the array is null or undefined), the method assumes the values passed directly in the props are the correct, pre-calculated
+   totals. It immediately returns an object containing the duration and classesQuantity from the props, an defaulting them
+   to 0 in case they are missing. This allows the creation of a summarized course record
+   - 2: If chapters are provided, it will resume its execution
 
 
 
+2. `ordenarCapitulos(capituloProps: CapituloProps[])`: This ensures that the chapters are stored in the correct order. It
+first sorts the chapters using the Ordem value object, and then reassign the order, similar to the `Chapter` function.
 
+### Constructor
 
+The constructor initiates the class's properties
 
-
-
-
-
+• Calls super() with modified properties, where `calcularNumerosDoCurso` is used to inject the calculated duration and
+lesson count, and `ordenarCapitulos` will be used to sort the chapters
+• The other properties are assigned to their respective value object. And attributes are instances, we map over it and
+return a new instance of that prop
 
 
 
@@ -439,3 +679,22 @@ Lesson will be focused on creating tests for the new vo
 
   Therefore, a `Usuario` class is certifying that will be we initialized with the defined attributes in `UsuarioProps`,
   and its instance attributes will conceptually correspond to them, but in a more robust format ('Value Objects')
+
+  ### Why do we map over each lesson and returning `a.props`?
+
+• It has to do with two important principles in OOP and functional programming. Immutability and Data representation
+
+1. Role of Capitulo.reatribuirOrdens()
+
+First, let's look at the method you provided:
+
+```ts
+private static reatribuirOrdens(aulas: Aula[]): Aula[] {
+  return aulas.map((aula, i) => aula.clone({ ordem: i + 1 }));
+}
+```
+This method, is designed to enforce immutability:
+
+• **Iteration and Transformation**:  (`.map()`): It uses .map() to create a new array without modifying the original `aulas` array.
+
+• **Creation of New Instances**: (`.clone()`): The use of aula.clone({ ordem: i + 1 }) suggests that the Aula (Lesson) object is an immutable Value Object. Instead of changing the ordem (order) property on the existing instance (which would be a mutation), it creates an entirely new Aula instance with the updated order (i + 1) while keeping all other properties the same.
