@@ -9,7 +9,9 @@ export default class Duracao {
 	readonly segundos: number;
 
 	constructor(segundos?: number) {
-		if (segundos && segundos < 0) ErroValidacao.lancar(Erros.DURACAO_NEGATIVA);
+		if (segundos && segundos < 0) {
+			ErroValidacao.lancar(Erros.DURACAO_NEGATIVA);
+		}
 
 		this.segundos = segundos ?? 0;
 	}
