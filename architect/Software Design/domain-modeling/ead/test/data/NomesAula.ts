@@ -1,0 +1,56 @@
+/** biome-ignore-all lint/complexity/noStaticOnlyClass: <lesson purpose> */
+export default class NomesAula {
+	static aleatorio(): string {
+		const indice = Math.floor(Math.random() * NomesAula.nomes.length);
+		return NomesAula.nomes[indice];
+	}
+
+	static readonly nomes = [
+		"Abstração",
+		"Declarations",
+		"Arrays",
+		"Arrow functions",
+		"Box Model",
+		"Classes abstratas",
+		"Classes",
+		"Configurando o TypeScript",
+		"Decorators",
+		"Destructuring",
+		"DOM",
+		"Encapsulamento",
+		"ES6",
+		"Estruturas de controle",
+		"Estruturas de repetição",
+		"Eventos",
+		"Fetch API",
+		"Flexbox",
+		"Funções",
+		"Funções",
+		"Fundamentos de OO",
+		"Generics",
+		"Grid",
+		"Herança",
+		"HTML e CSS",
+		"Instalando o TypeScript",
+		"Interfaces",
+		"Introdução",
+		"JavaScript",
+		"Map",
+		"Mixins",
+		"Módulos",
+		"Namespaces",
+		"O que é o TypeScript?",
+		"Objetos",
+		"Operadores",
+		"Polimorfismo",
+		"Promises",
+		"Responsividade",
+		"Sass",
+		"Set",
+		"Spread operator",
+		"Template strings",
+		"Tipos avançados",
+		"Tipos básicos",
+		"Tipos de dados",
+	];
+}
