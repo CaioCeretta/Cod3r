@@ -624,13 +624,470 @@ lesson count, and `ordenarCapitulos` will be used to sort the chapters
 return a new instance of that prop
 
 
+## Lesson 36 - Curso - Teste #01
+
+Before the initial tests, we will apply in the Curso entity, a validation to prevent a course to be created with the duration
+set to zero — If it is, we will simply throw an exception.
+
+Create the CursoBuilder and a first basic tests
+
+## Lesson 36 - Curso - Teste #02
+
+We will continue testing the functionalities created
+
+The test to recalculate the duration and lessons quantity when there are chapters, works like this: 
+
+- If we have multiple chapters, even if we have a wrong duration and a wrong quantity of lessons, we still need to be able
+to calculate it correctly. It works as follows:
+
+  1. Initialization (CursoBuilder.criar(10,20))
+    • The static method is called
+    • It creates the initial CursoProps object
+    • The `criar` method creates 10 chapters, each containing 20 lessons
+    • The initial calculation: Total number of lessons embedded in the props is 10 x 20 = 200
+  
+  2. Builder chain (`.comQuantidadeDeAulas(45)`)
+    • The method modifies the internal this.props object of the builder, setting `props.quantidadeDeAulas = 45`
+    • At this points, the props object contains
+      . A list of capitulos, that collectively defines 200 lessons
+      . A redundant property quantidadeDeAulas: 45
+  
+  3. Object Creation (`.agora()`)
+    • When `.agora()` is called, it instantiates the `Curso` object with the props
+    • The `Curso` constructor executes the `calcularNumerosDoCurso` logic
+
+  4. The decisive logic
+
+    • The method checks: 
+      ```ts
+        if (!props.capitulos) { 
+          // ... Simplified/Pre-calculated Mode
+        }
+        // Since props.capitulos IS present, it executes the aggregation logic:
+        const capitulos = props.capitulos.map((props) => new Capitulo(props));
+        const quantidadeDeAulas = capitulos.reduce( // <- THIS HAPPENS
+          (total, cap) => total + cap.quantidadeDeAulas,
+          0,
+        );
+        return { duracao, quantidadeDeAulas };
+      ```
+    
+  Since  the `capitulos` list was present, The `Curso` class ignores the value 45 passed via builder. Instead, it recalculates
+  the total number of lessons by summing the lessons from the 10 provided chapters (10 x 20)
+
+
+## Lesson 37 ~ 40 - Adicionar, Remover, Mover Capítulo
+
+These methods will follow a logic similar to the one used for the Aulas within Capitulos.
+
+## Lesson 41 - Alterar Aula
+
+Assume we want to go through every lesson to do some kind of processing. We will have to go through every `Capitulo` to
+fetch all `Aula`s.
+
+We would like to directly provide all `Aula`s of a course through a getter method.
+
+This getter will make use of a `flatMap`, they work basically by getting each return, that is an array, in the end it will
+concat and generate a single sequential array.
+
+Therefore, by doing `return this.capitulos.flatMap((c) => c.aulas);`, it will go through the capitulos array, map it and
+return a single array with the lessons directly
+
+We can do a similar thing in the process of updating a lesson. Instead of necessarily having to search a `Aula` inside each
+`Capitulo`, then replace that Capitulo inside the `Curso` and return a new `Curso`.
+
+We can create the `atualizarAula` behavior directly inside the `Curso`, and since it has a list of capitulos, we can iterate
+over each one of them and, in case it finds that given `Aula`, replace it with the new one.
+
+## Lesson 42 - Progresso
+
+Every `Usuario` will possess a `Progresso` relationship with a specific course. Placing the Progresso directly inside the
+`Usuario` class is a design choice we make based on necessity. In this case, we've decided to link the Usuario's email
+directly to the Progresso class itself.
+
+The `Progresso` service will be located within the usuario folder. While it could have its own dedicated folder, it's
+uniquely tied to a `Usuario`, yet it will not be part of the Usuario aggregate. The decision to not create an aggregate
+comes from the flow: registering a Usuario is a distinct moment/flow, and managing Progresso is a separate flow. If the
+persistence/flow of data is not intrinsically "connected" and one flow doesn't strictly depend on the other, we avoid
+creating an aggregate, even if they share a folder (like the curso folder structure).
+
+Progresso will function as a service domain and serves as the **introduction** to how we handle events.
+
+Although Progress is "tied" to a user, it's not strictly part of their core flows (like updating an avatar, changing a
+description, and so on). These basic user flows don't have a strong link with the progress flows. Therefore, to ensure
+the code remains explicit, we will create a separate folder within the user domain to store the progress entities.
+
+We will have two progress entities: `ProgressoAula` and `ProgressoCurso`. Crucially, they will both share the same ID as
+the entity they are related to.
+
+### Key Properties
+
+The progress entities will feature two main date attributes: `dataInicio`  and `dataConclusao`.
+
+• `dataInicio`: This starts counting the moment a user accesses a lesson, regardless of whether they finish it or not.
+
+  . `dataInicio` will never be set to zero (or null) if the progress is initialized. It can, however, be updated to a more recent
+  date if the flow requires it (e.g., re-access).
+
+• `dataConclusao`: This is the date of conclusion. If the user "unchecks" the lesson as complete, we can set it back to undefined (or zero). A user is also allowed to mark a lesson as complete even without having entered it.
+
+### Identity and Validation
+
+Instead of letting the value object generate a random ID (like a UUID), we require an ID to be explicitly provided upon
+the creation of a progress entity. This ensures the progress ID is bound to the corresponding `Aula` or Curso ID.
+
+While we currently do not enforce a strict binding to validate if the provided ID is truly the ID of an existing Aula,
+we will ensure a valid ID is provided when the lesson is created.
+
+We will implement this kind of binding/enforcement when we create the service domain responsible for generating the course
+progress.
+
+### Behavior
+
+• We must ensure that a progress cannot be created with a duration **set to zero**, mirroring the constraint on the lesson
+itself.
+
+• The function to trigger when a user "unchecks" an `Aula` as concluded (zerar()) will be immutable. It won't change the
+existing `dataInicio` but will define `dataConclusão` as undefined.
+
+## Lesson 43 - ProgressoAulaBuilder / Tests
+
+Similar to other lessons.
+
+## Lesson 44 - Progresso do Curso #01
+
+A `ProgressoCurso` must be bound to a given `Usuario`. For this, the properties will receive `emailUsuario?` (unique to
+each `Usuario`) and the `nomeCurso`.
+
+### Domain-Centric Modeling vs. Persistence
+
+We often instinctively think about links via primary keys and foreign keys. **However, the modeling we are creating is
+for the domain, not for a specific database or persistence layer**.
+
+Inside the domain, it makes complete sense that the **name** of the course is associated with its progress, and not
+necessarily its ID. The translation layer from our domain model to a relational database (where IDs and foreign keys are
+mandatory) is where that mapping should occur.
+
+Of course, we can, eventually, insert information into the model that will assist the translation layer (e.g., adding a
+technical ID). But the initial idea is to **not** burden our domain model with the entire weight of primary keys and
+foreign keys. We start with a functional model, and if necessary, we can add more specific, technical information later
+to help with the persistence mapping.
+
+### `ProgressoCurso` Implementation Details
+
+• It requires a non-empty array of aulas (`ProgressoAulaProps[]`) for validation: `Erros.PROGRESSO_CURSO_SEM_AULAS`.
+• The `emailUsuario` and `nomeCurso` are initialized using their respective Value Objects (Email and NomeSimples).
+• The data (creation/start date) defaults to new Date() if not provided.
+• The aulas are mapped from ProgressoAulaProps to an array of ProgressoAula entities.
+• `aulaSelecionada` is determined by matching the ID or defaulting to the first lesson in the array.
+
+## Lesson 44 - Progresso do Curso #02
+
+This lesson will be focused on creating getters. Getters won't cause any alteration inside the class, it will be used just
+so we have some important information that we do not have looking directly to the attributes. For example:
+
+• concluido: In the attributes, we are not able to directly infer if a `Curso` is concluded or not using its progress,
+but we are able to create a getter so we can find it in a very simple way.
+  - We know if it is concluded if all of its `Aula`s are concluded.
+
+• duracaoTotal: This getter iterate over all the lessons of a `Curso` and return the sum of their `duracao`.
+
+**Reduce reminder**: The type of the second reduce parameter, is how our accumulator will be typed, so if we type it as an
+object with given attributes, the reduce return must be an accumulator adhering to that object. In case it is a new instance
+of a class, we are  also able to use this class methods through the reduce
+
+• duracaoAssistida: This method returns the duration of the lessons indeed watched by the User
+
+• percentualAssistido: method that will divide the `duracaoAssistida` in seconds with the `duracaoTotal` in seconds, then,
+it returns that value * 100
+
+## Lesson 45 - Progresso do Curso #03
+ 
+Although in the `Aula` we created some processing to initiate it, conclude it, and set it to zero. Even if we get an `Aula`
+and call one of these methods., We still would have to replace that `Aula` inside `ProgressoCurso` to have  a new instance
+of `ProgressoCurso` with that lesson initialized/concluded/reset.
+
+Therefore, it is interesting so we directly expose these methods inside the `CursoProgresso` so with a single call we are
+able to start an `Aula` passing its ID, and it will return an updated `Curso` progress, for it, we create to methods
+
+• iniciarAula - Receives the aulaId, iterates over the aulas until it finds the given one, if yes, starts the lesson and
+return a clone of aulas with a new Date that reflects the last update of the progress
+
+• concluirAula - If we try to conclude an aula, but the `Curso` is already concluded, it simply returns, otherwise, it calls
+the concluir() method inside ProgressoAula class and return a clone of the aulas with a new date.
+
+## Lesson 46 - Progresso do Curso #04
+
+This lesson will implement new methods
+
+1 - `iniciarAulaAtual`: calls `iniciarAula` by sending the current selected aula.id
+
+2 - `selecionarAula`: Receive a lesson in its parameters and clones the current object and passes the selected class as
+the `aulaSelecionada`
+
+3 - `selecionarAulaAtual`: This methods checks what is the current index of the current lesson being displayed, and will
+automatically set the selecionarAula with the next index
+
+4 - concluirESelecionarProximaAula: This method will basically concat the one where we conclude a lesson and move to the
+next one.
+
+## Lesson 47 - Progresso do Curso - Testes
+
+In the `ProgressoAulaBuilder` add the ability of creating a list of AulaProgresso
+
+And create a builder for the CursoProgresso.
+
+Implement similar to the lest ones
+
+## Lesson 48 - Risco de Fraude #01
+
+Assume a `Curso` has a timeline, and in that timeline, we have points in it, meaning that a  `Usuario` is watching a class.
+Which is exactly what `Progresso` monitors and stores so we have a notion of what is happening.
+
+Suppose that the lesson that is being watched is a lesson of 10 minutes of duration — meaning that the user stays at that
+lesson for that period of time. 
+
+But a certain point, a Usuario may have a watched a 10 minutes class in five minutes. ALthough it may not be suspicious
+since the lesson could have been watched in 2x, we may start to notice suspicious behavior on every other lesson and
+creates logics to it.
+
+Let's say that there are 8 lessons, 1 lesson is a bit suspicious, but it keeps getting more and more from one class to
+the other. And we start marking them as 1 (suspicious) and 0 (not suspicious). By the end, we have this set of suspicious
+check, and by summing all array values, we may get to 7 from an interval of 8 items. 
+
+So basically we will get this idea of time, and using the dataInicio we will have an idea of how long a user took from
+going to one class to the other. And after this value, we can determine if the user was maybe doing something wrong or
+not.
+
+Another scenario would be a user that is doing some course that he already knows a large amount of the displayed content
+and he can simply checks the lessons are concluded (without even entering them). This would not be a suspicious behavior.
+
+## Lesson 48 - Risco de Fraude #02
+
+Implement the method that determines suspicious behaviors due to the small interval of one class to the other.
+
+We need to make one question every time we implement a new behavior that is:
+**What data will i be using in this behavior and whose data is it?**. Following this question, that are some scenarios
+
+1. I will use three different entities
+  - In this case, we create a domain service that will receive these three entities and do a processing for all this data.
+2. In the risk of fraud code every data is present within the `ProgressoDoCurso`, which would not make sense for us to
+  implement it outside the course
+
+Given this, ProgressoCurso we define a new method named `riscoDeFraude`
+
+## Lesson 49-50 - Progresso Curso Teste
+
+Continue creating tests
+
+## Lesson 51 - Events - Theory
+
+Events are linked to the **observer** pattern.
+
+The DDD book basically says to us
+
+Use a domain event to capture an occurrence of something that **happened** inside the Domain. That is an extremely powerful
+modeling tool. After mastering the use of domain events, we will be addicted and ask ourselves: "How was i able to live
+without it until now?"
+
+Every domain has significative events, such as an e-commerce website, such as:
+• "finalized_purchase": significative event that can fire many other processes like the credit card communication.
+• "completed_payment" also can be one
+
+**Strapi** has webhooks that consist of all these events for us to track them.
+
+Applying this to our `Curso` would basically be something like
+
+• User finished course - This event would trigger a process to generate a certificate
+
+This way, we could start working with the asynchronism, we won't need to couple every necessary code, they don't need to
+be executed at that specific time but by firing an event, and having other parts of our code, interested in them, we can
+make several codes listen to these events and may process something in answer to something that just happened.
+
+Example:
+
+```ts
+class CursoConcluido extends Evento {
+  private constructor(
+    cursoId: Id,
+    usuarioEmail: Email,
+    data: Date
+  ) {
+    /* ... */
+  }
+  // ...
+  }
+``` 
+
+That event could be put in a message queue and from this queue, having several independent processing that may be execute
+for what they are interested in, and these events can lead to other events and so on.
+
+### Evento - Curso Concluido
+
+Define an `EventoDominio` interface, which will simply have a `data` and every other event will extend it
+
+**Observation**: Events don't implement business rules, they are objects that contain data and point to the event that
+just happened.
+
+Inside folder `progresso` we define a new event named `CursoConcluido`
+
+An event is basically an object that have data  and this data is enough for us to understand how this event happened or
+of whom this event is talking about.
+
+And the event that has in the constructor, only a date, an `idCurso` and a `emailUsuario`, we already have all the necessary
+information to fire the event and all its related events
+
+## Lesson 52 - Padrão Observer
+
+For understanding this pattern we can think this example
+
+• Assume are having a surprise birthday scenario, let's say we have a street, in the street a building where the party
+will happen, and inside the building's apartment the birthday boy girlfriend is looking through the window to notice
+if the man is arriving, and at the doorway there is a doorman.
+
+• No observer example
+
+Let's suppose that many cars are traversing through the street and the girl is OBSERVING if the car is arriving.
+
+In the first scenario, that doorman is not involved in the history, only the girl is on the window on an "occupied wait"
+monitoring the street if she tells everybody to hide and turn off the lights. Waiting until the event happens, and as soon
+as the man arrives, she goes and "fires" every process for the birthday to happen
+
+In this case, we can notice what would be a pattern without an **observer**, the interested in the event is the girlfriend
+and was occupied waiting the event to happen — car arriving, and then firing all the processing of party organization.
+
+That occupied waiting, inside the code, could be a while loop that executes until finally the event happen.
+
+• With observer example
+
+In this scenario, in addition to the girlfriend's interested in the arrival, we also have the doorman observing if he
+arrives.  
+
+In order for this pattern to work, the first step is the **registration**, which is the act of the interested to make a
+call for the doorman to tell him to **observe** and inform us when the event happen.
+
+The doorman is the subject, the person that has logistically conditions of detecting the event. Let's say that the building
+has an entrance where all the cars arrive and he is the only person able to monitor it.
+
+We can have more than one observer, in addition to the girlfriend, let's say that the building manager lives in an intermediate
+apartment between the doorway and the rooftop, he knows that there will be a surprise party, is worried in relation of noises
+and troubling other people, and he can also make a call for the doorman asking when the man arrives to monitor the noises.
+
+Both the processes of the manager and the girlfriend registering with the subject (doorman), is the first step.
+
+Now assume that it is 10:15pm the car just arrived and the subjected detected the arrival of the event. What will he do?
+He will in the step 2, to notify the interested people (observers) that the event happened and each one of them may do
+different processing according to their interests.
+
+Other events like mouse click, mouse move, some key have been pressed, all of these are events that we should monitor and
+in addition to the time they happened and each event will have their own characteristics.
+
+## Lesson 53 - Observador Evento Domínio
+
+Lesson will be focused in creating an interface for the observers with a single behavior that will be called when the event
+has happened.
+
+Every observer will implement this interface, meaning that when an event happen, the method eventoOcorreu will be invoked
+passing the event and its date.
+
+This method will hold all the necessary logic that will happen in response to the event.
+
+## Lesson 53 - Registrando Observer
+
+We will first allow the register of an interest after the observers. So inside the ProgressoCurso class, that will be the
+class capable of monitoring the progress state change to detect when the course was concluded. Inside of it, it will have
+a list of observers and call every observer every time the event conclusion happens.
+
+Therefore, in the constructor, in addition to the props, we are going to add an `observadores` parameter. this observadores
+will be of type ObservadorEventoDominio, which will be specific to the event `CursoConcluido`, and receive an array of
+observers in that constructor.
+
+Every time we are cloning that object, we now need to the observadores that are already instantiated in the class. Because
+there is no sense of cloning an instance and lose all the registered observers.
+
+Define a new method registrar, which will receive an observer and return a new instance of ProgressoCurso with a registered
+observer
+
+Now we need to define this evento and will notify every registered observer inside that clas. 
+
+## Lesson 54 - Notificar Observadores
+
+Create a method responsible for creating the event and call every registered observer so that we can pass the event for
+these codings.
+
+Here we define a constant evento and assign to it a new object CursoConcluido by passing all the necessary information
+
+The notifying flow is basically this, creating the event and call the observers, but the notificarConclusao function can
+only be called if we have a way of detecting if the event happened, we are not interested in calling it all the time. We
+want an intelligent way of detecting if it happened in that moment so we don't have to call this method in an improper
+form.
+
+## Lesson 55 - Detectar conclusão do curso
+
+For this check, we will use the dataConclusao property. Inside the super arguments, we are going to inform a new argument
+`dataConclusao` that will be equal to the method calcularDatConclusao return. This dataConclusao is not what we received
+in the constructor `props`, but what was generated and passed to the super class.
+
+With this we already have the code to  correctly define the dataConclusao. But we will have to fire the notificarConclusao
+method and how are we supposed to know if the curso has just be concluded?
+
+We will have to confront two dates, check if the date passed in the constructor props is null and the date passed to the
+super is set. It means that the curso has just been concluded.
+
+To fire this notification we will define a constant inside the constructor named `acabouDeConcluir`, which will consist
+of the return of that comparison. If the return is true, in the constructor itself we call the method to fire the event
+and notify the observers
+
+## Lesson 56 - Progresso do Curso - Teste #03
+
+Implement tests
+
+## Lesson 57 - Criar Progresso Curso #01
+
+CriarProgressoCurso will be a domain service
+
+Assume that in a given day a user accessed the platform and started watching a lesson, this mean that a new progress will
+have to start with that e-mail, the service will consist of these methods
+
+• novo(email: string): ProgressoCurso -> create a new progress after a user email
+• sincronizadoCom(progressoAtual: ProgressoCurso): ProgressoCurso -> update a progress on top of another course. It will
+generate a new ProgressoCurso considering all the new lessons and all the updates, such as duration change, progress change
+and so on.
+• private criar(progressoAtual?: ProgressoCurso, email?: string) -> creates a progresso constant equal to a new empty
+ProgressoCurso and return that progresso
+
+`novo` returns that criar method by passing the e-mail, and sincronizadoCom will be the inverse.
+
+inside criar we will start to define the ProgressoCurso
+
+## Lesson 58 - Criar Progresso Curso #02
+
+We are going to start to implement the criar method
+
+The criar method receives the progressoAtual, meaning we will have access to all the ProgressoCurso instance information,
+and the user e-mail
+
+After id we define a new constant `progresso` where we create a new ProgressoCurso instance with all the existing information.
+This new progresso curso may return if the course was completed, and if there is a current selected `aula`.
+
+In the aulas.array we do the following
+
+  • First of all, we have to consider that an aula may have been modified/updated, so let's say that an old class had the
+  `duracao` of 20 minutes and now the new one has 25, we need to
+    1. Create a constant `progAula` where we check whether the user has a progressoAtual.progressoAula on that `Aula`
+    2. create a constant `aulaAlterada` where we check if the duration persisted in the current progresso, is the same
+    on the current course `Aula`, meaning that it will check if it remain correct.
+    3. In case it is different, push into an AulasAlteradas array  that we defined inside the criar method
+    4. return a new aula with the properties defined in the progressoAtual object
+    5. After the mapping, we create a new `cursoFoiModificado` constant which will check if every class remains with the
+    same duration - if not, clone a new object determining that the `dataConclusao` property is undefined.
 
 
 
+## Lesson 59 - Criar Progresso do Curso #03
 
-
-
-
+Lesson focused on the tests
+      
 ### Does the `Entidade` parent ensures that its children have their properties as attribute?
 
 1. The role of the interface (UsuarioProps)
