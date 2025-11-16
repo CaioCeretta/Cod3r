@@ -1,0 +1,14 @@
+{
+  "code-runner.executorMap": {
+    "javascript": "node",
+    "typescript": "npx ts-node"
+  },
+  "material-icon-theme.folders.associations": {
+    "core": "rules",
+    "external": "tools",
+    "ui": "animation",
+    "usuario": "admin",
+    "service": "ci",
+    "adapter": "pipe"
+  }
+}
