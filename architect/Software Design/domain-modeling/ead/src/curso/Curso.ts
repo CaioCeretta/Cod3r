@@ -1,7 +1,10 @@
+import { Erros } from "@/constants/Erros";
+import ErroValidacao from "@/error/ErroValidacao";
 import Duracao from "@/shared/Duracao";
 import Entidade, { type EntidadeProps } from "@/shared/Entidade";
 import NomeSimples from "@/shared/NomeSimples";
 import Ordem from "@/shared/Ordem";
+import type Aula from "./Aula";
 import type { CapituloProps } from "./Capítulo";
 import Capitulo from "./Capítulo";
 
@@ -33,6 +36,79 @@ export default class Curso extends Entidade<Curso, CursoProps> {
 		this.capitulos = this.props.capitulos!.map((c) => new Capitulo(c));
 		this.duracao = new Duracao(this.props.duracao);
 		this.quantidadeDeAulas = this.props.quantidadeDeAulas!;
+
+		const { duracao, quantidadeDeAulas } = this.props;
+		if (duracao! <= 0) {
+			ErroValidacao.lancar(Erros.CURSO_SEM_DURACAO, duracao);
+		}
+
+		if (quantidadeDeAulas! <= 0) {
+			ErroValidacao.lancar(Erros.CURSO_SEM_AULAS, quantidadeDeAulas);
+		}
+	}
+
+	atualizarAula(selecionada: Aula): Curso {
+		const capitulos = this.capitulos.map((c) => {
+			const aulas = c.aulas.map((a) =>
+				a.igual(selecionada) ? selecionada : a,
+			);
+			return { ...c.props, aulas: aulas.map((a) => a.props) } as CapituloProps;
+		});
+
+		return this.clone({ capitulos });
+	}
+
+	removerCapitulo(selecionado: Capitulo): Curso {
+		const outrosCapitulos = this.capitulos.filter((c) =>
+			c.diferente(selecionado),
+		);
+		const capitulos = Curso.reatribuirOrdens(outrosCapitulos).map(
+			(c) => c.props,
+		);
+		return this.clone({ capitulos });
+	}
+
+	moverCapitulo(selecionado: Capitulo, posicao: number): Curso {
+		return this.removerCapitulo(selecionado).adicionarCapitulo(
+			selecionado,
+			posicao,
+		);
+	}
+
+	moverCapituloParaCima(selecionado: Capitulo): Curso {
+		const posicao = this.capitulos.findIndex((c) => c.igual(selecionado));
+		const primeiro = posicao === 0;
+		return primeiro ? this : this.moverCapitulo(selecionado, posicao - 1);
+	}
+
+	moverCapituloParaBaixo(selecionado: Capitulo): Curso {
+		const posicao = this.capitulos.findIndex((a) => a.igual(selecionado));
+		const ultimo = posicao === this.capitulos.length - 1;
+		return ultimo ? this : this.moverCapitulo(selecionado, posicao + 1);
+	}
+
+	adicionarCapitulo(capitulo: Capitulo, posicao?: number): Curso {
+		const atuais = this.capitulos;
+		const novosCapitulos =
+			posicao !== undefined
+				? [...atuais.slice(0, posicao), capitulo, ...atuais.slice(posicao)]
+				: [...atuais, capitulo];
+		const capitulos = Curso.reatribuirOrdens(novosCapitulos).map(
+			(a) => a.props,
+		);
+		return this.clone({ capitulos });
+	}
+
+	get aulas(): Aula[] {
+		return this.capitulos.flatMap((c) => c.aulas);
+	}
+
+	get primeiroCapitulo() {
+		return this.capitulos[0];
+	}
+
+	get ultimoCapitulo() {
+		return this.capitulos[this.capitulos.length - 1];
 	}
 
 	private static calcularNumerosDoCurso(props: CursoProps) {
