@@ -1,5 +1,3 @@
-function somar(a: number, b: number) {
-	return a + b;
-}
+import MenuPrincipal from "./external/ui/menu/MenuPrincipal";
 
-console.log(somar(1, 2));
+new MenuPrincipal().renderizar();
