@@ -152,3 +152,106 @@ This repositorio will also be injected on the use case constructor.
 Since our concrete class is a in-memory database, a way for it to share every persistence made by the use case and not reset
 every time, is to define a static property equal a new instance of the database, and when injecting the Repositorio to the
 use case, utilize this static instance attribute
+
+  ## Lesson 17 - User Login (Login Usuário)
+
+In usuario/service create a new LoginUsuario.ts class that  implements a CasoDeUso.
+
+define a constructor that injects the dependencies and accesses these interfaces methods
+
+Define the comparar senha inside the implementation
+
+Retrieve the user based on its email and compare the password with the hashed password
+
+### semSenha(): Usuario
+
+We should never return a user with the password when logging in. So, to prevent this, we create a semSenha method that
+returns a clone of that instance, but passing the senha as undefined. Being able to clone an instance and choose if we want
+to pass a property as undefined is the primary reason for the optional properties
+
+`senha?: string` means it can be undefined, string, or empty
+
+`this.senha = props.senha ? new SenhaHash(props.senha!) : null` comply with this behavior, so our class already
+predicts that this may happen
+
+### External UI Method
+
+In the externa folder, where we are creating means to access the use cases via the terminal.kit add a new file for
+the login
+
+  ## Lesson 18 - User Session (Sessão do Usuario)
+ 
+Inside the utils folder create a new Sessao.ts file
+
+For the Session, we will need to store only their properties but no a `Usuario` itself
+
+Define the usuario as a private attribute, and create methods to initiate a add the user to that session, get the user
+and its sessions
+
+The iniciar method will assign the user received as parameter to the session private attribute
+
+After the login is made, we utilize the Sessao.iniciar method
+
+
+  ## Lesson 18 - List Users (Listar Usuarios)
+
+  Use case that return us a list of users. Follow the same pattern as the ones before.
+
+  Create a new behavior inside the terminal utility for listing a table.
+
+  Object.keys(dados[0]), will get all the keys from the first item array
+  as a second parameter of terminal table, map over the dados and return and over each data utilize the Object.values(d)
+
+  instead of returning to the table a full user, we can utilize only the `Usuario` properties we want
+
+  ## Lesson 19 - Product (Produto)
+
+Inside the `Usuario` folder, we created separated it in the model, the providers, which hold the interfaces `ProvedorCriptografia`
+and `RepositorioUsuario` and the service
+
+However, in the external ui folder, inside `usuarios`, we are directly using the core layer, which isn't the best practice.
+
+For the entity `Produto`, we will make use of the adapters layer to deal with this translation and separate more the concerns.
+
+  ## Lesson 20 - Product Repository (Repositório Produto)
+
+
+  similar to the UsuarioRepo
+
+
+  ## Lesson 21- Register Product (Cadastrar Produto)
+
+CadastrarProduto will be the first use case for product.
+
+Use the create the ProdutoRepo concrete implementation inside `external/db` folder
+Since cadastrarProduto use case, receives a produto:Produto, we have to 
+
+  ## Lesson 22 - Fetch Products (Obter Produtos)
+
+- For this use case we won't have any input parameter, and for the output, we will return an array of `Produto`.
+- Define a repo in attribute in the constructor
+- return repo.obterTodos() method
+
+in the terminal kit use case call
+
+- no need for creating any required field
+- instantiate the use case, repository implementation instance singleton
+- call method
+- return the produtos in the `tabela`
+
+## Lesson 23 - Interface Adapters (Adaptadores da Interface)
+
+The idea of having these adapters, is not running the risk of bringing an unnecessary complexity for the GUI, and they
+should only be inside a use case and the model.
+
+The idea of the "green layer" is creating a "protection barrier" so that we can evolve our use cases/model without these
+evolutions directly impact our gui.
+
+There may be an advantage of the graphical interface accessing the use cases/models, because it will minimize the complexity
+by not having to implement another layer, but on the other hand, we end up creating a bigger coupling level.
+
+• One example would be:
+  . We have our "listarProdutos" use case, and in this moment, it is showing the price in the number format, but what if we
+  would like to show it in "BRL"? Since we have access to the model, we can modify the preco.valor to preco.formatado.
+  
+
