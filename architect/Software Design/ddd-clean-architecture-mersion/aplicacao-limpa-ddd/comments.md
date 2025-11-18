@@ -6,4 +6,5 @@ of all the rest.
 
 ## Lesson 3~5 - Configuring
 
-We will start by configuring a turborepo project
+We will start by configuring a turbo-repo project
+Create a new nest app inside apps flder
