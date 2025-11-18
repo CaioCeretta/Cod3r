@@ -8,7 +8,7 @@
     "external": "tools",
     "ui": "animation",
     "usuario": "admin",
-    "service": "ci",
+    "service": "tools",
     "adapter": "pipe"
   }
 }

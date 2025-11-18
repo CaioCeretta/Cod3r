@@ -18,6 +18,10 @@ export default class Usuario extends Entidade<Usuario, UsuarioProps> {
 		super(props);
 		this.nome = new NomePessoa(props.nome!);
 		this.email = new Email(props.email!);
-		this.senha = new SenhaHash(props.senha!);
+		this.senha = props.senha ? new SenhaHash(props.senha) : null;
+	}
+
+	semSenha(): Usuario {
+		return this.clone({ senha: undefined });
 	}
 }

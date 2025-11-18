@@ -252,6 +252,179 @@ by not having to implement another layer, but on the other hand, we end up creat
 
 • One example would be:
   . We have our "listarProdutos" use case, and in this moment, it is showing the price in the number format, but what if we
-  would like to show it in "BRL"? Since we have access to the model, we can modify the preco.valor to preco.formatado.
-  
+  would like to show it in "BRL"? Since we have access to the model, we can modify the preco.valor to preco.formatado and
+  we will show it on gui normally
+  . But the problem is, even though it is simpler, it generates a coupling between the value object and the use case call.
+  and when we start to bring the model to the gui, the chances of skipping the use cases and defining the flows directly
+  in the graphical interface and start to lose visibility of what are the flows that were really implemented in our app.
+  . We will think like: "Ok, i have access to the model, to the domain services, and the value objects", we will fatally
+  get all these elements and directly put them inside our graphical interface. And by doing this, we will stop implementing
+  the use cases and of having these flows visibility by mixing everything.
+  . And all of this can be solved using interface adapters.
+
+• To help with this, was introduced the interface adapters interface, essentially to create a barrier between the external
+(e.g. GUIs) with the use cases and the model. When we talk about creating an extra layer, creating a clearer separation, 
+it will bring a cost in terms of codes, since we will have new classes, that there will be more rules to be followed, and
+so on. 
+• But even though we will increase its complexity, there are several benefits. Primarily at long-terms. If we don't have 
+the possibility of bringing the whole model power, to our UI, we will depend more on the use cases, creating better mappings,
+separating the flows, implementing them at the right places and consequentially, making our UI as simple as possible.
+
+
+## Lesson 24 - Adapter Layer / Product DTO
+
+DTO means **Data Transfer Object**, this pattern basically extract all the model intelligence and put inside a DTO only
+the data that interests us for a given GUI. DTOs can also be specific DTOs, assume we have a specific interface that is a
+report of all products of the company — we would then have a DTO responsible for transferring the data to this GUI.
+We don't have the necessity of creating a single DTO for each interface of our app, it would be costly, but eventually some
+interfaces may have specific needs to them.
+
+### Core Model vs The DTO
+
+Our domain entity's properties are defined by the interface $\text{ProdutoProps}$. This interface has a very clear,
+foundational purpose:
+
+• ProdutoProps Purpose: To define the raw, simplest, and required attributes for a `Produto` entity (e.g., id, name, price,
+in their raw formats like 'string' or 'number'). These properties are the input necessary for the `Produto` constructor
+to perform all business validations and instantiation. It represents the persistent, validated state of the entity
+
+The ProductDto has different purpose, focused on display
+
+• `ProductDTO` Purpose: To prepare and structure data for consumption by a specific GUI or external client. It's a view
+or projection of the model data, tailored to a use case (e.g., a product report or a checkout screen).
+
+### Why extending ProdutoProps is not a DRY violation?
+
+We design the ProductDTO to extend ProdutoProps (or use TS utility types like Pick or Omit on it) to maximize code reuse
+and maintainability.
+
+Once we pass the `ProdutoProps` into the constructor, and it passed by all the validations and created a product, it means
+that all the data we passed, are correct and adhering our apps business rules.
+
+• Reusing the Base Definition: By extending ProdutoProps, the DTO inherits the base fields (id, nome, preco) without 
+redundant re-declaration. This is the essence of adhering to DRY, if a base field changes, the DTO's inherited structure
+updates automatically.
+
+• Adding values, not duplicating: The DTO's value comes from its ability to introduce presentation-specific attributes,
+that are unnecessary or inappropriate for the core domain model. Like totalizers for reports, formatted data, formatted
+price, and so on.
+
+The DTO is not a duplicate definition, it is a specific, improved contract built on top of the necessary domain attributes,
+ensuring flexibility for the presentation layer without polluting the stability of the domain model
+
+
+## Lesson 25 - Adapter Layer / Controller
+
+Controllers act as the entry point and adapter layer between the outside world and our application's core business
+logic
+
+### What they do?
+
+1. Receive/Translate Input: They accept raw input (e.g., HTTP request body, query parameters, command arguments). 
+2. Instantiate Use Case: They initialize the appropriate Use Case (e.g., ObterProdutos).
+3. Call Business Logic: They pass the necessary data to the Use Case's execution method.
+4. Format Output (Adaptation): They take the result from the Use Case (which is often a core domain entity) and map it
+to a format suitable for the outside world (e.g., a DTO or a specific JSON structure).
+
+Controllers should be used whenever we need to translate an external request into a call to a Use Case and translate the
+Use Case's result back into an external response format.
+
+## Lesson 26 - Input and Output - Use Case
+
+Every time we have input data and output data inside a use case, we may use that idea of ports and adapters to make the
+conversion both from the controller to enter a use case, as well as the use case response can be converted through an 
+interface and an implementation
+
+Start by creating a Conversor.ts interface inside shared, it will be as following
+
+1 - Define an interface with this signature `export default interface Conversor<E, S>`
+2 - This interface will essentially convert an input of type E to an output of type S, similar to CasoDeUso
+3 - The role of this use case port, is to create a generic way of making this conversion
+
+### Presenter
+
+Presenter is a way of presenting/rendering the data according to the necessity of who called it.
+- If we are calling the use case from the UI, presenter could be a DTO. 
+- If we are calling from other system, presenter can return a XML, JSON, .csv
+
+That's why we create this separation, between the i/o format and do not tie it inside the use case.
+  e.g. The use case will retrieve the list of products in the DB and **always** return it as XML. And with this, we are
+  tying the Use Case to this output format, meaning that in multiple scenarios we won't be able to utilize the use case
+  because the type of output, is not the expected one.
+The Conversor interface will come to help us with this.
+
+Inside the `ObterProdutos` use case, we don't have an input — it is void, so it does not make sense for us to use an entry
+PORT inside it, because no data is received and there is no reason for converting anything to the UI.
+However, that use case returns data, a list of `Produto`, and we can create an output point, and from the use case, call
+it and convert it
+
+For that use case, we can use the Conversor in the constructor and it will receive a Produto as an input and return something
+that will be defined by the controller.
+
+In the executar return, instead of the list of products, we are going to map over the `produtos`, and apply the conversorSaida
+converter defined by whichever controller will "tell us", on each product.
+
+And implement that output port inside the controller, now whenever we make a use case call, it will be like this:
+
+```ts
+  	async executar(): Promise<ProductDTO[]> {
+		const conversorSaida: Conversor<Produto, ProdutoDTO> = {
+			converter(produto: Produto): ProdutoDTO {
+				return {
+					nome: produto.nome.completo,
+					precoFormatado: produto.preco.formatado(),
+				};
+			},
+		};
+		const casoDeUso = new ObterProdutos(this.repo, conversorSaida);
+		return casoDeUso.executar();
+	}
+```
+
+So basically, instead of the use case holding that return logic, we are now making the use call to call the function that
+will transform one `Produto` (that is one object of the model), into a simple object that does not have rules. only attributes,
+into a ProductDTO
+
+This will enable us to create any type of conversion we want. For example, if we would like the Produto to be returned as
+a string, we would create another conversorSaida constant, which would be simply
+
+  ```ts
+  		const conversorSaida2: Conversor<Produto, string> = {
+			converter(produto: Produto): ProdutoDTO {
+				return produto.nome.completo,
+			},
+		};
+  ```
+
+and use this new conversorSaida, as a useCase constructor argument.
+We were able to create this simple return with only `nome` because every `ProdutoProp` is optional, as well as the additional
+attribute from the DTO.
+
+In addition to the output conversion, we can also other property to a use case constructor that will be an Input Port
+
+And this conversorSaida logic being inside the controller, it does not harm any principle, it makes sense to be inside the
+"green" layer, since it adapts the external data to the model and vice versa
+
+### Converter folder
+
+We could even, if we would like, inside the adapter layer, create a folder to centralize all the converters. And from one
+single converter, we can have the capacity of saying if it will have certain attributes or not and call the useCase, instead
+of using the own controller implementation, using this new separate converter
+
+
+### Presenter
+
+What we are doing here is nothing more than a Presenter, converting the data in a  way to show it on the gui
+
+
+
+
+
+
+
+
+
+
+
+
 
