@@ -1,0 +1,12 @@
+{
+  "name": "@ddd/db",
+  "version": "1.0.0",
+  "description": "Package to manage Docker Compose for the database.",
+  "scripts": {
+    "dev": "docker compose up",
+    "destroy": "docker compose down -v"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
