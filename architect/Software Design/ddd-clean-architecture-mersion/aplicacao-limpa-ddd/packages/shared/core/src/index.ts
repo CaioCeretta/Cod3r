@@ -1,3 +1,3 @@
-export function somar(a: number, b: number): number {
-	return a + b;
-}
+import type UseCase from "./usecase";
+
+export type { UseCase };
